@@ -1,0 +1,18 @@
+Projectiles: {
+	RoquefortiProjectile.DisplayName: Roqueforti
+	MushroomProj.DisplayName: Mushroom
+}
+
+Items: {
+	Roqueforti: {
+		Tooltip: ""
+		DisplayName: Roqueforti
+	}
+
+	IceBossSummon: {
+		Tooltip: Summons the Ice Boss
+		DisplayName: Frozen Emblem
+	}
+}
+
+NPCs.IceBossFly.DisplayName: Ice Boss Fly
