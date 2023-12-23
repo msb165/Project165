@@ -1,6 +1,7 @@
 Projectiles: {
 	RoquefortiProjectile.DisplayName: Roqueforti
 	MushroomProj.DisplayName: Mushroom
+	IceChakramProj.DisplayName: Ice Chakram Proj
 }
 
 Items: {
@@ -12,6 +13,16 @@ Items: {
 	IceBossSummon: {
 		Tooltip: Summons the Ice Boss
 		DisplayName: Frozen Emblem
+	}
+
+	IceBossBag: {
+		DisplayName: Ice Boss Bag
+		Tooltip: ""
+	}
+
+	IceChakram: {
+		DisplayName: Ice Chakram
+		Tooltip: ""
 	}
 }
 
