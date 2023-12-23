@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -95,9 +96,24 @@ namespace Project165.Content.Projectiles.Melee
             GenerateDust();
         }
 
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            //Projectile.ai[0] = 1f;
+            if (Projectile.velocity.X != Projectile.oldVelocity.X)
+            {
+                Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
+            }
+            if (Projectile.velocity.X != Projectile.oldVelocity.X)
+            {
+                Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
+            }
+            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
+            return false;
+        }
+
         private void GenerateDust()
         {
-            Vector2 dustPosition = Projectile.Center; //+ Vector2.Normalize(Projectile.velocity) * 10f;
+            Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
             Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
             Vector2 negativeDustVelocity = Projectile.velocity.RotatedBy(-MathHelper.PiOver2);
 
