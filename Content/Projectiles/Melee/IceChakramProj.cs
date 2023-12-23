@@ -98,16 +98,19 @@ namespace Project165.Content.Projectiles.Melee
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            //Projectile.ai[0] = 1f;
-            if (Projectile.velocity.X != Projectile.oldVelocity.X)
+            if (Projectile.tileCollide)
             {
-                Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
+                Projectile.ai[0] = 1f;
+                if (Projectile.velocity.X != Projectile.oldVelocity.X)
+                {
+                    Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
+                }
+                if (Projectile.velocity.X != Projectile.oldVelocity.X)
+                {
+                    Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
+                }
+                SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             }
-            if (Projectile.velocity.X != Projectile.oldVelocity.X)
-            {
-                Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
-            }
-            SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
             return false;
         }
 
