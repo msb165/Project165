@@ -18,7 +18,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.height = 38;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.DamageType = DamageClass.Melee;            
             Projectile.aiStyle = -1;
         }
 
