@@ -14,5 +14,9 @@ namespace Project165.Content.Items.TreasureBags
         {
             ItemID.Sets.BossBag[Type] = true;
         }
+        public override void SetDefaults()
+        {
+            Item.rare = ItemRarityID.Pink;
+        }
     }
 }
