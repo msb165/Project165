@@ -13,6 +13,7 @@ namespace Project165.Content.Items.SummonItems
             Item.width = 26;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.rare = ItemRarityID.Pink;
             Item.consumable = false;
             Item.maxStack = 1;
         }
@@ -44,6 +45,9 @@ namespace Project165.Content.Items.SummonItems
             CreateRecipe()
                 .AddIngredient(ItemID.FrostCore, 1)
                 .AddIngredient(ItemID.IceBlock, 40)
+                .AddIngredient(ItemID.SoulofFright, 5)
+                .AddIngredient(ItemID.SoulofMight, 5)
+                .AddIngredient(ItemID.SoulofSight, 5)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
                 
