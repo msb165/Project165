@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Projectiles.Melee;
 using System;
+using Project165.Content.Dusts;
 
 namespace Project165.Content.Projectiles.Yoyos
 {
@@ -20,9 +21,9 @@ namespace Project165.Content.Projectiles.Yoyos
 
         public override void SetDefaults()
         {
-            Projectile.width = 16;
-            Projectile.height = 16;
-            Projectile.scale = 1.2f;
+            Projectile.width = 24;
+            Projectile.height = 24;
+            Projectile.scale = 1f;
 
             Projectile.aiStyle = ProjAIStyleID.Yoyo;
             Projectile.friendly = true;
@@ -31,7 +32,12 @@ namespace Project165.Content.Projectiles.Yoyos
         }        
 
         public override void PostAI()
-        {            
+        {
+            if (Main.rand.NextBool(3))
+            {
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0f, 0f, 0, Color.RoyalBlue, 3f);
+            }
+
             if (Projectile.owner == Main.myPlayer) 
             {
                 Projectile.localAI[1] += 1f;
@@ -40,16 +46,19 @@ namespace Project165.Content.Projectiles.Yoyos
                 {
                     float newVelocity = MathHelper.TwoPi + Projectile.localAI[0];
 
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, newVelocity.ToRotationVector2() * 6f, ModContent.ProjectileType<MushroomProj>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner); ;
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, newVelocity.ToRotationVector2() * 6f, ModContent.ProjectileType<MushroomProj>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
                     Projectile.localAI[1] = 0f;
                 }
                 
             }
+        }
 
-            if (Main.rand.NextBool(2))
-            {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GlowingMushroom, 0f, 0f, 100, default, 1f);
-            }
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            projHitbox.Width = 96;            
+            projHitbox.Height = 96;           
+            
+            return projHitbox.Intersects(targetHitbox);
         }
 
         public override Color? GetAlpha(Color lightColor) => new Color(255 - Projectile.alpha, 255 - Projectile.alpha, 255 - Projectile.alpha, 0);
@@ -58,13 +67,19 @@ namespace Project165.Content.Projectiles.Yoyos
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/RoquefortiExtra");
+            Texture2D glowTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/GlowSphere");
             Color drawColor = Projectile.GetAlpha(lightColor);
 
-            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
-            Vector2 thingDrawOrigin = new(extraThingTexture.Width / 2, extraThingTexture.Height / 2);
+            SpriteBatch spriteBatch = Main.spriteBatch;
 
-            Main.spriteBatch.Draw(extraThingTexture, Projectile.Center - Main.screenPosition, null, drawColor, Projectile.rotation, thingDrawOrigin, 1f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+            Vector2 drawOrigin = texture.Size() / 2f;
+            Vector2 drawOriginGlow = glowTexture.Size() / 2f;
+            Vector2 thingDrawOrigin = extraThingTexture.Size() / 2f;
+            Vector2 drawPos = Projectile.Center - Main.screenPosition;
+
+            spriteBatch.Draw(extraThingTexture, drawPos, null, drawColor, Projectile.rotation, thingDrawOrigin, 1f, SpriteEffects.None, 0);
+            spriteBatch.Draw(glowTexture, drawPos, null, new Color(0, 0, 255, 0), Projectile.rotation, drawOriginGlow, 1f, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, drawPos, null, drawColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
     }

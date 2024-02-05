@@ -1,6 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Project165.Content.Dusts;
+using Project165.Content.Items.Weapons.Melee;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,14 +12,16 @@ namespace Project165.Content.Projectiles.Melee
 {
     public class IceChakramProj : ModProjectile
     {
+        public override string Texture => ModContent.GetInstance<IceChakram>().Texture;
         public override void SetStaticDefaults()
         {
-            base.SetStaticDefaults();
+            ProjectileID.Sets.TrailCacheLength[Type] = 6;
+            ProjectileID.Sets.TrailingMode[Type] = 2;
         }
         public override void SetDefaults()
         {
-            Projectile.width = 34;
-            Projectile.height = 34;
+            Projectile.width = 30;
+            Projectile.height = 30;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Melee;            
@@ -23,7 +29,8 @@ namespace Project165.Content.Projectiles.Melee
         }
 
         private Player Owner => Main.player[Projectile.owner];
-        private readonly float returnSpeed = 18f;
+        private readonly float returnSpeed = 20f;
+        private readonly float maxTime = 25f;
         private readonly float acceleration = 1.2f;
 
         public override void AI()
@@ -32,15 +39,16 @@ namespace Project165.Content.Projectiles.Melee
             if (Projectile.ai[0] == 0f)
             {
                 Projectile.ai[1] += 1f;
-                if (Projectile.ai[1] >= 30f)
-                {
+                if (Projectile.ai[1] >= maxTime)
+                {                    
                     Projectile.ai[0] = 1f;
                     Projectile.ai[1] = 0f;
                     Projectile.netUpdate = true;
                 }
             }
             else
-            {                
+            {
+                Projectile.tileCollide = false;
                 Vector2 playerProjDistance = Owner.Center - Projectile.Center;
                 float distance = Vector2.Distance(Owner.Center, Projectile.Center);
 
@@ -52,6 +60,7 @@ namespace Project165.Content.Projectiles.Melee
                 distance = returnSpeed / distance;
                 playerProjDistance.X *= distance;
                 playerProjDistance.Y *= distance;
+
                 if (Projectile.velocity.X < playerProjDistance.X)
                 {
                     Projectile.velocity.X += acceleration;
@@ -68,6 +77,7 @@ namespace Project165.Content.Projectiles.Melee
                         Projectile.velocity.X -= acceleration;
                     }
                 }
+
                 if (Projectile.velocity.Y < playerProjDistance.Y)
                 {
                     Projectile.velocity.Y += acceleration;
@@ -96,6 +106,14 @@ namespace Project165.Content.Projectiles.Melee
             GenerateDust();
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (Main.rand.NextBool(4) && !target.HasBuff(BuffID.Frostburn))
+            {
+                target.AddBuff(BuffID.Frostburn, 300);
+            }
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             if (Projectile.tileCollide)
@@ -116,22 +134,43 @@ namespace Project165.Content.Projectiles.Melee
 
         private void GenerateDust()
         {
+            Color drawColor = Color.SkyBlue;
             Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
             Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
-            Vector2 negativeDustVelocity = Projectile.velocity.RotatedBy(-MathHelper.PiOver2);
 
-            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.IceTorch);
+            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
             iceDust.position = dustPosition;
             iceDust.velocity = dustVelocity * 0.33f + Projectile.velocity / 4f;
             iceDust.position += dustVelocity;
-            iceDust.fadeIn = 0.5f;
-            iceDust.noGravity = true;
-            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.IceTorch);
+
+            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
             iceDust2.position = dustPosition;
-            iceDust2.velocity = negativeDustVelocity * 0.33f + Projectile.velocity / 4f;
-            iceDust2.position += negativeDustVelocity;
-            iceDust2.fadeIn = 0.5f;
-            iceDust2.noGravity = true;
+            iceDust2.velocity = -dustVelocity * 0.33f + Projectile.velocity / 4f;
+            iceDust2.position -= dustVelocity;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Color drawColor = Color.White;
+            Color drawColorTrail = Color.SkyBlue with { A = 0 };
+
+            Vector2 drawOrigin = texture.Frame().Size() / 2f;
+            Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
+
+            SpriteBatch spriteBatch = Main.spriteBatch;
+
+            for (int i = 0; i < Projectile.oldPos.Length; i++)
+            {
+                Vector2 drawPosTrail = Projectile.oldPos[i] + Projectile.Size / 2f - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
+
+                drawColorTrail *= 0.6f;
+
+                spriteBatch.Draw(texture, drawPosTrail, texture.Frame(), drawColorTrail, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+            }
+
+            spriteBatch.Draw(texture, drawPos, texture.Frame(), drawColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+            return false;
         }
     }
 }

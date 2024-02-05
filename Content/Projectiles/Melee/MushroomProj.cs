@@ -8,7 +8,7 @@ namespace Project165.Content.Projectiles.Melee
     {
         public override void SetDefaults()
         {
-            Projectile.Size = Vector2.One * 20;
+            Projectile.Size = new(20);
             Projectile.DamageType = DamageClass.MeleeNoSpeed;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 10;
@@ -20,7 +20,7 @@ namespace Project165.Content.Projectiles.Melee
         public override void AI()
         {
             Projectile.velocity *= 0.95f;
-            Projectile.rotation += 0.25f;
+            Projectile.rotation += 0.25f * Projectile.direction;
 
             Projectile.ai[1] += 1f;
 

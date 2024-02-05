@@ -19,7 +19,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.UseSound = SoundID.Item1;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<IceChakramProj>();
-            Item.shootSpeed = 14f;
+            Item.shootSpeed = 15f;
             Item.value = Item.buyPrice(0, 0, 40, 0);
             Item.rare = ItemRarityID.Pink;
             Item.autoReuse = true;

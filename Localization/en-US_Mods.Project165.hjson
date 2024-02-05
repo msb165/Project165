@@ -2,6 +2,8 @@ Projectiles: {
 	RoquefortiProjectile.DisplayName: Roqueforti
 	MushroomProj.DisplayName: Mushroom
 	IceChakramProj.DisplayName: Ice Chakram Proj
+	TeleporterProjectile.DisplayName: Teleporter Projectile
+	IceBossProjectile.DisplayName: Ice Boss Projectile
 }
 
 Items: {
@@ -22,6 +24,11 @@ Items: {
 
 	IceChakram: {
 		DisplayName: Ice Chakram
+		Tooltip: ""
+	}
+
+	TeleporterGun: {
+		DisplayName: Teleporter Gun
 		Tooltip: ""
 	}
 }

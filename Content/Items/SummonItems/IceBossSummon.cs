@@ -1,4 +1,4 @@
-﻿using Project165.Content.NPCs;
+﻿using Project165.Content.NPCs.Bosses;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -13,13 +13,20 @@ namespace Project165.Content.Items.SummonItems
             Item.width = 26;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.rare = ItemRarityID.Pink;
             Item.consumable = false;
             Item.maxStack = 1;
         }
 
         public override bool CanUseItem(Player player)
         {
-            return !Main.IsItDay() && !NPC.AnyNPCs(ModContent.NPCType<IceBossFly>()) && player.ZoneSnow;
+            if (!Main.IsItDay() && !NPC.AnyNPCs(ModContent.NPCType<IceBossFly>()) && player.ZoneSnow)
+            {
+                return true;
+            }
+
+            Main.NewText("[c/50F8FF:Looks like nothing happened. It seems that it can only be used in the snow at daytime.]");
+            return false;
         }
 
         public override bool? UseItem(Player player)
@@ -44,6 +51,9 @@ namespace Project165.Content.Items.SummonItems
             CreateRecipe()
                 .AddIngredient(ItemID.FrostCore, 1)
                 .AddIngredient(ItemID.IceBlock, 40)
+                .AddIngredient(ItemID.SoulofFright, 5)
+                .AddIngredient(ItemID.SoulofMight, 5)
+                .AddIngredient(ItemID.SoulofSight, 5)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
                 
