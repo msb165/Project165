@@ -6,6 +6,10 @@ using Terraria.GameContent.ItemDropRules;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.TreasureBags;
 using Project165.Content.Projectiles.Hostile;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.GameContent;
+using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
 
 namespace Project165.Content.NPCs.Bosses
 {
@@ -14,9 +18,9 @@ namespace Project165.Content.NPCs.Bosses
     {
         public enum AIState : int
         {
-            PhaseOne_SideWays = 0,
+            PhaseOne_Sideways = 0,
             PhaseOne_Static = 1,
-            PhaseOne_NextPhase = 2,
+            PhaseOne_Bottom = 2,
             PhaseTwo_Circling = 3,
             PhaseTwo_Dashing = 4,
             PhaseTwo_Dying = 5,
@@ -28,7 +32,24 @@ namespace Project165.Content.NPCs.Bosses
         }
         public ref float Timer => ref NPC.ai[1];
         public ref float ShootCounter => ref NPC.localAI[0];
-        public bool PhaseTwo => NPC.ai[2] == 1f;
+        public bool PhaseTwo
+        {
+            get => NPC.ai[2] == 1f;
+            set => NPC.ai[2] = value ? 1f : 0f;
+        }
+
+        public float acceleration = 0.2f;
+
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.MPAllowedEnemies[Type] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
+            NPCID.Sets.TrailCacheLength[Type] = 15;
+            NPCID.Sets.TrailingMode[Type] = 1;
+            NPCID.Sets.BossBestiaryPriority.Add(Type);
+            Main.npcFrameCount[Type] = 2;
+        }
 
         public override void SetDefaults()
         {
@@ -46,8 +67,18 @@ namespace Project165.Content.NPCs.Bosses
             NPC.value = 120000f;
             NPC.npcSlots = 5f;
             NPC.aiStyle = -1;
+            Music = MusicID.FrostMoon;
         }
         private Player Player => Main.player[NPC.target];
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow
+            });
+        }
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
@@ -70,54 +101,49 @@ namespace Project165.Content.NPCs.Bosses
 
             if (Player.dead)
             {
-                NPC.velocity.Y += 0.025f;
+                NPC.velocity.Y += 0.1f;
                 NPC.EncourageDespawn(10);
                 return;
             }
 
             HandleRotation();
 
+            if (NPC.life < NPC.lifeMax * 0.65f)
+            {
+                PhaseTwo = true;
+            }
+
             switch (CurrentAIState)
             {
-                case AIState.PhaseOne_SideWays:
-                    StayOnSideways(); 
+                case AIState.PhaseOne_Sideways:
+                    StayOnSideways();
                     break;
                 case AIState.PhaseOne_Static:
                     StayOnPlace();
                     break;
+                case AIState.PhaseOne_Bottom:
+                    StayOnBottom();
+                    break;
             }
         }
-        private void StayOnPlace()
-        {
-            NPC.velocity *= 0.5f;
 
-            if (NPC.Distance(Player.Center) > 1250f)
-            {
-                NPC.Teleport(new Vector2(Player.Center.X + (300f * Player.direction), Player.Center.Y - 100f), 1);
-            }
+        #region Phase 1 attacks
 
-            if (Timer % 12f == 0)
-            {
-                SummonProjectiles(velocity: 15f);
-            }
-
-            Timer++;
-            if (Timer > 600f)
-            {
-                Timer = 0f;
-                CurrentAIState = AIState.PhaseOne_SideWays;
-                NPC.netUpdate = true;
-            }        
-        }
         private void StayOnSideways()
         {
+            float timeToShoot = 40f;
+
+            if (PhaseTwo)
+            {
+                timeToShoot = 30f;
+            }
+
             if (NPC.Distance(Player.Center) > 800f)
             {
                 NPC.Teleport(new Vector2(Player.Center.X + (250f * Player.direction), Player.Center.Y), 1);
             }
-
-            float acceleration = 0.18f;
-            Vector2 targetPosition = Player.Center + new Vector2(200f, 0f) - NPC.Center;
+            
+            Vector2 targetPosition = Player.Center + new Vector2(250f, 0f) - NPC.Center;
 
             float npcPlayerDistance = targetPosition.Length();
             npcPlayerDistance = 15f / npcPlayerDistance;
@@ -127,7 +153,7 @@ namespace Project165.Content.NPCs.Bosses
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
             Timer++;
-            if (Timer % 40f == 0)
+            if (Timer % timeToShoot == 0 && Timer != 40f)
             {
                 SummonProjectiles(velocity: 10f);
             }
@@ -140,10 +166,70 @@ namespace Project165.Content.NPCs.Bosses
             }
         }
 
-        private void StayOnTop()
+        private void StayOnPlace()
         {
+            float timeToShoot = 12f;
 
+            if (PhaseTwo)
+            {
+                timeToShoot = 10f;
+            }
+
+            NPC.velocity *= 0.5f;
+
+            if (NPC.Distance(Player.Center) > 1300f)
+            {
+                NPC.Teleport(new Vector2(Player.Center.X + (400f * Player.direction), Player.Center.Y - 100f), 1);
+            }
+
+            if (Timer % timeToShoot == 0)
+            {
+                SummonProjectiles(velocity: 14f);
+            }
+
+            Timer++;
+            if (Timer > 500f)
+            {
+                Timer = 0f;
+                CurrentAIState = AIState.PhaseOne_Bottom;
+                NPC.netUpdate = true;
+            }        
         }
+
+        private void StayOnBottom()
+        {
+            if (NPC.Distance(Player.Center) > 800f)
+            {
+                NPC.Teleport(Player.Center + new Vector2(0f, 200f), 1);
+            }
+            
+            Vector2 targetPosition = Player.Center + new Vector2(0f, 200f) - NPC.Center;
+
+            float npcPlayerDistance = targetPosition.Length();
+            npcPlayerDistance = 15f / npcPlayerDistance;
+            targetPosition.X *= npcPlayerDistance;
+            targetPosition.Y *= npcPlayerDistance;
+
+            NPC.SimpleFlyMovement(targetPosition, acceleration);
+
+            Timer++;
+            if (Timer % 100f == 0)
+            {
+                for (int i = 0; i < 16; i++)
+                {
+                    Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 400f);
+                    Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -6.5f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 1f, 0f);
+                }
+            }
+
+            if (Timer > 400f)
+            {
+                Timer = 0f;
+                CurrentAIState = AIState.PhaseOne_Sideways;
+                NPC.netUpdate = true;
+            }
+        }
+        #endregion
 
         private void SummonProjectiles(float velocity)
         {
@@ -199,6 +285,28 @@ namespace Project165.Content.NPCs.Bosses
             }
 
             NPC.rotation = newRotation;
+        }       
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Texture2D texture = TextureAssets.Npc[Type].Value;
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
+            Color npcDrawColor = Color.White with { A = 0 };
+
+            if (NPC.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+
+            for (int i = 0; i < NPC.oldPos.Length; i++)
+            {
+                npcDrawColor *= 0.6f;
+                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - Main.screenPosition, NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+            }
+
+            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+            return false;
         }
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

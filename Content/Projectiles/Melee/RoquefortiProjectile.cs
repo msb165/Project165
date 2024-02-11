@@ -4,19 +4,16 @@ using Terraria.ModLoader;
 using Terraria.GameContent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Project165.Content.Projectiles.Melee;
-using System;
 using Project165.Content.Dusts;
 
-namespace Project165.Content.Projectiles.Yoyos
+namespace Project165.Content.Projectiles.Melee
 {
     internal class RoquefortiProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.YoyosLifeTimeMultiplier[Type] = -1f;
-            ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 300f;
-            ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 20f;
+            ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 400f;
+            ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 16.5f;
         }
 
         public override void SetDefaults()
@@ -48,8 +45,7 @@ namespace Project165.Content.Projectiles.Yoyos
 
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, newVelocity.ToRotationVector2() * 6f, ModContent.ProjectileType<MushroomProj>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
                     Projectile.localAI[1] = 0f;
-                }
-                
+                }                
             }
         }
 

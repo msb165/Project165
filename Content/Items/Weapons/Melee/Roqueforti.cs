@@ -1,4 +1,4 @@
-﻿using Project165.Content.Projectiles.Yoyos;
+﻿using Project165.Content.Projectiles.Melee;
 using Terraria.ID;
 using Terraria.ModLoader;
 

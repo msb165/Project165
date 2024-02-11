@@ -15,8 +15,7 @@ namespace Project165.Content.Projectiles.Melee
         public override string Texture => ModContent.GetInstance<IceChakram>().Texture;
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Type] = 6;
-            ProjectileID.Sets.TrailingMode[Type] = 2;
+            ProjectileID.Sets.TrailingMode[Type] = 3;
         }
         public override void SetDefaults()
         {
@@ -30,15 +29,20 @@ namespace Project165.Content.Projectiles.Melee
 
         private Player Owner => Main.player[Projectile.owner];
         private readonly float returnSpeed = 20f;
-        private readonly float maxTime = 25f;
+        private readonly float maxTime = 20f;
         private readonly float acceleration = 1.2f;
 
         public override void AI()
         {
-            Projectile.rotation += 0.25f * Owner.direction;
+            Projectile.rotation += 0.25f * Projectile.direction;
             if (Projectile.ai[0] == 0f)
             {
                 Projectile.ai[1] += 1f;
+                if (Projectile.ai[1] % 8f == 0)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.position, new Vector2(0, -8f), ProjectileID.NorthPoleSnowflake, Projectile.damage / 4, Projectile.knockBack, Owner.whoAmI, Main.rand.Next(3));
+                }
+
                 if (Projectile.ai[1] >= maxTime)
                 {                    
                     Projectile.ai[0] = 1f;
@@ -106,6 +110,23 @@ namespace Project165.Content.Projectiles.Melee
             GenerateDust();
         }
 
+        private void GenerateDust()
+        {
+            Color drawColor = Color.SkyBlue;
+            Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
+            Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
+
+            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
+            iceDust.position = dustPosition;
+            iceDust.velocity = dustVelocity * 0.33f + Projectile.velocity / 4f;
+            iceDust.position += dustVelocity;
+
+            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
+            iceDust2.position = dustPosition;
+            iceDust2.velocity = -dustVelocity * 0.33f + Projectile.velocity / 4f;
+            iceDust2.position -= dustVelocity;
+        }
+
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Main.rand.NextBool(4) && !target.HasBuff(BuffID.Frostburn))
@@ -127,26 +148,9 @@ namespace Project165.Content.Projectiles.Melee
                 {
                     Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
                 }
-                SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
+                SoundEngine.PlaySound(SoundID.Shatter with { Pitch = 1f, Volume = 0.6f }, Projectile.position);
             }
             return false;
-        }
-
-        private void GenerateDust()
-        {
-            Color drawColor = Color.SkyBlue;
-            Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
-            Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
-
-            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
-            iceDust.position = dustPosition;
-            iceDust.velocity = dustVelocity * 0.33f + Projectile.velocity / 4f;
-            iceDust.position += dustVelocity;
-
-            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
-            iceDust2.position = dustPosition;
-            iceDust2.velocity = -dustVelocity * 0.33f + Projectile.velocity / 4f;
-            iceDust2.position -= dustVelocity;
         }
 
         public override bool PreDraw(ref Color lightColor)

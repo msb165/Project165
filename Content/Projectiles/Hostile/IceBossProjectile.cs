@@ -13,7 +13,8 @@ namespace Project165.Content.Projectiles.Hostile
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 3;
+            ProjectileID.Sets.TrailingMode[Type] = 15;
+            ProjectileID.Sets.TrailingMode[Type] = 2;
         }
         public override void SetDefaults()
         {
@@ -29,14 +30,27 @@ namespace Project165.Content.Projectiles.Hostile
 
         public override void AI()
         {
-            if (Projectile.ai[0] == 0f)
+            if (Projectile.ai[1] == 0f)
             {
-                SoundEngine.PlaySound(SoundID.Item28, Projectile.position);
-                Projectile.ai[0] = 1f;
+                SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.35f }, Projectile.position);
+                Projectile.ai[1] = 1f;
             }
+
             Projectile.rotation = Projectile.velocity.ToRotation();
 
             Lighting.AddLight(Projectile.position, 0f, 0.75f, 1f);
+
+            if (Projectile.ai[0] == 0f)
+            {
+                return;
+            }
+
+            Projectile.ai[0]++;
+            Projectile.localAI[0]++;
+            if (Projectile.ai[0] > 16f)
+            {
+                Projectile.velocity *= 1.02f;
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -52,7 +66,9 @@ namespace Project165.Content.Projectiles.Hostile
 
             Vector2 drawOrigin = texture.Frame().Size() / 2f;
             Vector2 drawOriginGlow = glowTexture.Frame().Size() / 2f;
-            Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);         
+            Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);    
+            
+
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
@@ -74,7 +90,7 @@ namespace Project165.Content.Projectiles.Hostile
             for (int i = 0; i < 20; i++)
             {
                 Vector2 velocity = Main.rand.NextVector2Unit();
-                Dust.NewDustPerfect(Projectile.position, ModContent.DustType<GlowDust>(), velocity, 0, Color.Cyan, 1.25f);
+                Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowDust>(), velocity, 0, Color.Cyan, 1.25f);
             }
             SoundEngine.PlaySound(SoundID.Item27);
         }
