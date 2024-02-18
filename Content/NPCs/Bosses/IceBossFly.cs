@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Project165.Content.Dusts;
+using Terraria.Graphics.Effects;
+using Project165.Content.Items.Weapons.Magic;
 
 namespace Project165.Content.NPCs.Bosses
 {
@@ -18,6 +21,7 @@ namespace Project165.Content.NPCs.Bosses
     {
         public enum AIState : int
         {
+            Spawning = -1,
             PhaseOne_Sideways = 0,
             PhaseOne_Static = 1,
             PhaseOne_Bottom = 2,
@@ -47,6 +51,11 @@ namespace Project165.Content.NPCs.Bosses
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
             NPCID.Sets.TrailCacheLength[Type] = 15;
             NPCID.Sets.TrailingMode[Type] = 1;
+            NPCID.Sets.NPCBestiaryDrawModifiers npcBestiaryDrawModifiers = new()
+            { 
+                PortraitScale = 1.25f,                
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, npcBestiaryDrawModifiers);
             NPCID.Sets.BossBestiaryPriority.Add(Type);
             Main.npcFrameCount[Type] = 2;
         }
@@ -58,7 +67,7 @@ namespace Project165.Content.NPCs.Bosses
             NPC.defense = 10;
             NPC.damage = 0;
             NPC.lifeMax = 20000;
-            NPC.HitSound = SoundID.NPCHit1;
+            NPC.HitSound = SoundID.NPCHit5;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -92,6 +101,14 @@ namespace Project165.Content.NPCs.Bosses
         {
             return true;
         }
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            Conditions.NotExpert notExpertCondition = new();
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<IceBossBag>()));
+
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<Avalanche>(), 3));
+        }
+
         public override void AI()
         {
             if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active || Vector2.Distance(Player.Center, NPC.Center) > 2000f)
@@ -101,20 +118,32 @@ namespace Project165.Content.NPCs.Bosses
 
             if (Player.dead)
             {
-                NPC.velocity.Y += 0.1f;
+                NPC.velocity.Y += 0.15f;
                 NPC.EncourageDespawn(10);
                 return;
             }
 
             HandleRotation();
 
+            if (NPC.localAI[0] == 0f)
+            {
+                NPC.localAI[0] = 1f;
+                NPC.alpha = 255;
+                NPC.velocity.Y = -5f;
+                CurrentAIState = AIState.Spawning;
+            }
+            
+
             if (NPC.life < NPC.lifeMax * 0.65f)
             {
                 PhaseTwo = true;
-            }
+            }            
 
             switch (CurrentAIState)
             {
+                case AIState.Spawning:
+                    SpawnAnimation();
+                    break;
                 case AIState.PhaseOne_Sideways:
                     StayOnSideways();
                     break;
@@ -127,7 +156,27 @@ namespace Project165.Content.NPCs.Bosses
             }
         }
 
-        #region Phase 1 attacks
+        #region Behavior
+
+        private void SpawnAnimation()
+        {
+            NPC.velocity *= 0.97f;
+            if (NPC.alpha > 0)
+            {
+                NPC.alpha -= 2;
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 speed = Main.rand.NextVector2CircularEdge(500f, 500f).SafeNormalize(Vector2.UnitY) * 40f;
+                    Dust.NewDustPerfect(NPC.Center - speed * 5f, ModContent.DustType<GlowDust>(), speed / 2, 0, Color.Cyan, 0.5f);
+                }
+            }
+            else
+            {
+                NPC.alpha = 0;
+                CurrentAIState = AIState.PhaseOne_Sideways;
+                NPC.netUpdate = true;
+            }
+        }
 
         private void StayOnSideways()
         {
@@ -198,11 +247,22 @@ namespace Project165.Content.NPCs.Bosses
 
         private void StayOnBottom()
         {
+            float timeToShoot = 100f;
+
             if (NPC.Distance(Player.Center) > 800f)
             {
                 NPC.Teleport(Player.Center + new Vector2(0f, 200f), 1);
             }
-            
+
+            if (PhaseTwo)
+            {
+                timeToShoot = 75f;
+                if (Main.expertMode)
+                {
+                    timeToShoot = 70f;
+                }
+            }
+
             Vector2 targetPosition = Player.Center + new Vector2(0f, 200f) - NPC.Center;
 
             float npcPlayerDistance = targetPosition.Length();
@@ -213,12 +273,17 @@ namespace Project165.Content.NPCs.Bosses
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
             Timer++;
-            if (Timer % 100f == 0)
+            if (Timer % timeToShoot == 0)
             {
+                for (int i = 0; i < 10; i++)
+                {
+                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, ModContent.DustType<GlowDust>(), 0, 0, 0, Color.LightCyan, 1.25f);
+                }
+
                 for (int i = 0; i < 16; i++)
                 {
-                    Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 400f);
-                    Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -6.5f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 1f, 0f);
+                    Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 800f);
+                    Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -4f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 1f, 0f);
                 }
             }
 
@@ -231,6 +296,7 @@ namespace Project165.Content.NPCs.Bosses
         }
         #endregion
 
+        
         private void SummonProjectiles(float velocity)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -285,14 +351,29 @@ namespace Project165.Content.NPCs.Bosses
             }
 
             NPC.rotation = newRotation;
-        }       
+        }
+        
+
+        public override void FindFrame(int frameHeight)
+        {
+            if (PhaseTwo)
+            {
+                NPC.frame.Y = 1 * frameHeight;
+            }
+            else
+            {
+                NPC.frame.Y = 0 * frameHeight;
+            }
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[Type].Value;
             SpriteEffects spriteEffects = SpriteEffects.None;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
-            Color npcDrawColor = Color.White with { A = 0 };
+            Color npcDrawColorTrail = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 0);
+            Color npcDrawColor = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha);
+
 
             if (NPC.spriteDirection == -1)
             {
@@ -301,20 +382,12 @@ namespace Project165.Content.NPCs.Bosses
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {
-                npcDrawColor *= 0.6f;
-                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - Main.screenPosition, NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+                npcDrawColorTrail *= 0.6f;
+                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos, NPC.frame, npcDrawColorTrail, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             }
 
-            spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, NPC.frame, Color.White, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+            spriteBatch.Draw(texture, NPC.Center - screenPos, NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             return false;
-        }
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<IceBossBag>()));
-
-            LeadingConditionRule notExpertConditionRule = new(new Conditions.NotExpert());
-            notExpertConditionRule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<IceChakram>(), 3));
-            npcLoot.Add(notExpertConditionRule);
         }
     }
 }
