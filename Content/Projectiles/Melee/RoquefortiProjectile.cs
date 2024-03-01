@@ -8,7 +8,7 @@ using Project165.Content.Dusts;
 
 namespace Project165.Content.Projectiles.Melee
 {
-    internal class RoquefortiProjectile : ModProjectile
+    public class RoquefortiProjectile : ModProjectile
     {
         public override void SetStaticDefaults()
         {

@@ -14,11 +14,11 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             Item.Size = new(32);
             Item.DamageType = DamageClass.Magic;
-            Item.damage = 25;
+            Item.damage = 70;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shoot = ModContent.ProjectileType<AvalanceProj>();
             Item.shootSpeed = 20f;
-            Item.mana = 10;
+            Item.mana = 12;
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.noMelee = true;

@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Project165.Content.Dusts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -12,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace Project165.Content.Items.Weapons.Ranged
 {
-    internal class IceShotgun : ModItem
+    public class IceShotgun : ModItem
     {
         public override void SetDefaults()
         {
@@ -24,7 +19,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.shootSpeed = 10f;
             Item.useAmmo = AmmoID.Bullet;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.UseSound = SoundID.Item36;
+            Item.UseSound = SoundID.Item36 with { Pitch = -0.25f };
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 22;
             Item.rare = ItemRarityID.Pink;
@@ -34,11 +29,13 @@ namespace Project165.Content.Items.Weapons.Ranged
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            for (int m = 0; m < 30; m++)
+            player.velocity.X += -3.5f * player.direction;
+            for (int m = 0; m < 5; m++)
             {
                 Vector2 offset = Vector2.UnitX.RotatedBy(velocity.ToRotation());
-                Vector2 spawnPos = offset.RotatedByRandom(0.3f);
-                Dust.NewDustPerfect(player.Center + spawnPos * 50, ModContent.DustType<GlowDust>(), (spawnPos * Main.rand.NextFloat(0.9f, 1.2f)) - Vector2.UnitY, 100, Color.LightCyan, 0.75f);
+                Vector2 spawnPos = offset.RotatedByRandom(0.5f);
+                Dust.NewDustPerfect(player.Center + spawnPos * 50f, ModContent.DustType<CloudDust>(), spawnPos - Vector2.UnitY * 4f, 100, default, Main.rand.NextFloat(0.75f, 1.1f));
+                Dust.NewDustDirect(player.Center, Item.width, Item.height, ModContent.DustType<CloudDust>(), 0, 0, 100, default, Main.rand.NextFloat(0.75f, 1.1f));
             }
 
             for (int i = 0; i < 4; i++)
@@ -47,9 +44,11 @@ namespace Project165.Content.Items.Weapons.Ranged
 
                 newVelocity *= 1f - Main.rand.NextFloat(0.4f);
 
-                Projectile.NewProjectileDirect(source, position, newVelocity, type, damage, knockback);
-                Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 3, knockback);
-                Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 3, knockback);
+                Projectile crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 2.5f, ProjectileID.CrystalShard, damage, knockback);
+                crystalShard.tileCollide = true;
+                crystalShard.scale = 1.75f;
+                crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 2, knockback);
+                crystalShard.penetrate = -1;
             }
 
             return false;

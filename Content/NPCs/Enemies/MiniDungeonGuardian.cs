@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,6 +19,8 @@ namespace Project165.Content.NPCs.Enemies
     {
         public override void SetStaticDefaults() 
         {
+            NPCID.Sets.TrailCacheLength[Type] = 5;
+            NPCID.Sets.TrailingMode[Type] = 3;
             NPCID.Sets.ShimmerTransformToNPC[Type] = NPCID.CursedSkull;
 
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
@@ -53,12 +57,13 @@ namespace Project165.Content.NPCs.Enemies
             Vector2 newSpeed = NPC.DirectionTo(Player.Center).SafeNormalize(Vector2.Zero);
 
             NPC.rotation += NPC.direction * 0.4f;            
-            NPC.velocity = NPC.velocity.MoveTowards(newSpeed, 5f) * 3f;
+            NPC.velocity = NPC.velocity.MoveTowards(newSpeed, 5f) * 4f;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GoldenKey, 100));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Bone, 1, 1, 3));
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => SpawnCondition.Dungeon.Chance * 0.25f;
@@ -67,7 +72,7 @@ namespace Project165.Content.NPCs.Enemies
         {
             if (NPC.life <= 0)
             {
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 12; i++)
                 {
                     Dust deathDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Bone, -NPC.velocity.X, -NPC.velocity.Y, 100, default);
                     deathDust.noGravity = true;
@@ -75,6 +80,21 @@ namespace Project165.Content.NPCs.Enemies
                     deathDust.velocity *= 1.25f;
                 }
             }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Texture2D texture = TextureAssets.Npc[Type].Value;
+            Color trailColor = drawColor;
+
+            for (int i = 0; i < NPC.oldPos.Length; i++)
+            {
+                trailColor *= 0.75f;
+                spriteBatch.Draw(texture, NPC.oldPos[i] + texture.Size() / 2 - screenPos, texture.Frame(), trailColor, NPC.rotation, texture.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+            }
+
+            spriteBatch.Draw(texture, NPC.Center - screenPos, texture.Frame(), drawColor, NPC.rotation, texture.Size() / 2, NPC.scale, SpriteEffects.None, 0);
+            return false;
         }
     }
 }

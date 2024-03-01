@@ -8,13 +8,14 @@ using Project165.Content.Items.TreasureBags;
 using Project165.Content.Projectiles.Hostile;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
-using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
 using Project165.Content.Dusts;
-using Terraria.Graphics.Effects;
 using Project165.Content.Items.Weapons.Magic;
+using Project165.Content.Items.Weapons.Ranged;
+using Project165.Common.Systems;
+using System;
 
-namespace Project165.Content.NPCs.Bosses
+namespace Project165.Content.NPCs.Bosses.Frigus
 {
     [AutoloadBossHead]
     public class IceBossFly : ModNPC
@@ -25,9 +26,7 @@ namespace Project165.Content.NPCs.Bosses
             PhaseOne_Sideways = 0,
             PhaseOne_Static = 1,
             PhaseOne_Bottom = 2,
-            PhaseTwo_Circling = 3,
-            PhaseTwo_Dashing = 4,
-            PhaseTwo_Dying = 5,
+            DeathAnimation = 3,
         }
         public AIState CurrentAIState
         {
@@ -65,8 +64,8 @@ namespace Project165.Content.NPCs.Bosses
             NPC.width = 110;
             NPC.height = 98;            
             NPC.defense = 10;
-            NPC.damage = 0;
-            NPC.lifeMax = 20000;
+            NPC.damage = 1;
+            NPC.lifeMax = 25000;
             NPC.HitSound = SoundID.NPCHit5;
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.knockBackResist = 0f;
@@ -78,6 +77,7 @@ namespace Project165.Content.NPCs.Bosses
             NPC.aiStyle = -1;
             Music = MusicID.FrostMoon;
         }
+
         private Player Player => Main.player[NPC.target];
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -92,26 +92,31 @@ namespace Project165.Content.NPCs.Bosses
         {
             potionType = ItemID.GreaterHealingPotion;
         }
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
+
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => true;
+
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            cooldownSlot = ImmunityCooldownID.Bosses;
-            return true;
+            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
+            NPC.damage = (int)(NPC.damage * 0.6f);
         }
-        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
-        {
-            return true;
-        }
+
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             Conditions.NotExpert notExpertCondition = new();
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<IceBossBag>()));
 
             npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<Avalanche>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceShotgun>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceChakram>(), 3));
         }
 
+        #region AI
         public override void AI()
         {
-            if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active || Vector2.Distance(Player.Center, NPC.Center) > 2000f)
+            if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active)
             {
                 NPC.TargetClosest();
             }
@@ -153,30 +158,14 @@ namespace Project165.Content.NPCs.Bosses
                 case AIState.PhaseOne_Bottom:
                     StayOnBottom();
                     break;
+                case AIState.DeathAnimation:
+                    DeathAnimation();
+                    break;
             }
         }
+        #endregion
 
-        #region Behavior
-
-        private void SpawnAnimation()
-        {
-            NPC.velocity *= 0.97f;
-            if (NPC.alpha > 0)
-            {
-                NPC.alpha -= 2;
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector2 speed = Main.rand.NextVector2CircularEdge(500f, 500f).SafeNormalize(Vector2.UnitY) * 40f;
-                    Dust.NewDustPerfect(NPC.Center - speed * 5f, ModContent.DustType<GlowDust>(), speed / 2, 0, Color.Cyan, 0.5f);
-                }
-            }
-            else
-            {
-                NPC.alpha = 0;
-                CurrentAIState = AIState.PhaseOne_Sideways;
-                NPC.netUpdate = true;
-            }
-        }
+        #region Attacks
 
         private void StayOnSideways()
         {
@@ -187,17 +176,14 @@ namespace Project165.Content.NPCs.Bosses
                 timeToShoot = 30f;
             }
 
-            if (NPC.Distance(Player.Center) > 800f)
+            if (NPC.Distance(Player.Center) > 1000f)
             {
                 NPC.Teleport(new Vector2(Player.Center.X + (250f * Player.direction), Player.Center.Y), 1);
             }
             
             Vector2 targetPosition = Player.Center + new Vector2(250f, 0f) - NPC.Center;
-
-            float npcPlayerDistance = targetPosition.Length();
-            npcPlayerDistance = 15f / npcPlayerDistance;
-            targetPosition.X *= npcPlayerDistance;
-            targetPosition.Y *= npcPlayerDistance;
+            targetPosition.Normalize();
+            targetPosition *= 15f;
 
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
@@ -264,11 +250,8 @@ namespace Project165.Content.NPCs.Bosses
             }
 
             Vector2 targetPosition = Player.Center + new Vector2(0f, 200f) - NPC.Center;
-
-            float npcPlayerDistance = targetPosition.Length();
-            npcPlayerDistance = 15f / npcPlayerDistance;
-            targetPosition.X *= npcPlayerDistance;
-            targetPosition.Y *= npcPlayerDistance;
+            targetPosition.Normalize();
+            targetPosition *= 15f;
 
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
@@ -282,7 +265,7 @@ namespace Project165.Content.NPCs.Bosses
 
                 for (int i = 0; i < 16; i++)
                 {
-                    Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 800f);
+                    Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 500f);
                     Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -4f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 1f, 0f);
                 }
             }
@@ -296,6 +279,66 @@ namespace Project165.Content.NPCs.Bosses
         }
         #endregion
 
+        #region Misc
+        public override void FindFrame(int frameHeight)
+        {
+            if (PhaseTwo)
+            {
+                NPC.frame.Y = 1 * frameHeight;
+            }
+            else
+            {
+                NPC.frame.Y = 0 * frameHeight;
+            }
+        }
+        private void DeathAnimation()
+        {
+            Timer++;
+            NPC.velocity *= 0.95f;
+            NPC.rotation += 0.4f;
+            if (NPC.alpha < 255)
+            {
+                NPC.alpha += 4;
+            }
+            Main.NewText(NPC.scale);
+            if (NPC.scale < 2f)
+            {
+                NPC.scale += 0.005f;
+            }
+            if (NPC.alpha > 255)
+            {
+                NPC.alpha = 255;
+            }
+            if (Timer >= 100f)
+            {                
+                NPC.HitEffect();
+                NPC.NPCLoot();
+                NPC.active = false;
+                NPC.netUpdate = true;
+            }
+        }
+
+        private void SpawnAnimation()
+        {
+            NPC.dontTakeDamage = true;
+            NPC.velocity *= 0.97f;
+            if (NPC.alpha > 0)
+            {
+                NPC.alpha -= 2;
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 speed = Main.rand.NextVector2CircularEdge(500f, 500f).SafeNormalize(Vector2.UnitY) * 40f;
+                    Dust.NewDustPerfect(NPC.Center - speed * 5f, ModContent.DustType<GlowDust>(), speed / 2, 0, Color.Cyan, 0.5f);
+                }
+            }
+            else
+            {
+                NPC.alpha = 0;
+                NPC.dontTakeDamage = false;
+                CurrentAIState = AIState.PhaseOne_Sideways;
+                NPC.netUpdate = true;
+            }
+        }      
         
         private void SummonProjectiles(float velocity)
         {
@@ -315,6 +358,11 @@ namespace Project165.Content.NPCs.Bosses
         }
         private void HandleRotation()
         {
+            if (CurrentAIState == AIState.DeathAnimation)
+            {
+                return;
+            }
+
             Vector2 npcPlayerPos = new(NPC.Center.X - Player.Center.X, NPC.Center.Y - Player.Center.Y);
             float rotAcceleration = 0.075f;
             float newRotation = npcPlayerPos.ToRotation() + MathHelper.PiOver2;
@@ -352,18 +400,34 @@ namespace Project165.Content.NPCs.Bosses
 
             NPC.rotation = newRotation;
         }
-        
 
-        public override void FindFrame(int frameHeight)
+        #endregion
+
+        public override void OnKill()
         {
-            if (PhaseTwo)
+            NPC.SetEventFlagCleared(ref DownedBossSystem.downedFrigus, -1);
+        }
+
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            if (NPC.life <= 0)
             {
-                NPC.frame.Y = 1 * frameHeight;
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Back").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Back").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Front").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Front").Type);
             }
-            else
-            {
-                NPC.frame.Y = 0 * frameHeight;
-            }
+        }
+
+        public override bool CheckDead()
+        {
+            Timer = 0f;
+            CurrentAIState = AIState.DeathAnimation;
+            NPC.active = true;
+            NPC.life = 1;
+            NPC.dontTakeDamage = true;
+            NPC.netUpdate = true;
+            return false;            
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

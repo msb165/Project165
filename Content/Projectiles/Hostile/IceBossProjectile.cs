@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using Terraria.Audio;
 using Project165.Content.Dusts;
+using System;
 
 namespace Project165.Content.Projectiles.Hostile
 {
@@ -29,6 +30,7 @@ namespace Project165.Content.Projectiles.Hostile
         }
 
         public bool ShowLaser => Projectile.ai[0] == 1f;
+        public bool drawLaser = true;
         public ref float AITimer => ref Projectile.ai[1];
 
         public override void AI()
@@ -45,6 +47,7 @@ namespace Project165.Content.Projectiles.Hostile
 
             if (!ShowLaser)
             {
+                drawLaser = false;
                 return;
             }
             if (Projectile.alpha > 1f)
@@ -54,8 +57,10 @@ namespace Project165.Content.Projectiles.Hostile
             AITimer++;
             if (AITimer > 60f)
             {
-                Projectile.velocity *= 1.02f;
+                Projectile.velocity *= 1.025f;
             }
+
+            drawLaser = AITimer < 120f;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -76,9 +81,9 @@ namespace Project165.Content.Projectiles.Hostile
             Vector2 drawOriginTelegraph = textureExtra.Frame().Size() / 2f;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
 
-            if (ShowLaser && AITimer < 30f)
+            if (drawLaser)
             {                
-                spriteBatch.Draw(textureExtra, Projectile.Center - Main.screenPosition, null, drawColorTelegraph * Projectile.Opacity, Projectile.rotation, drawOriginTelegraph, new Vector2(10f, 3f), SpriteEffects.None, 0);
+                spriteBatch.Draw(textureExtra, Projectile.Center - Main.screenPosition, null, drawColorTelegraph, Projectile.rotation, drawOriginTelegraph, new Vector2(10f, 3f), SpriteEffects.None, 0);
             }          
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
@@ -91,7 +96,6 @@ namespace Project165.Content.Projectiles.Hostile
                 spriteBatch.Draw(glowTexture, drawPosTrail, null, drawColorTrail, Projectile.rotation, drawOriginGlow, glowScale - i / Projectile.oldPos.Length, SpriteEffects.None, 0);
                 spriteBatch.Draw(texture, drawPosTrail, null, drawColor, Projectile.rotation, drawOrigin, Projectile.scale - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
             }
-
             spriteBatch.Draw(texture, drawPos, texture.Frame(), drawColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }

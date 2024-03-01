@@ -1,7 +1,7 @@
 ﻿using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Ranged;
-using Project165.Content.NPCs.Bosses;
+using Project165.Content.NPCs.Bosses.Frigus;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;

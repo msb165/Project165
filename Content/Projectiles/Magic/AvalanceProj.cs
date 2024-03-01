@@ -1,12 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Dusts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -15,11 +9,11 @@ using Terraria.ModLoader;
 
 namespace Project165.Content.Projectiles.Magic
 {
-    internal class AvalanceProj : ModProjectile
+    public class AvalanceProj : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
+            ProjectileID.Sets.TrailingMode[Type] = 3;
         }
         public override void SetDefaults()
         {
@@ -35,10 +29,10 @@ namespace Project165.Content.Projectiles.Magic
         }
 
         public override void AI()
-        {
+        {   
             if (Main.rand.NextBool(4))
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 190, Color.LightCyan, 1f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 190);
             }
 
             Projectile.rotation += Projectile.velocity.X * 0.06f;
@@ -51,13 +45,7 @@ namespace Project165.Content.Projectiles.Magic
             {              
                 if (Projectile.velocity.X != oldVelocity.X)
                 {
-                    for (int i = 0; i < 20; i++)
-                    {
-                        Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 100, Color.LightCyan, 1.5f);
-                    }
-                    SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-
-                    Projectile.velocity.X = -oldVelocity.X;
+                    Projectile.Kill();
                 }
             }
             return false;
@@ -67,15 +55,28 @@ namespace Project165.Content.Projectiles.Magic
             SoundEngine.PlaySound(SoundID.NPCDeath15, Projectile.position);
             for (int i = 0; i < 20; i++)
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 127, Color.LightCyan, 1.5f);
+                Dust snowDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 200, default, 1.5f);
+            }
+            
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 newVelocity = Vector2.UnitX * 12f;
+                newVelocity = newVelocity.RotatedBy(-i * MathHelper.TwoPi / 10f, Vector2.Zero);
+                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.position, newVelocity, ProjectileID.SnowBallFriendly, Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
             }
         }
 
+        float newScale = 0.5f;
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteBatch spriteBatch = Main.spriteBatch;
             Color drawColorTrail = lightColor with { A = 0 };
+
+            if (newScale < 1.5f)
+            {
+                newScale += 0.1f;
+            }
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
@@ -85,10 +86,10 @@ namespace Project165.Content.Projectiles.Magic
                 }
 
                 drawColorTrail *= 0.75f;
-                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, newScale, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, newScale, SpriteEffects.None, 0);
             return false;
         }
     }
