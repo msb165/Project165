@@ -67,8 +67,7 @@ namespace Project165.Content.Items.SummonItems
                 .AddIngredient(ItemID.SoulofMight, 5)
                 .AddIngredient(ItemID.SoulofSight, 5)
                 .AddTile(TileID.MythrilAnvil)
-                .Register();
-                
+                .Register();                
         }
     }
 }

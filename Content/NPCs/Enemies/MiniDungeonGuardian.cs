@@ -72,9 +72,9 @@ namespace Project165.Content.NPCs.Enemies
         {
             if (NPC.life <= 0)
             {
-                for (int i = 0; i < 12; i++)
+                for (int i = 0; i < 20; i++)
                 {
-                    Dust deathDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Bone, -NPC.velocity.X, -NPC.velocity.Y, 100, default);
+                    Dust deathDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Bone, -NPC.velocity.X, -NPC.velocity.Y, 100, default, 1.5f);
                     deathDust.noGravity = true;
                     deathDust.noLight = true;
                     deathDust.velocity *= 1.25f;

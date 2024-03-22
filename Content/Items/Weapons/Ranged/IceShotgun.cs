@@ -29,13 +29,17 @@ namespace Project165.Content.Items.Weapons.Ranged
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            player.velocity.X += -3.5f * player.direction;
+            if (player.whoAmI == Main.myPlayer)
+            {
+                player.velocity.X += -3.5f * player.direction;
+            }
+
             for (int m = 0; m < 5; m++)
             {
                 Vector2 offset = Vector2.UnitX.RotatedBy(velocity.ToRotation());
                 Vector2 spawnPos = offset.RotatedByRandom(0.5f);
-                Dust.NewDustPerfect(player.Center + spawnPos * 50f, ModContent.DustType<CloudDust>(), spawnPos - Vector2.UnitY * 4f, 100, default, Main.rand.NextFloat(0.75f, 1.1f));
-                Dust.NewDustDirect(player.Center, Item.width, Item.height, ModContent.DustType<CloudDust>(), 0, 0, 100, default, Main.rand.NextFloat(0.75f, 1.1f));
+                Dust.NewDustPerfect(player.Center + spawnPos * 50f, ModContent.DustType<CloudDust>(), spawnPos - Vector2.UnitY * 4f, 100, Color.White with { A = 0 }, Main.rand.NextFloat(0.75f, 1.1f));
+                Dust.NewDustDirect(player.Center, Item.width, Item.height, ModContent.DustType<CloudDust>(), 0, 0, 100, Color.White with { A = 0 }, Main.rand.NextFloat(0.75f, 1.1f));
             }
 
             for (int i = 0; i < 4; i++)

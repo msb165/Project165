@@ -3,7 +3,16 @@ Projectiles: {
 	MushroomProj.DisplayName: Mushroom
 	IceChakramProj.DisplayName: Ice Chakram Proj
 	TeleporterProjectile.DisplayName: Teleporter Projectile
-	IceBossProjectile.DisplayName: Ice Boss Projectile
+	IceBossProjectile.DisplayName: Frost Bolt
+	AvalanceProj.DisplayName: Avalance Proj
+	ManaKnifeProj.DisplayName: Mana Knife Proj
+	ManaHeal.DisplayName: Mana Heal
+	ShadowPikeProj.DisplayName: Shadow Pike Proj
+	SinProj.DisplayName: Sin Proj
+	ShadowBolt.DisplayName: Shadow Bolt
+	ShadowSlimeProj.DisplayName: Shadow Slime Proj
+	ShadowBladeProj.DisplayName: Shadow Blade Proj
+	ShadowSlash.DisplayName: Shadow Slash
 }
 
 Items: {
@@ -13,12 +22,12 @@ Items: {
 	}
 
 	IceBossSummon: {
-		Tooltip: Summons the Ice Boss
+		Tooltip: Summons Frigus
 		DisplayName: Frozen Emblem
 	}
 
 	IceBossBag: {
-		DisplayName: Ice Boss Bag
+		DisplayName: Treasure Bag (Frigus)
 		Tooltip: ""
 	}
 
@@ -27,10 +36,46 @@ Items: {
 		Tooltip: ""
 	}
 
-	TeleporterGun: {
-		DisplayName: Teleporter Gun
+	IceShotgun: {
+		DisplayName: Frostgun
+		Tooltip: ""
+	}
+
+	Avalanche: {
+		DisplayName: Avalanche
+		Tooltip: ""
+	}
+
+	ManaKnife: {
+		DisplayName: Mana Knife
+		Tooltip: ""
+	}
+
+	ShadowPike: {
+		DisplayName: Tenebris
+		Tooltip: ""
+	}
+
+	ShadowGel: {
+		DisplayName: Shadow Gel
+		Tooltip: ""
+	}
+
+	ShadowBlade: {
+		DisplayName: Shadow Blade
+		Tooltip: ""
+	}
+
+	ShadowSlimeStaff: {
+		DisplayName: Shadow Slime Staff
 		Tooltip: ""
 	}
 }
 
-NPCs.IceBossFly.DisplayName: Ice Boss Fly
+NPCs: {
+	IceBossFly.DisplayName: Frigus
+	MiniDungeonGuardian.DisplayName: Mini Dungeon Guardian
+	DarkSlime.DisplayName: Dark Slime
+	AncientSlime.DisplayName: Ancient Slime
+	ShadowSlime.DisplayName: Shadow Slime
+}

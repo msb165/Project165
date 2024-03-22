@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Dusts;
 using Project165.Content.Items.Weapons.Melee;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -112,16 +113,15 @@ namespace Project165.Content.Projectiles.Melee
 
         private void GenerateDust()
         {
-            Color drawColor = Color.SkyBlue;
             Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
             Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
 
-            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
+            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ice, 0, 0, 0, default, 1f);
             iceDust.position = dustPosition;
             iceDust.velocity = dustVelocity * 0.33f + Projectile.velocity / 4f;
             iceDust.position += dustVelocity;
 
-            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, drawColor, 1f);
+            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ice, 0, 0, 0, default, 1f);
             iceDust2.position = dustPosition;
             iceDust2.velocity = -dustVelocity * 0.33f + Projectile.velocity / 4f;
             iceDust2.position -= dustVelocity;

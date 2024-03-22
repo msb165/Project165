@@ -35,6 +35,7 @@ namespace Project165.Content.Projectiles.Magic
         
         public override void PostAI()
         {
+            Lighting.AddLight(Projectile.Center, 0.1f, 0.1f, 0.5f);
             if (Main.rand.NextBool(2))
             {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 100, Color.SkyBlue, 0.75f);
@@ -74,12 +75,12 @@ namespace Project165.Content.Projectiles.Magic
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
-                drawColorTrail *= 0.5f;
-                newScale *= 1.25f;
-                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, newScale, SpriteEffects.None, 0);
+                drawColorTrail *= 0.75f;
+                newScale *= 0.99f;
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, Projectile.Size / 2, newScale, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), drawColor, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, drawColor, Projectile.rotation, Projectile.Size / 2, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
     }

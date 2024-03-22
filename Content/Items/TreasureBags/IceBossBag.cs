@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace Project165.Content.Items.TreasureBags
 {
-    internal class IceBossBag : ModItem
+    public class IceBossBag : ModItem
     {
         public override void SetStaticDefaults()
         {

@@ -24,8 +24,6 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         private void UpdateIceIndex()
         {
             int iceBossType = ModContent.NPCType<IceBossFly>();
-            //Console.WriteLine(iceBossIndex);
-            //Main.NewText(iceBossIndex);
             if (iceBossIndex >= 0 && Main.npc[iceBossIndex].active && Main.npc[iceBossIndex].type == iceBossType)
             {
                 return;

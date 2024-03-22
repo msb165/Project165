@@ -15,15 +15,16 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.Size = new(32);
             Item.DamageType = DamageClass.Magic;
             Item.damage = 70;
-            Item.useStyle = ItemUseStyleID.Swing;
+            Item.rare = ItemRarityID.Pink;            
             Item.shoot = ModContent.ProjectileType<AvalanceProj>();
             Item.shootSpeed = 20f;
             Item.mana = 12;
             Item.useTime = 20;
             Item.useAnimation = 20;
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
+            Item.useStyle = ItemUseStyleID.Swing;
             Item.UseSound = SoundID.NPCHit11;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;            
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -32,7 +33,7 @@ namespace Project165.Content.Items.Weapons.Magic
 
             for (int i = 0; i < 10; i++)
             {
-                Dust.NewDustDirect(position, player.width, player.height, ModContent.DustType<GlowDust>(), velocity.X, velocity.Y, 100, Color.SkyBlue, 1f);
+                Dust.NewDustDirect(position, player.width, player.height, DustID.Snow, velocity.X, velocity.Y, 100, default, 1f);
             }
 
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);

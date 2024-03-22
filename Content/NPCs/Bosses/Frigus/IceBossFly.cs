@@ -300,7 +300,6 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             {
                 NPC.alpha += 4;
             }
-            Main.NewText(NPC.scale);
             if (NPC.scale < 2f)
             {
                 NPC.scale += 0.005f;
@@ -321,14 +320,14 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         private void SpawnAnimation()
         {
             NPC.dontTakeDamage = true;
-            NPC.velocity *= 0.97f;
+            NPC.velocity *= 0.96f;
             if (NPC.alpha > 0)
             {
                 NPC.alpha -= 2;
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     Vector2 speed = Main.rand.NextVector2CircularEdge(500f, 500f).SafeNormalize(Vector2.UnitY) * 40f;
-                    Dust.NewDustPerfect(NPC.Center - speed * 5f, ModContent.DustType<GlowDust>(), speed / 2, 0, Color.Cyan, 0.5f);
+                    Dust.NewDustPerfect(NPC.Center - speed * 5f, ModContent.DustType<CloudDust>(), speed / 2, 128, default, 0.75f);
                 }
             }
             else
