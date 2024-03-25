@@ -26,7 +26,7 @@ namespace Project165.Content.Items.TreasureBags
             Item.height = 32;
             Item.expert = true;
             Item.consumable = true;
-            Item.stack = Item.CommonMaxStack;
+            Item.maxStack = Item.CommonMaxStack;
         }
 
         public override bool CanRightClick() => true;

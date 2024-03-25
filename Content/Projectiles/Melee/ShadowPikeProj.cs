@@ -54,6 +54,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 + MathHelper.PiOver4;
             Projectile.Center = Player.MountedCenter + Projectile.velocity * progress;
 
+
             AITimer++;
 
             if (Counter == 0f)

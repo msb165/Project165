@@ -132,12 +132,14 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             {
                 jumpTime = 25f;
             }
+
             NPC.rotation = NPC.velocity.X * 0.025f;
             NPC.noTileCollide = false;                
+
             if (NPC.velocity.Y == 0f)
             {
                 NPC.TargetClosest();
-                NPC.velocity.X *= 0.85f;
+                NPC.velocity.X *= 0.9f;
                 AITimer++;                
 
                 if (MathF.Abs(NPC.velocity.X) > -0.1f && MathF.Abs(NPC.velocity.X) < 0.1f)
@@ -340,7 +342,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {
                 npcDrawColorTrail *= 0.75f;
-                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColorTrail, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColorTrail * 0.5f, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             }
             
             spriteBatch.Draw(texture, NPC.Center - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);

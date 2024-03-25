@@ -70,12 +70,16 @@ Items: {
 		DisplayName: Shadow Slime Staff
 		Tooltip: ""
 	}
+
+	DarkSlimeBag: {
+		DisplayName: Treasure Box (Shadow Slime)
+		Tooltip: ""
+	}
 }
 
 NPCs: {
 	IceBossFly.DisplayName: Frigus
 	MiniDungeonGuardian.DisplayName: Mini Dungeon Guardian
 	DarkSlime.DisplayName: Dark Slime
-	AncientSlime.DisplayName: Ancient Slime
 	ShadowSlime.DisplayName: Shadow Slime
 }
