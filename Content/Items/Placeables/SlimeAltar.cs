@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Project165.Content.Tiles;
+using Terraria.ModLoader;
 
 namespace Project165.Content.Items.Placeables
 {
-    internal class SlimeAltar
+    public class SlimeAltar : ModItem
     {
+        public override void SetDefaults()
+        {
+            Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.SlimeAltar>());
+            Item.width = 48;
+            Item.height = 32;
+            Item.value = 150;
+        }
     }
 }
