@@ -37,6 +37,11 @@ namespace Project165.Content.Projectiles.Melee
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
 
+            if (Main.rand.NextBool(25))
+            {
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height * 4, DustID.Clentaminator_Purple, 0f, 0f, 100, default, 0.75f);
+            }
+
             if (Projectile.frameCounter++ >= 1)
             {
                 Projectile.frameCounter = 0;

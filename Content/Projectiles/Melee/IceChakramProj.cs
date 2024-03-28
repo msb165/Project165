@@ -116,13 +116,15 @@ namespace Project165.Content.Projectiles.Melee
             Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
             Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
 
-            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ice, 0, 0, 0, default, 1f);
+            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 1.25f);
             iceDust.position = dustPosition;
+            iceDust.noGravity = true;
             iceDust.velocity = dustVelocity * 0.33f + Projectile.velocity / 4f;
             iceDust.position += dustVelocity;
 
-            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ice, 0, 0, 0, default, 1f);
+            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 1.25f);
             iceDust2.position = dustPosition;
+            iceDust2.noGravity = true;
             iceDust2.velocity = -dustVelocity * 0.33f + Projectile.velocity / 4f;
             iceDust2.position -= dustVelocity;
         }

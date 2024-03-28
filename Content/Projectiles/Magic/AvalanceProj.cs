@@ -30,6 +30,17 @@ namespace Project165.Content.Projectiles.Magic
 
         public override void AI()
         {   
+            if (Projectile.ai[0] == 0f)
+            {
+                Projectile.ai[0] = 1f;
+                for (int i = 0; i < 20; i++)
+                {
+                    Vector2 newPosition = new Vector2(10f, 0f).RotatedBy(i + MathHelper.TwoPi / 20);
+                    Dust newDust = Dust.NewDustPerfect(Projectile.position - newPosition, DustID.SnowSpray, newPosition, 180, default, 1.25f);
+                    newDust.noGravity = true;
+                }
+            }
+
             if (Main.rand.NextBool(4))
             {
                 Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 190);
