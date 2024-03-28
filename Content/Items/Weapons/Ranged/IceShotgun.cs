@@ -21,7 +21,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = SoundID.Item36 with { Pitch = -0.25f };
             Item.DamageType = DamageClass.Ranged;
-            Item.damage = 22;
+            Item.damage = 28;
             Item.rare = ItemRarityID.Pink;
             Item.autoReuse = true;
             Item.noMelee = true;
