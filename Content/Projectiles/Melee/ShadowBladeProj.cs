@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -131,6 +132,12 @@ namespace Project165.Content.Projectiles.Melee
         {
             target.AddBuff(BuffID.ShadowFlame, 300);
             target.AddBuff(BuffID.Weak, 300);
+
+            ParticleOrchestrator.RequestParticleSpawn(true, ParticleOrchestraType.NightsEdge, new ParticleOrchestraSettings
+            {
+                PositionInWorld = target.Center,
+
+            }, Projectile.owner);
         }
 
         public override bool PreDraw(ref Color lightColor)

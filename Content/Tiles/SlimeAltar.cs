@@ -1,9 +1,14 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Project165.Content.Items.SummonItems;
+using Project165.Content.NPCs.Bosses.ShadowSlime;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -21,6 +26,32 @@ namespace Project165.Content.Tiles
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
             TileObjectData.newTile.DrawYOffset = 2;
             TileObjectData.addTile(Type);
+
+            LocalizedText slimeAltarName = CreateMapEntryName();
+            AddMapEntry(Color.Purple, slimeAltarName);
+            MinPick = 210;
+        }
+
+        public override void MouseOver(int i, int j)
+        {
+            Main.LocalPlayer.cursorItemIconEnabled = true;
+            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ShadowSlimeSummon>();
+        }
+
+        public override bool RightClick(int i, int j)
+        {
+            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowSlime>()) && NPC.downedGolemBoss && Main.LocalPlayer.HasItemInAnyInventory(ModContent.ItemType<ShadowSlimeSummon>()))
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.SpawnOnPlayer(Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowSlime>());
+                }
+                else
+                {
+                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowSlime>());
+                }
+            }
+            return true;
         }
     }
 }

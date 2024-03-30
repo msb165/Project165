@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Dusts;
+using ReLogic.Threading;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -36,7 +37,7 @@ namespace Project165.Content.Projectiles.Magic
                 for (int i = 0; i < 20; i++)
                 {
                     Vector2 newPosition = new Vector2(10f, 0f).RotatedBy(i + MathHelper.TwoPi / 20);
-                    Dust newDust = Dust.NewDustPerfect(Projectile.position - newPosition, DustID.SnowSpray, newPosition, 180, default, 1.25f);
+                    Dust newDust = Dust.NewDustPerfect(Projectile.Center - newPosition, DustID.SnowSpray, newPosition, 180, default, 1.25f);
                     newDust.noGravity = true;
                 }
             }

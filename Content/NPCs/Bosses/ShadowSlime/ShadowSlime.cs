@@ -24,7 +24,8 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             Jumping = 0,
             ClimbingUp = 1,
             Landing = 2,
-            Sliding = 3
+            Sliding = 3,
+            ShootingAround = 4
         }
 
         public AIState CurrentAIState
@@ -89,12 +90,12 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
 
         public override void AI()
         {
-            if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active || Vector2.Distance(Player.Center, NPC.Center) > 2000f)
+            if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active || Vector2.Distance(Player.Center, NPC.Center) > 1000f)
             {
                 NPC.TargetClosest();
             }
 
-            if (Player.dead)
+            if (Player.dead || Vector2.Distance(Player.Center, NPC.Center) > 2000f)
             {
                 NPC.noTileCollide = true;                
                 NPC.velocity.Y += 0.25f;
@@ -121,6 +122,9 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
                 case AIState.Sliding:
                     Slide();
                     break;
+                case AIState.ShootingAround:
+                    ShootAround();
+                    break;
             }
         }
 
@@ -134,7 +138,14 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             }
 
             NPC.rotation = NPC.velocity.X * 0.025f;
-            NPC.noTileCollide = false;                
+            NPC.noTileCollide = false; 
+            
+            if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
+            {
+                AITimer = 0f;
+                CurrentAIState = AIState.ClimbingUp;
+                NPC.netUpdate = true;
+            }
 
             if (NPC.velocity.Y == 0f)
             {
@@ -231,6 +242,39 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
         {
             NPC.rotation = NPC.velocity.X * 0.025f;
 
+            if (NPC.Center.Y != Player.position.Y || NPC.velocity.Y <= 0f)
+            {
+                AITimer += 1f;
+                Main.NewText(AITimer);
+                NPC.noTileCollide = true;
+                NPC.noGravity = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 16f)
+                {
+                    AITimer = 0f;
+                    AICounter = 0f;
+                    CurrentAIState = AIState.ShootingAround;
+                    NPC.netUpdate = true;
+                }            
+            }
+
+            NPC.velocity.X *= 0.85f;
+            if (MathF.Abs(NPC.velocity.X) > -0.1f && MathF.Abs(NPC.velocity.X) < 0.1f)
+            {
+                NPC.velocity.X = 0f;
+            }
+
+            NPC.velocity.Y += 0.3f;
+            if (NPC.velocity.Y > 16f)
+            {
+                NPC.velocity.Y = 16f;
+            }         
+
+        }
+
+        public void ShootAround()
+        {
+            NPC.noTileCollide = false;
+            NPC.noGravity = false;
             float shootTime = 60f;
             if (Main.expertMode)
             {
@@ -242,22 +286,11 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
                 shootTime -= 10f;
             }
 
-
-            NPC.noTileCollide = true;
-            NPC.noGravity = false;
-
             NPC.velocity.X *= 0.85f;
             if (MathF.Abs(NPC.velocity.X) > -0.1f && MathF.Abs(NPC.velocity.X) < 0.1f)
             {
                 NPC.velocity.X = 0f;
             }
-
-            NPC.velocity.Y += 0.3f;
-
-            if (NPC.velocity.Y > 16f)
-            {
-                NPC.velocity.Y = 16f;
-            }            
 
             AITimer++;
             if (AITimer % shootTime == 0f)
@@ -275,9 +308,11 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
                 Vector2 speed = Main.rand.NextVector2CircularEdge(300f, 300f).SafeNormalize(Vector2.UnitY) * 5f;
                 Dust.NewDustPerfect(NPC.Center - speed * 5f, ModContent.DustType<GlowDust>(), speed / 4, 100, Color.DarkSlateBlue, 0.75f);
             }
+
             if (AITimer == 240f)
             {
-                AITimer = 0f;                
+                AITimer = 0f;
+                AICounter = 0f;
                 CurrentAIState = AIState.Sliding;
                 NPC.rotation = 0;
                 NPC.netUpdate = true;
@@ -293,7 +328,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             AITimer++;
             if (AITimer > 30f && AITimer < 120f)
             {
-                NPC.velocity.X += 2f * NPC.direction;
+                NPC.velocity.X += 1.25f * NPC.direction;
             }
             if (NPC.velocity.X > 10f)
             {
@@ -337,16 +372,16 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             Color npcDrawColor = NPC.GetAlpha(drawColor);
             Color drawColorThing = Color.Red with { A = 0, B = 255 };
             Color lightDrawColor = Color.DarkSlateBlue with { A = 0 };
-            Color npcDrawColorTrail = lightDrawColor;
+            Color npcDrawColorTrail = Color.DarkBlue;
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {
                 npcDrawColorTrail *= 0.75f;
-                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColorTrail * 0.5f, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColorTrail * 0.2f, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             }
             
             spriteBatch.Draw(texture, NPC.Center - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
-            spriteBatch.Draw(extraThingTexture, NPC.Center - screenPos, null, drawColorThing, NPC.rotation + (float)Main.timeForVisualEffects / 16f, extraThingTexture.Size() / 2, NPC.scale, spriteEffects, 0);
+            spriteBatch.Draw(extraThingTexture, NPC.Center - screenPos + new Vector2(0f, 2f), null, drawColorThing, NPC.rotation + (float)Main.timeForVisualEffects / 8f, extraThingTexture.Size() / 2, NPC.scale * 2f, spriteEffects, 0);
             return false;
         }
     }
