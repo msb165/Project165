@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
+using Project165.Content.Items.Materials;
 
 namespace Project165.Content.Items.SummonItems
 {
@@ -12,6 +13,15 @@ namespace Project165.Content.Items.SummonItems
             Item.rare = ItemRarityID.Pink;
             Item.consumable = false;
             Item.maxStack = 1;
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient(ModContent.ItemType<ShadowGel>(), 20)
+                .AddIngredient(ItemID.LihzahrdPowerCell, 1)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
         }
     }
 }

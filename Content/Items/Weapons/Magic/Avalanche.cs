@@ -14,7 +14,7 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             Item.Size = new(32);
             Item.DamageType = DamageClass.Magic;
-            Item.damage = 70;
+            Item.damage = 100;
             Item.rare = ItemRarityID.Pink;            
             Item.shoot = ModContent.ProjectileType<AvalanceProj>();
             Item.shootSpeed = 20f;

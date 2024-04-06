@@ -14,7 +14,7 @@ namespace Project165.Content.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.Size = new(46);
-            Item.damage = 120;
+            Item.damage = 130;
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 20;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Dusts;
+using Project165.Content.Items.Weapons.Magic;
 using ReLogic.Threading;
 using Terraria;
 using Terraria.Audio;
@@ -12,6 +13,7 @@ namespace Project165.Content.Projectiles.Magic
 {
     public class AvalanceProj : ModProjectile
     {
+        public override string Texture => ModContent.GetInstance<Avalanche>().Texture;
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 3;
@@ -67,7 +69,7 @@ namespace Project165.Content.Projectiles.Magic
             SoundEngine.PlaySound(SoundID.NPCDeath15, Projectile.position);
             for (int i = 0; i < 20; i++)
             {
-                Dust snowDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 200, default, 1.5f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 200, default, 1.5f);
             }
             
             for (int i = 0; i < 10; i++)
@@ -78,16 +80,16 @@ namespace Project165.Content.Projectiles.Magic
             }
         }
 
-        float newScale = 0.5f;
+        float projScale = 0.5f;
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteBatch spriteBatch = Main.spriteBatch;
             Color drawColorTrail = lightColor with { A = 0 };
 
-            if (newScale < 1.5f)
+            if (projScale < 1.5f)
             {
-                newScale += 0.1f;
+                projScale += 0.1f;
             }
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
@@ -98,10 +100,10 @@ namespace Project165.Content.Projectiles.Magic
                 }
 
                 drawColorTrail *= 0.75f;
-                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, newScale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, projScale, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, newScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, projScale, SpriteEffects.None, 0);
             return false;
         }
     }

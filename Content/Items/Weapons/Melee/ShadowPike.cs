@@ -20,7 +20,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.damage = 100;
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<ShadowPikeProj>();
-            Item.shootSpeed = 9f;
+            Item.shootSpeed = 16f;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 17;
             Item.useAnimation = 17;
@@ -30,6 +30,8 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.noUseGraphic = true;
             Item.rare = ItemRarityID.Yellow;
         }
+
+        public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {

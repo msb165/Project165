@@ -1,4 +1,5 @@
-﻿using Project165.Content.Items.Weapons.Magic;
+﻿using Project165.Content.Items.Materials;
+using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Summon;
 using System;
@@ -36,6 +37,7 @@ namespace Project165.Content.Items.TreasureBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowBlade>(), 3));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowPike>(), 3));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowSlimeStaff>(), 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowEssence>(), 1, 8, 30));
         }
     }
 }

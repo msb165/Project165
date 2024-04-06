@@ -175,6 +175,7 @@ namespace Project165.Content.Projectiles.Melee
                 spriteBatch.Draw(texture, drawPosTrail, texture.Frame(), drawColorTrail, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             }
 
+            spriteBatch.Draw(texture, drawPos, texture.Frame(), Color.Cyan with { A = 0 }, Projectile.rotation, drawOrigin, Projectile.scale * 1.25f, SpriteEffects.None, 0);
             spriteBatch.Draw(texture, drawPos, texture.Frame(), drawColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }

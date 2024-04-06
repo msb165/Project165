@@ -22,6 +22,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.shootSpeed = 15f;
             Item.value = Item.buyPrice(0, 0, 40, 0);
             Item.rare = ItemRarityID.Pink;
+            Item.ArmorPenetration = 10;
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.noUseGraphic = true;

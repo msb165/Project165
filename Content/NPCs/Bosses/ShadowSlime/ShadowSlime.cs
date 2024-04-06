@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
 using Project165.Content.Dusts;
+using Project165.Content.Items.Materials;
 using Project165.Content.Items.TreasureBags;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Summon;
@@ -85,7 +86,6 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
 
         public ref float AITimer => ref NPC.ai[1];
         public ref float AICounter => ref NPC.ai[2];
-
         private Player Player => Main.player[NPC.target];
 
         public override void AI()
@@ -128,6 +128,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             }
         }
 
+        #region Attacks
         private void Jump()
         {
             float jumpTime = 30f;
@@ -160,7 +161,9 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
 
                 if (AITimer > jumpTime)
                 {
-                    AITimer = 0f;                    
+                    AITimer = 0f;             
+                    
+                    // Check if the boss is stuck sideways
 
                     if (NPC.collideX)
                     {
@@ -174,6 +177,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
 
                     NPC.velocity.Y -= 4f;
                     NPC.velocity.X = 7f * NPC.direction;
+
                     AICounter++;
                     if (AICounter > 4f)
                     {
@@ -293,7 +297,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             }
 
             AITimer++;
-            if (AITimer % shootTime == 0f)
+            if (AITimer % shootTime == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int projAmount = 6;
                 for (int i = 0; i < projAmount; i++)
@@ -347,6 +351,8 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             }
         }
 
+        #endregion
+
         public override void OnKill()
         {
             NPC.SetEventFlagCleared(ref DownedBossSystem.downedShadowSlime, -1);
@@ -360,6 +366,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<ShadowBlade>(), 3));
             npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<ShadowPike>(), 3));
             npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<ShadowSlimeStaff>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<ShadowEssence>(), 1, 8, 30));
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

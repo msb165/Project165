@@ -31,7 +31,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.tileCollide = false;
             Projectile.aiStyle = -1;
             Projectile.scale = 1f;
-            Projectile.timeLeft = 15;
+            Projectile.timeLeft = 12;
             Projectile.noEnchantmentVisuals = true;
             Projectile.friendly = true;
         }
@@ -58,17 +58,12 @@ namespace Project165.Content.Projectiles.Melee
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
-                float trailScale = 1f;
-                drawColorTrail *= 0.99f;
-                if (i == 0)
-                {
-                    trailScale = 1.25f;
-
-                }
-                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail, Projectile.rotation, texture.Size() / 2, trailScale, SpriteEffects.None, 0);
+                drawColorTrail *= 0.98f;
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail, Projectile.rotation, texture.Size() / 2, Projectile.scale - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail * 0.35f, Projectile.rotation, texture.Size() / 2, (Projectile.scale * 1.5f) - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkSlateBlue with { A = 0 }, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkSlateBlue with { A = 0 } * 0.5f, Projectile.rotation, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
             return false;
         }
     }

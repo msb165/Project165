@@ -34,7 +34,7 @@ namespace Project165.Content.NPCs.Enemies
         {
             if (NPC.downedGolemBoss)
             {
-                return SpawnCondition.OverworldNight.Chance;
+                return SpawnCondition.OverworldNight.Chance * 0.4f;
             }
             return 0f;
         }
