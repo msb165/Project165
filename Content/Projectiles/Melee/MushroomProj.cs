@@ -15,6 +15,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.penetrate = -1;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
+            Projectile.noEnchantmentVisuals = true;
         }
 
         public override void AI()

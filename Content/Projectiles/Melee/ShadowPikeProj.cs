@@ -22,6 +22,8 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.scale = 1.25f;
             Projectile.ownerHitCheck = true;
             Projectile.aiStyle = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 19;
         }
 
         public float AITimer
@@ -47,9 +49,10 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.Center = projPos;
             Projectile.direction = Projectile.spriteDirection = Player.direction;
 
-            Vector2 spinningpoint = new Vector2(0.5f, 1f).RotatedBy(MathHelper.PiOver4 * AITimer * 0.35f * -Player.direction + 128f * Player.direction) * new Vector2(velocityLength, AITimer);
+            Vector2 spinningpoint = new Vector2(0.4f, 0.9f).RotatedBy(MathHelper.PiOver4 * AITimer * 0.34f * -Player.direction + 64f * Player.direction) * new Vector2(velocityLength, AITimer);
             Projectile.position += (Projectile.velocity * 4f) + spinningpoint.RotatedBy(velocityToRotation) + new Vector2(velocityLength + 44f, 0f).RotatedBy(velocityToRotation);
             Vector2 target = projPos + spinningpoint.RotatedBy(velocityToRotation) + new Vector2(velocityLength + 64f, 0f).RotatedBy(velocityToRotation);
+
             Projectile.rotation = projPos.AngleTo(target) + MathHelper.PiOver4 + MathHelper.PiOver2 * Player.direction;
             if (Projectile.spriteDirection == -1)
             {
@@ -59,11 +62,11 @@ namespace Project165.Content.Projectiles.Melee
             AITimer++;
             if (Counter == 0f)
             {
-                Counter = 1f;
+                Counter = 8f;
                 Projectile.netUpdate = true;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<ShadowBolt>(), (int)(Projectile.damage * 1.25f), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * AITimer, Projectile.velocity * 0.75f, ModContent.ProjectileType<ShadowBolt>(), (int)(Projectile.damage * 1.5f), 0f, Projectile.owner);
                 }
             }
 
@@ -73,13 +76,9 @@ namespace Project165.Content.Projectiles.Melee
             }
 
             SetPlayerValues();
-            GenerateDust();
-        }
-
-        public void GenerateDust()
-        {
             Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.8f, Projectile.velocity.Y * 0.8f, 100, Color.DarkSlateBlue, 1.25f);
         }
+ 
         public void SetPlayerValues()
         {
             Player.heldProj = Projectile.whoAmI;

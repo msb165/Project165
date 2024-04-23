@@ -18,15 +18,15 @@ namespace Project165.Content.Projectiles.Melee
 
         public override void SetDefaults()
         {
-            Projectile.width = 24;
-            Projectile.height = 24;
+            Projectile.Size = new(24);
             Projectile.scale = 1f;
 
             Projectile.aiStyle = ProjAIStyleID.Yoyo;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.MeleeNoSpeed;
-        }        
+            Projectile.noEnchantmentVisuals = true;
+        }
 
         public override void PostAI()
         {

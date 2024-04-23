@@ -12,7 +12,7 @@ namespace Project165.Common.Globals
         {
             if (Main.hardMode && spawnInfo.Player.ZoneForest)
             {
-                pool[NPCID.SlimeSpiked] = SpawnCondition.OverworldDay.Chance * 0.25f;
+                pool[NPCID.SlimeSpiked] = SpawnCondition.OverworldDay.Chance * 0.1f;
             }
 
             if (Main.hardMode && spawnInfo.Player.ZoneSnow && spawnInfo.Player.ZoneOverworldHeight)

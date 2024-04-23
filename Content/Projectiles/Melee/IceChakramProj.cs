@@ -20,8 +20,7 @@ namespace Project165.Content.Projectiles.Melee
         }
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 30;
+            Projectile.Size = new(30);
             Projectile.friendly = true;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Melee;            

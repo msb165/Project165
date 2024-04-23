@@ -32,6 +32,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.aiStyle = -1;
             Projectile.scale = 1f;
             Projectile.timeLeft = 12;
+            Projectile.penetrate = -1;
             Projectile.noEnchantmentVisuals = true;
             Projectile.friendly = true;
         }
@@ -40,6 +41,11 @@ namespace Project165.Content.Projectiles.Melee
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0f, 0f, 100, Color.DarkSlateBlue, 0.75f);
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.ShadowFlame, 300);
         }
 
         public override void OnKill(int timeLeft)

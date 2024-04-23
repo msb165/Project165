@@ -39,12 +39,13 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.localNPCHitCooldown = 20;
             Projectile.extraUpdates = 1;
             Projectile.scale = 1f;
+            Projectile.noEnchantmentVisuals = true;
         }
 
         public Player Player => Main.player[Projectile.owner];
         public float InitialRotation = -1.5f;
 
-        public bool IsActive() => !Player.dead || Player.active || !Player.CCed;
+        public bool IsActive => !Player.dead || Player.active || !Player.CCed;
 
         public float AITimer
         {
@@ -68,7 +69,7 @@ namespace Project165.Content.Projectiles.Melee
 
         public override void AI()
         {            
-            if (!IsActive())
+            if (!IsActive)
             {
                 Projectile.Kill();
                 Player.reuseDelay = 10;
@@ -90,13 +91,17 @@ namespace Project165.Content.Projectiles.Melee
             }
 
             AITimer += 0.5f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + (InitialRotation * Player.direction) + EaseInBack(AITimer / 10f) * Player.direction;
-            
+            Projectile.rotation = Projectile.velocity.ToRotation() + (InitialRotation * Player.direction) + EaseInBack(AITimer / 10f) * Player.direction;            
 
-            if (AITimer == 10f && Projectile.owner == Main.myPlayer)
+            if (AITimer == 10f)
             {
                 SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with { Pitch = 0.5f }, Projectile.Center);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Player.Center + new Vector2(Projectile.velocity.X * 10f, -250f), new(Main.rand.NextFloat(-0.1f, 3f) * MathF.Sign(Projectile.velocity.X), 2f), ModContent.ProjectileType<ShadowSlash>(), Projectile.damage * 2, Projectile.knockBack, Projectile.owner, 0f, 1f);
+            }
+
+            if (AITimer % 5f == 0f && Projectile.owner == Main.myPlayer)
+            {
+                float speedX = MathF.Sign(Projectile.velocity.X) + Main.rand.NextFloat(0.1f, 1f) * MathF.Sign(Projectile.velocity.X);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Player.Center + new Vector2(Projectile.velocity.X * 10f, -250f), new(speedX, 2f), ModContent.ProjectileType<ShadowSlash>(), (int)(Projectile.damage * 1.3f), Projectile.knockBack * 2f, Projectile.owner, 0f, 1f);
             }
 
             if (AITimer > 14f && Projectile.scale > 0.5f)
@@ -144,13 +149,13 @@ namespace Project165.Content.Projectiles.Melee
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPos = Player.Center + Projectile.rotation.ToRotationVector2() * 28f - Main.screenPosition;
+            SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Color projColor = Color.BlueViolet with { A = 0 };
             float rotation = Projectile.rotation + MathHelper.PiOver4;
             if (Player.direction == -1)
             {
                 rotation += MathHelper.PiOver2;
             }
-            SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Color projColor = Color.BlueViolet with { A = 0 };
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {

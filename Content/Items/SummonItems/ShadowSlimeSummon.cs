@@ -9,7 +9,7 @@ namespace Project165.Content.Items.SummonItems
     {
         public override void SetDefaults()
         {
-            Item.Size = new(40);
+            Item.Size = new(38);
             Item.rare = ItemRarityID.Pink;
             Item.consumable = false;
             Item.maxStack = 1;

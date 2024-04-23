@@ -6,6 +6,7 @@ using Project165.Content.Items.Materials;
 using Project165.Content.Items.TreasureBags;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Summon;
+using Project165.Content.Projectiles.Hostile;
 using System;
 using Terraria;
 using Terraria.GameContent;
@@ -40,6 +41,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             get => NPC.ai[3] == 1f;
             set => NPC.ai[3] = value ? 1f : 0f;
         }
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[Type] = 6;
@@ -94,6 +96,9 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             {
                 NPC.TargetClosest();
             }
+
+            // Emit Light
+            Lighting.AddLight(NPC.Center, 1f, 1f, 1f);
 
             if (Player.dead || Vector2.Distance(Player.Center, NPC.Center) > 2000f)
             {
@@ -207,7 +212,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             NPC.noGravity = true;
             NPC.TargetClosest();
 
-            Vector2 targetPos = Player.Center + new Vector2(0f, -350f) - NPC.Center;
+            Vector2 targetPos = Player.Center + new Vector2(0f, -400f) - NPC.Center;
             NPC.rotation = NPC.velocity.X * 0.025f;
             if (AICounter == 1f)
             {
@@ -246,14 +251,16 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
         {
             NPC.rotation = NPC.velocity.X * 0.025f;
 
+
             if (NPC.Center.Y != Player.position.Y || NPC.velocity.Y <= 0f)
             {
-                AITimer += 1f;
-                Main.NewText(AITimer);
+                AITimer++;
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
+
                 if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 16f)
                 {
+                    //Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileID.QueenSlimeSmash, NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Player.whoAmI);
                     AITimer = 0f;
                     AICounter = 0f;
                     CurrentAIState = AIState.ShootingAround;
@@ -271,15 +278,15 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             if (NPC.velocity.Y > 16f)
             {
                 NPC.velocity.Y = 16f;
-            }         
-
+            }      
         }
 
         public void ShootAround()
         {
+            float shootTime = 80f;
             NPC.noTileCollide = false;
             NPC.noGravity = false;
-            float shootTime = 60f;
+            
             if (Main.expertMode)
             {
                 shootTime *= 0.8f;
@@ -299,11 +306,11 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             AITimer++;
             if (AITimer % shootTime == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int projAmount = 6;
+                int projAmount = 5;
                 for (int i = 0; i < projAmount; i++)
                 {
-                    Vector2 newVelocity = new Vector2(10f, 0f).RotatedBy(i * MathHelper.TwoPi / projAmount, Vector2.Zero);
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ProjectileID.QueenSlimeGelAttack, NPC.GetAttackDamage_ForProjectiles(20f, 23f), 0f, Player.whoAmI);
+                    Vector2 newVelocity = new Vector2(10f, 0f).RotatedBy(-i * MathHelper.TwoPi / projAmount, Vector2.Zero);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<SlimeBossProj>(), NPC.GetAttackDamage_ForProjectiles(20f, 23f), 0f, Player.whoAmI);
                 }
             }
 
@@ -332,7 +339,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             AITimer++;
             if (AITimer > 30f && AITimer < 120f)
             {
-                NPC.velocity.X += 1.25f * NPC.direction;
+                NPC.velocity.X += 0.9f * NPC.direction;
             }
             if (NPC.velocity.X > 10f)
             {
@@ -354,7 +361,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
         #endregion
 
         public override void OnKill()
-        {
+        {            
             NPC.SetEventFlagCleared(ref DownedBossSystem.downedShadowSlime, -1);
         }
 
@@ -374,21 +381,26 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             Texture2D texture = TextureAssets.Npc[Type].Value;
             Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/RoquefortiExtra");
             SpriteEffects spriteEffects = NPC.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);  
+            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
+            float intensity = 0.2f;
+
+            if (CurrentAIState is AIState.ClimbingUp or AIState.Landing)
+            {
+                intensity *= 3f;
+            }
             
             Color npcDrawColor = NPC.GetAlpha(drawColor);
             Color drawColorThing = Color.Red with { A = 0, B = 255 };
-            Color lightDrawColor = Color.DarkSlateBlue with { A = 0 };
             Color npcDrawColorTrail = Color.DarkBlue;
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {
                 npcDrawColorTrail *= 0.75f;
-                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColorTrail * 0.2f, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
+                spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColorTrail * intensity, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             }
             
             spriteBatch.Draw(texture, NPC.Center - screenPos + new Vector2(0f, 2f), NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
-            spriteBatch.Draw(extraThingTexture, NPC.Center - screenPos + new Vector2(0f, 2f), null, drawColorThing, NPC.rotation + (float)Main.timeForVisualEffects / 8f, extraThingTexture.Size() / 2, NPC.scale * 2f, spriteEffects, 0);
+            spriteBatch.Draw(extraThingTexture, NPC.Center - screenPos + new Vector2(0f, 2f), null, drawColorThing, NPC.rotation + (float)Main.timeForVisualEffects / 8f, extraThingTexture.Size() / 2, 1.5f, spriteEffects, 0);
             return false;
         }
     }

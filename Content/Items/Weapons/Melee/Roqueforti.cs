@@ -24,7 +24,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.noUseGraphic = true;
             Item.UseSound = SoundID.Item1;
 
-            Item.damage = 95;
+            Item.damage = 90;
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.knockBack = 2.5f;
             Item.crit = 8;

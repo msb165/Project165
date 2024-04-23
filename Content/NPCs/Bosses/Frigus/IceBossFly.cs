@@ -14,6 +14,7 @@ using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Ranged;
 using Project165.Common.Systems;
 using System;
+using System.IO;
 
 namespace Project165.Content.NPCs.Bosses.Frigus
 {
@@ -114,6 +115,17 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         }
 
         #region AI
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(NPC.dontTakeDamage);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            NPC.dontTakeDamage = reader.ReadBoolean();
+        }
+
         public override void AI()
         {
             if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active)
@@ -249,7 +261,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 }
             }
 
-            Vector2 targetPosition = Player.Center + new Vector2(0f, 200f) - NPC.Center;
+            Vector2 targetPosition = Player.Center + new Vector2(0f, 170f) - NPC.Center;
             targetPosition.Normalize();
             targetPosition *= 15f;
 
@@ -266,7 +278,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 for (int i = 0; i < 16; i++)
                 {
                     Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 500f);
-                    Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -4f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 1f, 0f);
+                    Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -4f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
                 }
             }
 
@@ -282,13 +294,10 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         #region Misc
         public override void FindFrame(int frameHeight)
         {
+            NPC.frame.Y = 0 * frameHeight;
             if (PhaseTwo)
             {
                 NPC.frame.Y = 1 * frameHeight;
-            }
-            else
-            {
-                NPC.frame.Y = 0 * frameHeight;
             }
         }
         private void DeathAnimation()
@@ -296,13 +305,14 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             Timer++;
             NPC.velocity *= 0.95f;
             NPC.rotation += 0.4f;
-            if (NPC.alpha < 255)
-            {
-                NPC.alpha += 4;
-            }
+
             if (NPC.scale < 2f)
             {
                 NPC.scale += 0.005f;
+            }
+            if (NPC.alpha < 255)
+            {
+                NPC.alpha += 4;
             }
             if (NPC.alpha > 255)
             {

@@ -13,6 +13,11 @@ Projectiles: {
 	ShadowSlimeProj.DisplayName: Shadow Slime Proj
 	ShadowBladeProj.DisplayName: Shadow Blade Proj
 	ShadowSlash.DisplayName: Shadow Slash
+	WormholeProj.DisplayName: Wormhole Proj
+	WormholeBolt.DisplayName: Wormhole Bolt
+	ShadowBall.DisplayName: Shadow Ball
+	ShadowYoYoProj.DisplayName: Shadow Yo Yo Proj
+	SlimeBossProj.DisplayName: Slime Boss Proj
 }
 
 Items: {
@@ -62,7 +67,7 @@ Items: {
 	}
 
 	ShadowBlade: {
-		DisplayName: Shadow Blade
+		DisplayName: Darkness Blade
 		Tooltip: ""
 	}
 
@@ -75,6 +80,36 @@ Items: {
 		DisplayName: Treasure Box (Shadow Slime)
 		Tooltip: ""
 	}
+
+	SlimeAltar: {
+		DisplayName: Slime Altar
+		Tooltip: ""
+	}
+
+	ShadowSlimeSummon: {
+		DisplayName: Shadow Sphere
+		Tooltip: Used at the Slime Altar
+	}
+
+	ShadowEssence: {
+		DisplayName: Shadow Essence
+		Tooltip: ""
+	}
+
+	Wormhole: {
+		DisplayName: Wormhole
+		Tooltip: ""
+	}
+
+	ShadowYoYo: {
+		DisplayName: Lightless
+		Tooltip: ""
+	}
+
+	ShadowSlimeBlock: {
+		DisplayName: Shadow Slime Block
+		Tooltip: ""
+	}
 }
 
 NPCs: {
@@ -82,4 +117,10 @@ NPCs: {
 	MiniDungeonGuardian.DisplayName: Mini Dungeon Guardian
 	DarkSlime.DisplayName: Dark Slime
 	ShadowSlime.DisplayName: Shadow Slime
+	FlyingIce.DisplayName: Flying Ice
+}
+
+Tiles: {
+	SlimeAltar.MapEntry: Slime Altar
+	ShadowSlimeBlock.MapEntry: Shadow Slime Block
 }

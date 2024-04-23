@@ -31,7 +31,7 @@ namespace Project165.Content.Dusts
 
         public override bool PreDraw(Dust dust)
         {
-            Color drawColor = Lighting.GetColor((int)(dust.position.X + 4) / 16, (int)(dust.position.Y + 4) / 16);
+            Color drawColor = Lighting.GetColor((dust.position + Vector2.One * 4).ToTileCoordinates());
             Main.spriteBatch.Draw(Texture2D.Value, dust.position - Main.screenPosition, dust.frame, dust.GetAlpha(drawColor), dust.rotation, new Vector2(18f), dust.scale, SpriteEffects.None, 0);
             return false;
         }

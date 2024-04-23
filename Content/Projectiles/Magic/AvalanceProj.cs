@@ -31,9 +31,11 @@ namespace Project165.Content.Projectiles.Magic
             Projectile.scale = 1.5f;
         }
 
+        public bool ShouldSpawnDust => Projectile.ai[0] == 0f;
+
         public override void AI()
         {   
-            if (Projectile.ai[0] == 0f)
+            if (ShouldSpawnDust)
             {
                 Projectile.ai[0] = 1f;
                 for (int i = 0; i < 20; i++)
@@ -80,16 +82,16 @@ namespace Project165.Content.Projectiles.Magic
             }
         }
 
-        float projScale = 0.5f;
+        float spawnScale = 0.5f;
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteBatch spriteBatch = Main.spriteBatch;
             Color drawColorTrail = lightColor with { A = 0 };
 
-            if (projScale < 1.5f)
+            if (spawnScale < 1.5f)
             {
-                projScale += 0.1f;
+                spawnScale += 0.1f;
             }
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
@@ -100,10 +102,10 @@ namespace Project165.Content.Projectiles.Magic
                 }
 
                 drawColorTrail *= 0.75f;
-                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, projScale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, spawnScale, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, projScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, spawnScale, SpriteEffects.None, 0);
             return false;
         }
     }
