@@ -8,6 +8,7 @@ namespace Project165.Content.Tiles
         public override void SetStaticDefaults()
         {
             Main.wallHouse[Type] = true;
+            Main.wallLight[Type] = true;
         }
     }
 }

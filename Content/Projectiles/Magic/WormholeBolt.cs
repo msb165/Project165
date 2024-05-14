@@ -55,7 +55,7 @@ namespace Project165.Content.Projectiles.Magic
             SoundEngine.PlaySound(SoundID.NPCHit3, Projectile.position);
             for (int i = 0; i < 30; i++)
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X, Projectile.velocity.Y, 0, Color.LightPink, 1.25f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X, Projectile.velocity.Y, 0, Color.LightPink, 1.2f);
             }
         }
 

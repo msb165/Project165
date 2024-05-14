@@ -49,14 +49,6 @@ namespace Project165.Content.Projectiles.Melee
             }
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            projHitbox.Width = 96;            
-            projHitbox.Height = 96;           
-            
-            return projHitbox.Intersects(targetHitbox);
-        }
-
         public override Color? GetAlpha(Color lightColor) => new Color(255 - Projectile.alpha, 255 - Projectile.alpha, 255 - Projectile.alpha, 0);
 
         public override bool PreDraw(ref Color lightColor)

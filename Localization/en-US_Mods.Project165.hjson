@@ -114,10 +114,11 @@ Items: {
 
 NPCs: {
 	IceBossFly.DisplayName: Frigus
-	MiniDungeonGuardian.DisplayName: Mini Dungeon Guardian
+	MiniDungeonGuardian.DisplayName: Small Guardian
 	DarkSlime.DisplayName: Dark Slime
 	ShadowSlime.DisplayName: Shadow Slime
 	FlyingIce.DisplayName: Flying Ice
+	Tortoise.DisplayName: Armed Tortoise
 }
 
 Tiles: {

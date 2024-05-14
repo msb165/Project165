@@ -187,7 +187,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
                     if (AICounter > 4f)
                     {
                         AICounter = 0f;
-                        CurrentAIState = AIState.ClimbingUp;
+                        CurrentAIState = AIState.ShootingAround;
                         NPC.netUpdate = true;
                     }
                 }
@@ -260,7 +260,6 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 16f)
                 {
-                    //Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ProjectileID.QueenSlimeSmash, NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Player.whoAmI);
                     AITimer = 0f;
                     AICounter = 0f;
                     CurrentAIState = AIState.ShootingAround;

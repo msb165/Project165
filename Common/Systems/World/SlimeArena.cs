@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Project165.Content.Tiles;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Generation;
@@ -36,9 +37,22 @@ namespace Project165.Common.Systems.World
 
             // Arena Entrace
             ShapeData entraceShape = new();
-            WorldUtils.Gen(new Point(origin.X, origin.Y + 10), new Shapes.Rectangle(4, 12), Actions.Chain(new Modifiers.SkipTiles(TileID.LihzahrdBrick), new Actions.ClearTile().Output(entraceShape), new Modifiers.Expand(1)));
-            WorldUtils.Gen(new Point(origin.X, origin.Y + 10), new ModShapes.All(entraceShape), new Actions.SetFrames(frameNeighbors: true));
-            WorldGen.PlaceTile(altarPos.X - 6, altarPos.Y - 15, ModContent.TileType<SlimeAltar>());
+            WorldUtils.Gen(new Point(origin.X + 40, origin.Y + 12), new Shapes.Rectangle(4, 12), Actions.Chain(new Modifiers.SkipTiles(TileID.LihzahrdBrick), new Actions.ClearTile().Output(entraceShape), new Modifiers.Expand(1)));
+            WorldUtils.Gen(new Point(origin.X, origin.Y), new ModShapes.All(entraceShape), new Actions.SetFrames(frameNeighbors: true));
+
+            for (int i = 0; i < 5; i++)
+            {
+                WorldGen.PlaceTile(altarPos.X + 16 - (i * 8), origin.Y, TileID.Torches, false, true, -1, 4);
+            }
+            
+            if (WorldGen.PlaceTile(altarPos.X - 6, altarPos.Y - 11, ModContent.TileType<SlimeAltar>()))
+            {
+                Console.WriteLine("Project 165: Successfully placed Slime Altar");
+            }
+            else
+            {
+                Console.WriteLine("Project 165: Failed to place Slime Altar!");
+            }
 
             structures.AddProtectedStructure(new Rectangle(circlePos.X - 20, circlePos.Y - 20, 40, 40), 10);
             return true;

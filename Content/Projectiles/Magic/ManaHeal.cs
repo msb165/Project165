@@ -19,46 +19,44 @@ namespace Project165.Content.Items.Weapons.Magic
             Projectile.ignoreWater = true;            
         }
 
+        Player Owner => Main.player[(int)Projectile.ai[0]];
+
         public override void AI()
         {
-
-            int playerIndex = (int)Projectile.ai[0];
             float moveSpeed = 4f;
-            Vector2 playerProjDistance = Main.player[playerIndex].Center - Projectile.Center;
+            Vector2 playerProjDistance = Owner.Center - Projectile.Center;
             float playerProjDist = playerProjDistance.Length();
             
-            if (playerProjDist < 50f && Projectile.Hitbox.Intersects(Main.player[playerIndex].Hitbox))
+            if (playerProjDist < 50f && Projectile.Hitbox.Intersects(Owner.Hitbox))
             {
                 if (Projectile.owner == Main.myPlayer && !Main.player[Main.myPlayer].moonLeech)
                 {
                     int manaAmount = (int)Projectile.ai[1];
-                    Main.player[playerIndex].ManaEffect(manaAmount);
-                    Player playerOwner = Main.player[playerIndex];
+                    Owner.ManaEffect(manaAmount);
+                    Player playerOwner = Owner;
                     playerOwner.statMana += manaAmount;
-                    if (Main.player[playerIndex].statMana > Main.player[playerIndex].statManaMax2)
+                    if (Owner.statMana > Owner.statManaMax2)
                     {
-                        Main.player[playerIndex].statMana = Main.player[playerIndex].statManaMax2;
+                        Owner.statMana = Owner.statManaMax2;
                     }
-                    NetMessage.SendData(MessageID.SpiritHeal, -1, -1, null, playerIndex, manaAmount);
+                    NetMessage.SendData(MessageID.SpiritHeal, -1, -1, null, Owner.whoAmI, manaAmount);
                 }
                 Projectile.Kill();
             }
+
             playerProjDist = moveSpeed / playerProjDist;
             playerProjDistance *= playerProjDist;
-            Projectile.velocity.X = (Projectile.velocity.X * 15f + playerProjDistance.X) / 16f;
-            Projectile.velocity.Y = (Projectile.velocity.Y * 15f + playerProjDistance.Y) / 16f;
+            Projectile.velocity = (Projectile.velocity * 15f + playerProjDistance) / 16f;
 
             for (int i = 0; i < 5; i++)
             {
-                float speedX = Projectile.velocity.X * 0.2f * i;
-                float speedY = -Projectile.velocity.Y * 0.2f * i;
+                Vector2 speed = new(Projectile.velocity.X * 0.25f * i, -Projectile.velocity.Y * 0.25f * i);
                 Dust manaDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.SpectreStaff, 0f, 0f, 100, Color.Blue, 1.5f);
                 manaDust.noGravity = true;
-
                 Dust secondManaDust = manaDust;
                 secondManaDust.velocity *= 0f;
-                manaDust.position.X -= speedX;
-                manaDust.position.Y -= speedY;
+                manaDust.position.X -= speed.X;
+                manaDust.position.Y -= speed.Y;
             }
         }
     }

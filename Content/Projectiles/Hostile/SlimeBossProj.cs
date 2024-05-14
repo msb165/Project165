@@ -46,7 +46,7 @@ namespace Project165.Content.Projectiles.Hostile
             GenerateDust();
 
             Projectile.rotation += 0.2f * Projectile.direction;
-            Projectile.velocity.Y += 0.2f;
+            //Projectile.velocity.Y += 0.2f;
             if (Projectile.velocity.Y > 16f)
             {
                 Projectile.velocity.Y = 16f;
@@ -72,7 +72,7 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.penetrate--;
             if (Projectile.velocity.X != oldVelocity.X)
             {
-                Projectile.velocity.X = oldVelocity.X * -0.4f;
+                Projectile.velocity.X = oldVelocity.X;
             }
             if (Projectile.velocity.Y != oldVelocity.Y)
             {
