@@ -1,3 +1,7 @@
 displayName = Project 165
 author = Kosky
-version = 0.1
+hideCode = false
+hideResources = false
+includeSource = true
+includePDB = true
+version = 1.0
