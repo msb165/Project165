@@ -41,7 +41,6 @@ namespace Project165.Content.Projectiles.Summon
 
         Player Player => Main.player[Projectile.owner];
 
-
         public override void PostAI()
         {
             Projectile.rotation = Projectile.velocity.X * 0.05f;
@@ -50,7 +49,6 @@ namespace Project165.Content.Projectiles.Summon
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
             fallThrough = Player.position.Y + Player.height - 12f > Projectile.position.Y + height;
-            //fallThrough = false;
             return true;
         }
 

@@ -1,11 +1,6 @@
-﻿using Project165.Content.Projectiles.Melee;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
+using Project165.Content.Projectiles.Melee;
 
 namespace Project165.Content.Items.Weapons.Melee
 {

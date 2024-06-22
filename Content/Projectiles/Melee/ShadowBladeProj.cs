@@ -27,7 +27,7 @@ namespace Project165.Content.Projectiles.Melee
         }
         public override void SetDefaults()
         {
-            Projectile.Size = new(46);
+            Projectile.Size = new(16);
             Projectile.ownerHitCheck = true;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
@@ -122,7 +122,7 @@ namespace Project165.Content.Projectiles.Melee
         {
             Projectile.timeLeft = 2;
             Projectile.spriteDirection = Projectile.direction;
-            Projectile.position = Player.RotatedRelativePoint(Player.MountedCenter, false);
+            Projectile.Center = Player.RotatedRelativePoint(Player.MountedCenter, true);
         }
 
         public void SetPlayerValues()

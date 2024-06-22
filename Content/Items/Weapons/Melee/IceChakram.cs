@@ -9,8 +9,7 @@ namespace Project165.Content.Items.Weapons.Melee
     {
         public override void SetDefaults()
         {
-            Item.width = 46;
-            Item.height = 46;
+            Item.Size = new(46);
             Item.damage = 65;
             Item.knockBack = 8f;
             Item.useTime = 22;

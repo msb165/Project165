@@ -24,6 +24,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.aiStyle = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 19;
+            Projectile.extraUpdates = 1;
         }
 
         public float AITimer

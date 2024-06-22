@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Project165.Content.Dusts;
-using Terraria;
-using Terraria.DataStructures;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
+using Microsoft.Xna.Framework;
+using Project165.Content.Dusts;
 
 namespace Project165.Content.Items.Weapons.Ranged
 {
@@ -11,8 +11,6 @@ namespace Project165.Content.Items.Weapons.Ranged
     {
         public override void SetDefaults()
         {
-            Item.useAnimation = 42;
-            Item.useTime = 42;
             Item.width = 60;
             Item.height = 18;
             Item.shoot = ProjectileID.PurificationPowder;
@@ -20,6 +18,8 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.useAmmo = AmmoID.Bullet;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = SoundID.Item36 with { Pitch = -0.25f };
+            Item.useAnimation = 42;
+            Item.useTime = 42;
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 28;
             Item.rare = ItemRarityID.Pink;
@@ -45,7 +45,6 @@ namespace Project165.Content.Items.Weapons.Ranged
             for (int i = 0; i < 4; i++)
             {
                 Vector2 newVelocity = velocity.RotatedByRandom(MathHelper.ToRadians(15f));
-
                 newVelocity *= 1f - Main.rand.NextFloat(0.4f);
 
                 Projectile crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 2.5f, ProjectileID.CrystalShard, damage, knockback);

@@ -1,23 +1,23 @@
 Projectiles: {
 	RoquefortiProjectile.DisplayName: Roqueforti
 	MushroomProj.DisplayName: Mushroom
-	IceChakramProj.DisplayName: Ice Chakram Proj
-	TeleporterProjectile.DisplayName: Teleporter Projectile
+	IceChakramProj.DisplayName: Ice Chakram
 	IceBossProjectile.DisplayName: Frost Bolt
-	AvalanceProj.DisplayName: Avalance Proj
-	ManaKnifeProj.DisplayName: Mana Knife Proj
+	AvalanceProj.DisplayName: Avalance
+	ManaKnifeProj.DisplayName: Mana Knife
 	ManaHeal.DisplayName: Mana Heal
-	ShadowPikeProj.DisplayName: Shadow Pike Proj
-	SinProj.DisplayName: Sin Proj
+	ShadowPikeProj.DisplayName: Shadow Pike
 	ShadowBolt.DisplayName: Shadow Bolt
-	ShadowSlimeProj.DisplayName: Shadow Slime Proj
-	ShadowBladeProj.DisplayName: Shadow Blade Proj
+	ShadowSlimeProj.DisplayName: Shadow Slime
+	ShadowBladeProj.DisplayName: Darkness Blade
 	ShadowSlash.DisplayName: Shadow Slash
-	WormholeProj.DisplayName: Wormhole Proj
-	WormholeBolt.DisplayName: Wormhole Bolt
+	WormholeProj.DisplayName: Wormhole
+	WormholeBolt.DisplayName: Wormhole
 	ShadowBall.DisplayName: Shadow Ball
-	ShadowYoYoProj.DisplayName: Shadow Yo Yo Proj
+	ShadowYoYoProj.DisplayName: Shadow Yo Yo
 	SlimeBossProj.DisplayName: Slime Boss Proj
+	MachineGunProj.DisplayName: Machine Gun
+	GravityKnives.DisplayName: Gravity Defying Knives
 }
 
 Items: {
@@ -108,6 +108,16 @@ Items: {
 
 	ShadowSlimeBlock: {
 		DisplayName: Shadow Slime Block
+		Tooltip: ""
+	}
+
+	MachineGunStaff: {
+		DisplayName: Machine Gun Staff
+		Tooltip: ""
+	}
+
+	GravityKnives: {
+		DisplayName: Gravity Defying Knives
 		Tooltip: ""
 	}
 }

@@ -57,11 +57,6 @@ namespace Project165.Content.Projectiles.Summon
 
         public override bool? CanDamage() => false;
 
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            base.SendExtraAI(writer);
-        }
-
         public override void AI()
         {
             switch (CurrentAIState)
@@ -120,13 +115,13 @@ namespace Project165.Content.Projectiles.Summon
             }
             else
             {
-                Projectile.rotation = Projectile.rotation.AngleLerp(0f, MathHelper.Pi / 50f);
+                Projectile.rotation = (Projectile.direction == 1 ? MathHelper.TwoPi : MathHelper.Pi);
             }
         }
 
         public void ShootStuff()
         {
-            int timeToShoot = 12;
+            int timeToShoot = 3;
             if (AITimer == timeToShoot)
             {
                 SoundEngine.PlaySound(SoundID.Item11, Projectile.Center);
@@ -142,10 +137,10 @@ namespace Project165.Content.Projectiles.Summon
 
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, targetPos * 16f, ProjectileID.BulletHighVelocity, Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, targetPos * 16f, ProjectileID.Bullet, Projectile.damage, Projectile.knockBack, Projectile.owner);
                 }
             }
-            if (++AITimer >= 25f)
+            if (++AITimer >= 12f)
             {
                 CurrentAIState = AIState.Targeting;
                 AITimer = 0f;

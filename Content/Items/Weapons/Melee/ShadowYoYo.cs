@@ -26,14 +26,12 @@ namespace Project165.Content.Items.Weapons.Melee
         {
             Item.width = 40;
             Item.height = 26;
-
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 25;
             Item.useAnimation = 25;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.UseSound = SoundID.Item1;
-
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.damage = 120;
             Item.knockBack = 2f;
@@ -41,19 +39,8 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.channel = true;
             Item.rare = ItemRarityID.Yellow;
             Item.value = Item.buyPrice(gold: 0, silver: 80);
-
             Item.shoot = ModContent.ProjectileType<ShadowYoYoProj>();
             Item.shootSpeed = 16f;
-        }
-
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    Vector2 newVelocity = velocity * Main.rand.NextFloat(1f, 1.2f);
-                Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
-            //}
-            return false;
         }
 
         public override void AddRecipes()
