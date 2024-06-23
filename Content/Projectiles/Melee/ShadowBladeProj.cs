@@ -38,12 +38,12 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
             Projectile.extraUpdates = 1;
-            Projectile.scale = 1f;
+            Projectile.scale = 1.25f;
             Projectile.noEnchantmentVisuals = true;
         }
 
         public Player Player => Main.player[Projectile.owner];
-        public float InitialRotation = -1.5f;
+        public float InitialRotation = -MathHelper.PiOver2;
 
         public bool IsActive => !Player.dead || Player.active || !Player.CCed;
 
@@ -81,7 +81,7 @@ namespace Project165.Content.Projectiles.Melee
                 Projectile.Kill();
             }
 
-            Projectile.velocity = new Vector2(MathF.Sign(Projectile.velocity.X), 0f);
+            //Projectile.velocity = new Vector2(MathF.Sign(Projectile.velocity.X), 0f);
             if (AITimer == 0f)
             {
                 if (Projectile.velocity.X < 0)
@@ -122,15 +122,20 @@ namespace Project165.Content.Projectiles.Melee
         {
             Projectile.timeLeft = 2;
             Projectile.spriteDirection = Projectile.direction;
-            Projectile.Center = Player.RotatedRelativePoint(Player.MountedCenter, true);
+            Projectile.Center = Player.RotatedRelativePoint(Player.Center, true) + Projectile.rotation.ToRotationVector2() * 30f * Projectile.scale - Vector2.UnitX * 4f * Player.direction;
         }
 
         public void SetPlayerValues()
         {
             Player.heldProj = Projectile.whoAmI;
-            Player.SetDummyItemTime(2);
             Player.itemRotation = MathHelper.WrapAngle(Projectile.rotation);
-            Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2 * MathHelper.PiOver4);
+            float rotation = Projectile.rotation - MathHelper.PiOver4;
+            if (Player.direction == -1)
+            {
+                rotation -= MathHelper.PiOver2;
+            }
+            Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, rotation);
+            Player.SetDummyItemTime(2);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -148,7 +153,7 @@ namespace Project165.Content.Projectiles.Melee
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Vector2 drawPos = Player.Center + Projectile.rotation.ToRotationVector2() * 28f - Main.screenPosition;
+            Vector2 drawPos = Projectile.Center - Main.screenPosition;
             SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Color projColor = Color.BlueViolet with { A = 0 };
             float rotation = Projectile.rotation + MathHelper.PiOver4;
@@ -172,7 +177,7 @@ namespace Project165.Content.Projectiles.Melee
                 }
 
                 projColor *= 0.7f;
-                Main.EntitySpriteDraw(texture, Player.Center + Projectile.rotation.ToRotationVector2() * 28f - Main.screenPosition, texture.Frame(), projColor, oldRotation, texture.Frame().Size() / 2, Projectile.scale, spriteEffects, 0);
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), projColor, oldRotation, texture.Frame().Size() / 2, Projectile.scale, spriteEffects, 0);
             }
 
             Main.EntitySpriteDraw(texture, drawPos, texture.Frame(), Color.White, rotation, texture.Frame().Size() / 2, Projectile.scale, spriteEffects);
