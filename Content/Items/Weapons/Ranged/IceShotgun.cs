@@ -23,6 +23,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 28;
             Item.rare = ItemRarityID.Pink;
+            Item.buyPrice(gold: 20);
             Item.autoReuse = true;
             Item.noMelee = true;
         }

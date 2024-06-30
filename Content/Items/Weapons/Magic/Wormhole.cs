@@ -8,7 +8,6 @@ namespace Project165.Content.Items.Weapons.Magic
 {
     public class Wormhole : ModItem
     {
-
         public override void SetStaticDefaults()
         {
             Item.staff[Type] = true;

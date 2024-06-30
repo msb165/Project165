@@ -24,6 +24,8 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.noUseGraphic = true;
+            Item.rare = ItemRarityID.Yellow;
+            Item.value = Item.buyPrice(silver: 50);
             Item.consumable = true;
             Item.maxStack = 999;
         }

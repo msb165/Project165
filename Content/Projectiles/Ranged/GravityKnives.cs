@@ -62,7 +62,7 @@ namespace Project165.Content.Projectiles.Ranged
             Texture2D extraTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/GravityKnivesExtra");
             Vector2 origin = Vector2.UnitX * texture.Width / 2f;
             Color trailColor = Color.SkyBlue with { A = 0 } * Projectile.Opacity;
-            Color glowColor = Color.SkyBlue with { A = 0 } * Projectile.Opacity;
+            Color glowColor = trailColor;
 
             for (int i = 1; i <= Projectile.oldPos.Length - 1; i++)
             {

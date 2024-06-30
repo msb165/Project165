@@ -19,7 +19,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.DamageType = DamageClass.Melee;
             Item.shoot = ModContent.ProjectileType<IceChakramProj>();
             Item.shootSpeed = 15f;
-            Item.value = Item.buyPrice(0, 0, 40, 0);
+            Item.value = Item.buyPrice(gold: 40);
             Item.rare = ItemRarityID.Pink;
             Item.ArmorPenetration = 10;
             Item.autoReuse = true;

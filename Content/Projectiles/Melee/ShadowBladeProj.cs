@@ -40,10 +40,11 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.extraUpdates = 1;
             Projectile.scale = 1.25f;
             Projectile.noEnchantmentVisuals = true;
+            Projectile.timeLeft = 12;
         }
 
         public Player Player => Main.player[Projectile.owner];
-        public float InitialRotation = -MathHelper.PiOver2;
+        public float InitialRotation = -1.75f;
 
         public bool IsActive => !Player.dead || Player.active || !Player.CCed;
 
@@ -64,7 +65,7 @@ namespace Project165.Content.Projectiles.Melee
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float collisionPoint = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Player.Center, Player.Center + 46f * Projectile.scale * Projectile.rotation.ToRotationVector2(), 16f, ref collisionPoint);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + 30f * Projectile.scale * Projectile.rotation.ToRotationVector2(), 16f, ref collisionPoint);
         }
 
         public override void AI()
@@ -76,24 +77,11 @@ namespace Project165.Content.Projectiles.Melee
                 return;
             }
 
-            if (!Player.controlUseItem && AITimer >= 12f)
-            {
-                Projectile.Kill();
-            }
-
-            //Projectile.velocity = new Vector2(MathF.Sign(Projectile.velocity.X), 0f);
-            if (AITimer == 0f)
-            {
-                if (Projectile.velocity.X < 0)
-                {
-                    Projectile.rotation -= MathHelper.PiOver2;
-                }
-            }
 
             AITimer += 0.5f;
             Projectile.rotation = Projectile.velocity.ToRotation() + (InitialRotation * Player.direction) + EaseInBack(AITimer / 10f) * Player.direction;            
 
-            if (AITimer == 10f)
+            if (AITimer == 11.5f)
             {
                 SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with { Pitch = 0.5f }, Projectile.Center);
             }

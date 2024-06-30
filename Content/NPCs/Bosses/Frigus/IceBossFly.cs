@@ -1,20 +1,19 @@
 ﻿using Terraria;
+using System.IO;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.GameContent;
 using Microsoft.Xna.Framework;
+using Project165.Content.Dusts;
+using Project165.Common.Systems;
+using Terraria.GameContent.Bestiary;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent.ItemDropRules;
-using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.TreasureBags;
 using Project165.Content.Projectiles.Hostile;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Terraria.GameContent.Bestiary;
-using Project165.Content.Dusts;
+using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Ranged;
-using Project165.Common.Systems;
-using System;
-using System.IO;
 
 namespace Project165.Content.NPCs.Bosses.Frigus
 {
@@ -34,6 +33,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             get => (AIState)NPC.ai[0];
             set => NPC.ai[0] = (float)value;
         }
+
         public ref float Timer => ref NPC.ai[1];
         public ref float ShootCounter => ref NPC.localAI[0];
         public bool PhaseTwo
@@ -46,11 +46,11 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.TrailingMode[Type] = 1;
+            NPCID.Sets.TrailCacheLength[Type] = 15;
             NPCID.Sets.MPAllowedEnemies[Type] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
-            NPCID.Sets.TrailCacheLength[Type] = 15;
-            NPCID.Sets.TrailingMode[Type] = 1;
             NPCID.Sets.NPCBestiaryDrawModifiers npcBestiaryDrawModifiers = new()
             { 
                 PortraitScale = 1.25f,                
@@ -83,12 +83,13 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
-            {
+            bestiaryEntry.Info.AddRange(
+            [
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow
-            });
+            ]);
         }
+
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.GreaterHealingPotion;
@@ -193,7 +194,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 NPC.Teleport(new Vector2(Player.Center.X + (250f * Player.direction), Player.Center.Y), 1);
             }
             
-            Vector2 targetPosition = Player.Center + new Vector2(250f, 0f) - NPC.Center;
+            Vector2 targetPosition = Player.Center + Vector2.UnitX * 250f - NPC.Center;
             targetPosition.Normalize();
             targetPosition *= 15f;
 
@@ -249,7 +250,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
             if (NPC.Distance(Player.Center) > 800f)
             {
-                NPC.Teleport(Player.Center + new Vector2(0f, 200f), 1);
+                NPC.Teleport(Player.Center + Vector2.UnitY * 200f, 1);
             }
 
             if (PhaseTwo)
@@ -261,7 +262,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 }
             }
 
-            Vector2 targetPosition = Player.Center + new Vector2(0f, 170f) - NPC.Center;
+            Vector2 targetPosition = Player.Center + Vector2.UnitY * 170f - NPC.Center;
             targetPosition.Normalize();
             targetPosition *= 15f;
 
@@ -278,7 +279,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 for (int i = 0; i < 16; i++)
                 {
                     Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 500f);
-                    Projectile.NewProjectile(null, spawnPos, new Vector2(0f, -4f), ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
+                    Projectile.NewProjectile(null, spawnPos, Vector2.UnitY * -4f, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
                 }
             }
 
@@ -445,8 +446,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             SpriteEffects spriteEffects = SpriteEffects.None;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
             Color npcDrawColorTrail = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 0);
-            Color npcDrawColor = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha);
-
+            Color npcDrawColor = Color.White * NPC.Opacity;
 
             if (NPC.spriteDirection == -1)
             {
