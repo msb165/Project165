@@ -6,7 +6,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace Project165.Common.Globals
 {
-    internal class GlobalNPCSpawn : GlobalNPC
+    public class GlobalNPCSpawn : GlobalNPC
     {
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
@@ -17,7 +17,7 @@ namespace Project165.Common.Globals
 
             if (Main.hardMode && spawnInfo.Player.ZoneSnow && spawnInfo.Player.ZoneOverworldHeight)
             {
-                pool[NPCID.IceGolem] = SpawnCondition.Overworld.Chance * 0.25f;
+                pool[NPCID.IceGolem] = SpawnCondition.Overworld.Chance * 0.2f;
             }
         }
     }

@@ -28,9 +28,10 @@ namespace Project165.Content.Items.TreasureBags
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Avalanche>(), 3));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceShotgun>(), 3));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceChakram>(), 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Avalanche>(), 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceShotgun>(), 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceChakram>(), 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceBat>(), 4));
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<IceBossFly>()));
         }
     }

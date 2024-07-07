@@ -33,8 +33,8 @@ namespace Project165.Common.Systems.World
                             int j = 0;
                             while (j++ <= Main.maxTilesX)
                             {
-                                //origin2.X = GenVars.dungeonSide < 0 ? WorldGen.genRand.Next((int)(Main.maxTilesX * 0.65), Main.maxTilesX - 250) : WorldGen.genRand.Next(50, (int)(Main.maxTilesX * 0.25));
-                                origin2.X = (int)(Main.maxTilesX - 250);
+                                origin2.X = GenVars.dungeonSide < 0 ? WorldGen.genRand.Next((int)(Main.maxTilesX * 0.65), Main.maxTilesX - 250) : WorldGen.genRand.Next(50, (int)(Main.maxTilesX * 0.25));
+                                //origin2.X = Main.maxTilesX - 250;
                                 origin2.Y = (int)GenVars.rockLayer + WorldGen.genRand.Next(300, 500);                                
                                 if (slimeArena.Place(origin2, GenVars.structures))
                                 {

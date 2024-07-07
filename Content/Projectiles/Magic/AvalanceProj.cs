@@ -57,18 +57,15 @@ namespace Project165.Content.Projectiles.Magic
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (Projectile.tileCollide)
-            {              
-                if (Projectile.velocity.X != oldVelocity.X)
-                {
-                    Projectile.Kill();
-                }
+            if (Projectile.velocity.X != oldVelocity.X)
+            {
+                Projectile.Kill();
             }
             return false;
         }
         public override void OnKill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.NPCDeath15, Projectile.position);
+            SoundEngine.PlaySound(SoundID.NPCDeath15 with { Pitch = -0.5f }, Projectile.position);
             for (int i = 0; i < 20; i++)
             {
                 Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 200, default, 1.5f);

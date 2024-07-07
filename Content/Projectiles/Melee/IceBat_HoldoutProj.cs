@@ -9,6 +9,8 @@ using System;
 using rail;
 using Terraria.Audio;
 using Project165.Content.Dusts;
+using Terraria.Graphics.Shaders;
+using Terraria.Graphics;
 
 namespace Project165.Content.Projectiles.Melee
 {
@@ -38,7 +40,6 @@ namespace Project165.Content.Projectiles.Melee
         {
             ProjectileID.Sets.TrailCacheLength[Type] = 60;
             ProjectileID.Sets.TrailingMode[Type] = 2;
-
         }
 
         public override void SetDefaults()
@@ -52,10 +53,12 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
             Projectile.ownerHitCheck = true;
+            Projectile.ownerHitCheckDistance = 300f;
             Projectile.noEnchantmentVisuals = true;
             Projectile.timeLeft = 25;
             Projectile.extraUpdates = 1;
         }
+
         private float EaseInBack(float value)
         {
             float c1 = 1.70158f;
@@ -66,7 +69,7 @@ namespace Project165.Content.Projectiles.Melee
 
         public Player Player => Main.player[Projectile.owner];
 
-        public float defaultScale = 1.5f;
+        public float defaultScale = 2f;
 
         public override void AI()
         {
@@ -75,13 +78,14 @@ namespace Project165.Content.Projectiles.Melee
             {
                 Projectile.scale = Projectile.scale * Player.GetAdjustedItemScale(Player.HeldItem);
                 Projectile.localAI[0] = 1f;
-                SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with { Pitch = 0.5f }, Projectile.position);
+                SoundEngine.PlaySound(SoundID.DD2_JavelinThrowersAttack with { Pitch = -0.5f }, Projectile.position);
             }
 
             AITimer += 0.1f;
             Projectile.scale = defaultScale + MathF.Sin(AITimer) * 0.5f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.SmoothStep(projRotation * Player.direction, -projRotation * Player.direction, AITimer * 0.3f);
             Projectile.Center = Player.Center + Projectile.rotation.ToRotationVector2() * 32f * Projectile.scale;
+            Lighting.AddLight(Projectile.position, 0.5f, 0.8f, 1f);
 
             for (int i = 0; i < 2; i++)
             {
@@ -99,7 +103,7 @@ namespace Project165.Content.Projectiles.Melee
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float collisionPoint = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Player.Center, Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 16f, ref collisionPoint);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - 48f * Projectile.rotation.ToRotationVector2(), Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 16f, ref collisionPoint);
         }
 
         public override bool PreDraw(ref Color lightColor)

@@ -47,11 +47,11 @@ namespace Project165.Common.Systems.World
             
             if (WorldGen.PlaceTile(altarPos.X - 6, altarPos.Y - 11, ModContent.TileType<SlimeAltar>()))
             {
-                Console.WriteLine("Project 165: Successfully placed Slime Altar");
+                Console.WriteLine("Project 165: Successfully placed the Slime Altar");
             }
             else
             {
-                Console.WriteLine("Project 165: Failed to place Slime Altar!");
+                Console.WriteLine("Project 165: Failed to place the Slime Altar!");
             }
 
             structures.AddProtectedStructure(new Rectangle(circlePos.X - 20, circlePos.Y - 20, 40, 40), 10);

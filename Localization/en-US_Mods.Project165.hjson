@@ -18,6 +18,10 @@ Projectiles: {
 	SlimeBossProj.DisplayName: Slime Boss Proj
 	MachineGunProj.DisplayName: Machine Gun
 	GravityKnives.DisplayName: Gravity Defying Knives
+	IceBatHoldoutProj.DisplayName: Ice Bat Holdout Proj
+	SuperWaterBolt.DisplayName: Super Water Bolt
+	SuperWaterBoltProj.DisplayName: Super Water Bolt Proj
+	IceShard.DisplayName: Ice Shard
 }
 
 Items: {
@@ -118,6 +122,16 @@ Items: {
 
 	GravityKnives: {
 		DisplayName: Gravity Defying Knives
+		Tooltip: ""
+	}
+
+	IceBat: {
+		DisplayName: Ice Bat
+		Tooltip: ""
+	}
+
+	SuperWaterBolt: {
+		DisplayName: Super Water Bolt
 		Tooltip: ""
 	}
 }

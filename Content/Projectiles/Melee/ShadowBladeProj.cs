@@ -120,7 +120,7 @@ namespace Project165.Content.Projectiles.Melee
             float rotation = Projectile.rotation - MathHelper.PiOver4;
             if (Player.direction == -1)
             {
-                rotation -= MathHelper.PiOver2;
+                rotation -= MathHelper.PiOver2; 
             }
             Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, rotation);
             Player.SetDummyItemTime(2);

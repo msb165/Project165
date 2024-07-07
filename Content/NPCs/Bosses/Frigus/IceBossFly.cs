@@ -110,9 +110,10 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             Conditions.NotExpert notExpertCondition = new();
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<IceBossBag>()));
 
-            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<Avalanche>(), 3));
-            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceShotgun>(), 3));
-            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceChakram>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<Avalanche>(), 4));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceShotgun>(), 4));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceChakram>(), 4));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceBat>(), 4));
         }
 
         #region AI
@@ -194,10 +195,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 NPC.Teleport(new Vector2(Player.Center.X + (250f * Player.direction), Player.Center.Y), 1);
             }
             
-            Vector2 targetPosition = Player.Center + Vector2.UnitX * 250f - NPC.Center;
-            targetPosition.Normalize();
-            targetPosition *= 15f;
-
+            Vector2 targetPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 15f;
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
             Timer++;
@@ -262,10 +260,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 }
             }
 
-            Vector2 targetPosition = Player.Center + Vector2.UnitY * 170f - NPC.Center;
-            targetPosition.Normalize();
-            targetPosition *= 15f;
-
+            Vector2 targetPosition = Vector2.Normalize(Player.Center + Vector2.UnitY * 170f - NPC.Center) * 15f;
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
             Timer++;

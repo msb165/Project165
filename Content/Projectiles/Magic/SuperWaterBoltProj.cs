@@ -41,6 +41,7 @@ namespace Project165.Content.Projectiles.Magic
             }
 
             Projectile.ai[0]++;
+            Projectile.tileCollide = Projectile.ai[0] < 20f;
 
             for (int i = 0; i < 10; i++)
             {
