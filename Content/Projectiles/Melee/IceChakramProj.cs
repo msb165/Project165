@@ -61,9 +61,7 @@ namespace Project165.Content.Projectiles.Melee
                     Projectile.Kill();
                 }
 
-                distance = returnSpeed / distance;
-                playerProjDistance.X *= distance;
-                playerProjDistance.Y *= distance;
+                playerProjDistance = Vector2.Normalize(playerProjDistance) * returnSpeed;
 
                 if (Projectile.velocity.X < playerProjDistance.X)
                 {
@@ -112,19 +110,19 @@ namespace Project165.Content.Projectiles.Melee
 
         private void GenerateDust()
         {
-            Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
-            Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2);
+            Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 16f;
+            Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * 0.33f + Projectile.velocity / 4f;
 
             Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 1.25f);
             iceDust.position = dustPosition;
             iceDust.noGravity = true;
-            iceDust.velocity = dustVelocity * 0.33f + Projectile.velocity / 4f;
+            iceDust.velocity = dustVelocity;
             iceDust.position += dustVelocity;
 
             Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 1.25f);
             iceDust2.position = dustPosition;
             iceDust2.noGravity = true;
-            iceDust2.velocity = -dustVelocity * 0.33f + Projectile.velocity / 4f;
+            iceDust2.velocity = -dustVelocity;
             iceDust2.position -= dustVelocity;
         }
 
@@ -138,19 +136,24 @@ namespace Project165.Content.Projectiles.Melee
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (Projectile.tileCollide)
+            for (int i = 0; i < 20; i++)
             {
-                Projectile.ai[0] = 1f;
-                if (Projectile.velocity.X != Projectile.oldVelocity.X)
-                {
-                    Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
-                }
-                if (Projectile.velocity.X != Projectile.oldVelocity.X)
-                {
-                    Projectile.velocity.X = 0f - Projectile.oldVelocity.X;
-                }
-                SoundEngine.PlaySound(SoundID.Shatter with { Pitch = 1f, Volume = 0.6f }, Projectile.position);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 0.5f);
+                dust.noGravity = true;
+                dust.velocity *= 4f;
             }
+
+            Projectile.ai[0] = 1f;
+            if (Projectile.velocity.X != Projectile.oldVelocity.X)
+            {
+                Projectile.velocity.X = -oldVelocity.X;
+            }
+            if (Projectile.velocity.Y != Projectile.oldVelocity.Y)
+            {
+                Projectile.velocity.Y = -oldVelocity.Y;
+            }
+            SoundEngine.PlaySound(SoundID.Shatter with { Pitch = 1f, Volume = 0.6f }, Projectile.position);
+
             return false;
         }
 

@@ -97,8 +97,6 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
-        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => true;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
             NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
@@ -156,7 +154,10 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             if (NPC.life < NPC.lifeMax * 0.65f)
             {
                 PhaseTwo = true;
-            }            
+            }
+
+            NPC.dontTakeDamage = CurrentAIState is AIState.PhaseOne_Bottom or AIState.DeathAnimation or AIState.Spawning;
+            NPC.chaseable = !NPC.dontTakeDamage;
 
             switch (CurrentAIState)
             {
@@ -190,12 +191,17 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 timeToShoot = 30f;
             }
 
+            if (NPC.alpha >= 0)
+            {
+                NPC.alpha -= 16;
+            }
+
             if (NPC.Distance(Player.Center) > 1000f)
             {
-                NPC.Teleport(new Vector2(Player.Center.X + (250f * Player.direction), Player.Center.Y), 1);
+                NPC.Teleport(new Vector2(Player.Center.X + (175f * Player.direction), Player.Center.Y), 1);
             }
             
-            Vector2 targetPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 15f;
+            Vector2 targetPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 175f - NPC.Center) * 15f;
             NPC.SimpleFlyMovement(targetPosition, acceleration);
 
             Timer++;
@@ -214,18 +220,19 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         private void StayOnPlace()
         {
-            float timeToShoot = 12f;
+            float timeToShoot = 16f;
 
             if (PhaseTwo)
             {
-                timeToShoot = 10f;
+                timeToShoot = 12f;
             }
 
             NPC.velocity *= 0.5f;
 
+            // Teleport in front of the player if they get too far.
             if (NPC.Distance(Player.Center) > 1300f)
             {
-                NPC.Teleport(new Vector2(Player.Center.X + (400f * Player.direction), Player.Center.Y - 100f), 1);
+                NPC.Teleport(new Vector2(Player.Center.X + (400f * Player.direction), Player.Center.Y), 1);
             }
 
             if (Timer % timeToShoot == 0)
@@ -244,6 +251,11 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         private void StayOnBottom()
         {
+            if (NPC.alpha < 200)
+            {
+                NPC.alpha += 16;
+            }
+
             float timeToShoot = 100f;
 
             if (NPC.Distance(Player.Center) > 800f)
@@ -268,7 +280,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, ModContent.DustType<GlowDust>(), 0, 0, 0, Color.LightCyan, 1.25f);
+                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, ModContent.DustType<GlowDust>(), 0, 0, 0, Color.SkyBlue, 1.25f);
                 }
 
                 for (int i = 0; i < 16; i++)
@@ -296,11 +308,12 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 NPC.frame.Y = 1 * frameHeight;
             }
         }
+
         private void DeathAnimation()
         {
             Timer++;
-            NPC.velocity *= 0.95f;
-            NPC.rotation += 0.4f;
+            NPC.velocity *= 0.9f;
+            NPC.rotation += 0.4f * NPC.direction;
 
             if (NPC.scale < 2f)
             {
@@ -314,18 +327,24 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             {
                 NPC.alpha = 255;
             }
-            if (Timer >= 100f)
-            {                
+
+            for (int i = 0; i < 5; i++)
+            {
+                Dust deathDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, ModContent.DustType<CloudDust>(), 0, 0, 0, default, 1f);
+                deathDust.velocity *= 4f;
+            }
+
+            if (Timer >= 64f)
+            {
+                NPC.active = false;
                 NPC.HitEffect();
                 NPC.NPCLoot();
-                NPC.active = false;
                 NPC.netUpdate = true;
             }
         }
 
         private void SpawnAnimation()
         {
-            NPC.dontTakeDamage = true;
             NPC.velocity *= 0.96f;
             if (NPC.alpha > 0)
             {
@@ -339,7 +358,6 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             else
             {
                 NPC.alpha = 0;
-                NPC.dontTakeDamage = false;
                 CurrentAIState = AIState.PhaseOne_Sideways;
                 NPC.netUpdate = true;
             }
@@ -352,13 +370,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 return;
             }
 
-            Vector2 spawnVelocity = Player.Center - NPC.Center;
-
-            float spawnDistance = spawnVelocity.Length();
-            spawnDistance = velocity / spawnDistance;
-            spawnVelocity.X *= spawnDistance;
-            spawnVelocity.Y *= spawnDistance;
-
+            Vector2 spawnVelocity = Vector2.Normalize(Player.Center - NPC.Center) * velocity;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spawnVelocity, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 0f, 0f);
         }
         private void HandleRotation()
@@ -430,7 +442,6 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             CurrentAIState = AIState.DeathAnimation;
             NPC.active = true;
             NPC.life = 1;
-            NPC.dontTakeDamage = true;
             NPC.netUpdate = true;
             return false;            
         }

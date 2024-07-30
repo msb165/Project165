@@ -16,14 +16,14 @@ namespace Project165.Content.Items.Weapons.Magic
         public override void SetDefaults()
         {
             Item.Size = new(40);
-            Item.damage = 80;
+            Item.damage = 53;
             Item.mana = 17;
             Item.shoot = ModContent.ProjectileType<WormholeProj>();
             Item.shootSpeed = 12f;
             Item.knockBack = 4f;
             Item.useStyle = ItemUseStyleID.Shoot;
-            Item.useTime = 35;
-            Item.useAnimation = 35;
+            Item.useTime = 50;
+            Item.useAnimation = 50;
             Item.UseSound = SoundID.Item82;
             Item.rare = ItemRarityID.Yellow;
             Item.DamageType = DamageClass.Magic;

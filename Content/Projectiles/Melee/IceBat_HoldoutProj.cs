@@ -87,6 +87,7 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.Center = Player.Center + Projectile.rotation.ToRotationVector2() * 32f * Projectile.scale;
             Lighting.AddLight(Projectile.position, 0.5f, 0.8f, 1f);
 
+
             for (int i = 0; i < 2; i++)
             {
                 Dust.NewDustDirect(Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 8, 8, ModContent.DustType<CloudDust>(), 0, 0, 0, default, 0.5f);
@@ -98,6 +99,17 @@ namespace Project165.Content.Projectiles.Melee
         public void SetPlayerValues()
         {
             Player.heldProj = Projectile.whoAmI;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Frostburn2, 300);
+            target.AddBuff(BuffID.Weak, 300);
+
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Projectile.NewProjectileDirect(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<BlueFire>(), Projectile.damage / 2, 0f, Projectile.owner);
+            }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

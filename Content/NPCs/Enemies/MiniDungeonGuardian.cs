@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -44,13 +45,21 @@ namespace Project165.Content.NPCs.Enemies
             NPC.DeathSound = SoundID.NPCDeath2;
         }
 
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(
+            [
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheDungeon
+            ]);
+        }
+
         Player Player => Main.player[NPC.target];
         public override void AI()
         {
             NPC.TargetClosest(faceTarget: true);
-            if (NPC.ai[0] == 0f)
+            if (NPC.localAI[0] == 0f)
             {
-                NPC.ai[0] = 1f;
+                NPC.localAI[0] = 1f;
                 SoundEngine.PlaySound(SoundID.Roar with { Pitch = 0.65f }, NPC.position);
             }
 

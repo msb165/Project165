@@ -25,12 +25,13 @@ namespace Project165.Content.Projectiles.Hostile
         {
             Projectile.Size = new(34);
             Projectile.aiStyle = -1;
-            Projectile.penetrate = 2;
+            Projectile.penetrate = 5;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.scale = 1.25f;
             Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 1800;
+            Projectile.timeLeft = 100;
         }
 
         public bool ShouldPlaySound => Projectile.ai[1] == 0f;
@@ -64,15 +65,21 @@ namespace Project165.Content.Projectiles.Hostile
 
         public override void OnKill(int timeLeft)
         {
-            base.OnKill(timeLeft);
+            for (int i = 0; i < 30; i++)
+            {
+                Color newColor = Color.Purple with { A = 0 };
+                Dust slimeDust = Dust.NewDustDirect(Projectile.position - Vector2.One * 8 + Projectile.velocity, Projectile.width + 16, Projectile.height + 16, DustID.t_Slime, 0f, 0f, 125, newColor, 2f);
+                slimeDust.velocity *= 4f;
+                slimeDust.noGravity = Main.rand.NextBool(2);
+            }
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity)
+        /*public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Projectile.penetrate--;
             if (Projectile.velocity.X != oldVelocity.X)
             {
-                Projectile.velocity.X = oldVelocity.X;
+                Projectile.velocity.X = -oldVelocity.X;
             }
             if (Projectile.velocity.Y != oldVelocity.Y)
             {
@@ -80,7 +87,7 @@ namespace Project165.Content.Projectiles.Hostile
             }
 
             return false;
-        }
+        }*/
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -90,7 +97,7 @@ namespace Project165.Content.Projectiles.Hostile
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 trailColor *= 0.8f;
-                Main.spriteBatch.Draw(texture, Projectile.oldPos[i] + texture.Size() / 2 - Main.screenPosition, texture.Frame(), trailColor, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), trailColor, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
 
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.White, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);

@@ -28,6 +28,7 @@ namespace Project165.Content.Projectiles.Melee
         }
 
         Player Owner => Main.player[Projectile.owner];
+        public int YoYoIndex => (int)Projectile.ai[0];
 
         public override void AI()
         {
@@ -36,9 +37,15 @@ namespace Project165.Content.Projectiles.Melee
 
             Projectile.spriteDirection = Projectile.direction;
 
-            Projectile.penetrate = (int)Main.projectile[(int)Projectile.ai[0]].ai[1];
-            Projectile.Center = Main.projectile[(int)Projectile.ai[0]].Center;
-            Projectile.position = Main.projectile[(int)Projectile.ai[0]].Center - (rad.ToRotationVector2() * 90f) - Projectile.Size / 2;
+            // This handles the projectiles' life
+            Projectile.penetrate = (int)Main.projectile[YoYoIndex].ai[1];
+            Projectile.Center = Main.projectile[YoYoIndex].Center;
+            Projectile.position = Main.projectile[YoYoIndex].Center - (rad.ToRotationVector2() * 90f) - Projectile.Size / 2;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.ShadowFlame, 300);
         }
 
         public override bool PreDraw(ref Color lightColor)

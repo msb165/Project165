@@ -44,9 +44,10 @@ namespace Project165.Content.Projectiles.Magic
                 Projectile.velocity.Y = 16f;
             }
 
-            Dust boltDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 100, Color.Pink, 0.5f);
-            boltDust.scale *= 1.3f;
+            Dust boltDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 100, Color.Magenta, 0.5f);
+            boltDust.scale *= 1.1f;
             boltDust.velocity *= 0f;
+            boltDust.velocity += Projectile.velocity * 0.1f;
             boltDust.noGravity = true;
         }
 
@@ -55,7 +56,8 @@ namespace Project165.Content.Projectiles.Magic
             SoundEngine.PlaySound(SoundID.NPCHit3, Projectile.position);
             for (int i = 0; i < 30; i++)
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X, Projectile.velocity.Y, 0, Color.LightPink, 1.2f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 0, Color.Magenta, 1.25f);
+                dust.velocity *= 4f;
             }
         }
 

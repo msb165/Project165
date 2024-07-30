@@ -36,6 +36,7 @@ public class GlowDust : ModDust
     {
         Color drawColor = Lighting.GetColor((int)(dust.position.X + 4) / 16, (int)(dust.position.Y + 4) / 16);
         Main.spriteBatch.Draw(Texture2D.Value, dust.position - Main.screenPosition, dust.frame, dust.GetAlpha(drawColor), dust.rotation, dust.frame.Size() / 2, 0.5f * dust.scale, SpriteEffects.None, 0);
+        Main.spriteBatch.Draw(Texture2D.Value, dust.position - Main.screenPosition, dust.frame, Color.White with { A = 0 }, dust.rotation, dust.frame.Size() / 2, 0.125f * dust.scale, SpriteEffects.None, 0);
         return false;
     }
 }

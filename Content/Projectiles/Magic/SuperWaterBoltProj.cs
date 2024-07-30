@@ -16,11 +16,11 @@ namespace Project165.Content.Projectiles.Magic
             Projectile.aiStyle = -1;
             Projectile.penetrate = -1;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.tileCollide = true;
             Projectile.friendly = true;
             Projectile.ignoreWater = true;
             Projectile.alpha = 255;
             Projectile.penetrate = 10;
+            Projectile.timeLeft = 800;
         }
 
         public override void AI()
@@ -41,7 +41,6 @@ namespace Project165.Content.Projectiles.Magic
             }
 
             Projectile.ai[0]++;
-            Projectile.tileCollide = Projectile.ai[0] < 20f;
 
             for (int i = 0; i < 10; i++)
             {
@@ -56,6 +55,14 @@ namespace Project165.Content.Projectiles.Magic
         {
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
             Projectile.penetrate--;
+
+            for (int i = 0; i < 20; i++)
+            {
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Blue, 0, 0, 0, Color.White with { A = 127 }, 0.75f);
+                dust.noGravity = true;
+                dust.velocity *= 0.25f * i;
+            }
+
             if (Projectile.velocity.X != oldVelocity.X)
             {
                 Projectile.velocity.X = -oldVelocity.X;
@@ -72,9 +79,11 @@ namespace Project165.Content.Projectiles.Magic
         {
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Blue, 0, 0, 0, Color.White with { A = 127 }, 0.75f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Blue, 0, 0, 0, Color.White with { A = 127 }, 0.75f);
+                dust.noGravity = true;
+                dust.velocity *= 4f;
             }
         }
     }

@@ -44,6 +44,9 @@ namespace Project165.Content.Projectiles.Summon
         public override void PostAI()
         {
             Projectile.rotation = Projectile.velocity.X * 0.05f;
+            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.CorruptSpray);
+            dust.velocity *= 0.5f;
+            dust.noGravity = true;
         }
 
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)

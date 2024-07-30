@@ -2,8 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Utilities;
 
 namespace Project165.Content.NPCs.Enemies
 {
@@ -25,9 +27,16 @@ namespace Project165.Content.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit5;
             NPC.DeathSound = SoundID.NPCDeath7;
             NPC.friendly = false;
-
             NPC.buffImmune[BuffID.Frostburn] = true;
             NPC.buffImmune[BuffID.Frostburn2] = true;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(
+            [
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow
+            ]);
         }
 
         public override void HitEffect(NPC.HitInfo hit)
@@ -36,10 +45,12 @@ namespace Project165.Content.NPCs.Enemies
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IceTorch, NPC.velocity.X * hit.HitDirection, NPC.velocity.Y, 100, default, 1.25f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.IceTorch, NPC.velocity.X * hit.HitDirection * 0.2f, NPC.velocity.Y * 0.2f, 100, default, 1.25f);
                 }
             }
         }
+
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.ZoneSnow ? SpawnCondition.OverworldDay.Chance * 0.25f : 0f;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {

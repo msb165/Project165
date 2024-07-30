@@ -66,9 +66,10 @@ namespace Project165.Content.Projectiles.Magic
         public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.NPCDeath15 with { Pitch = -0.5f }, Projectile.position);
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 30; i++)
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 200, default, 1.5f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 100, default, 1.5f);
+                dust.noGravity = true;
             }
             
             for (int i = 0; i < 10; i++)
@@ -84,7 +85,8 @@ namespace Project165.Content.Projectiles.Magic
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteBatch spriteBatch = Main.spriteBatch;
-            Color drawColorTrail = lightColor with { A = 0 };
+            Color drawColor = Projectile.GetAlpha(lightColor);
+            Color drawColorTrail = drawColor with { A = 0 };
 
             if (spawnScale < 1.5f)
             {
@@ -102,7 +104,7 @@ namespace Project165.Content.Projectiles.Magic
                 spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, texture.Size() / 2, spawnScale, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), lightColor, Projectile.rotation, texture.Size() / 2, spawnScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), drawColor, Projectile.rotation, texture.Size() / 2, spawnScale, SpriteEffects.None, 0);
             return false;
         }
     }
