@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
+using Project165.Content.Projectiles.Hostile;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
@@ -21,10 +22,16 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             Death = 4
         }
 
-        public AIState CurrentState
+        public AIState CurrentAIState
         {
             get => (AIState)NPC.ai[0];
             set => NPC.ai[0] = (float)value;
+        }
+
+        public float AITimer
+        {
+            get => NPC.ai[1];
+            set => NPC.ai[1] = value;
         }
 
         public override void SetStaticDefaults()
@@ -42,8 +49,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPC.boss = true;
             NPC.lifeMax = 42000;
             NPC.defense = 30;
-            NPC.width = 68;
-            NPC.height = 96;
+            NPC.width = 60;
+            NPC.height = 60;
             NPC.scale = 2.5f;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -83,8 +90,40 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public override void AI()
         {
+            if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active)
+            {
+                NPC.TargetClosest();
+            }
             Lighting.AddLight(NPC.Center, 2f, 2f, 2f);
-            base.AI();
+
+            if (NPC.localAI[0] == 0f)
+            {
+                NPC.localAI[0] = 1f;
+                //NPC.alpha = 255;
+                CurrentAIState = AIState.Spawning;
+            }
+
+            NPC.dontTakeDamage = CurrentAIState is not AIState.Spawning;
+
+            switch (CurrentAIState)
+            {
+                case AIState.Spawning:
+                    SpawnAnimation();
+                    break;
+            }
+        }
+
+        public void SpawnAnimation()
+        {
+            AITimer++;
+            if (AITimer % 72f == 0f && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Vector2 newVelocity = (Vector2.UnitY * 4f).RotatedBy(MathHelper.TwoPi / 10f * i, Vector2.Zero);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(23f, 25f), 2f, Main.myPlayer);
+                }
+            }
         }
 
         public override void OnKill()
@@ -105,7 +144,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[Type].Value;
-            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
+            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2 + 16);
             Color npcDrawColorTrail = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 0);
             Color npcDrawColor = Color.White * NPC.Opacity;
 

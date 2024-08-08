@@ -149,12 +149,9 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 NPC.velocity.Y = -5f;
                 CurrentAIState = AIState.Spawning;
             }
-            
 
-            if (NPC.life < NPC.lifeMax * 0.65f)
-            {
-                PhaseTwo = true;
-            }
+            PhaseTwo = NPC.life < NPC.lifeMax * 0.65f;
+
 
             NPC.dontTakeDamage = CurrentAIState is AIState.PhaseOne_Bottom or AIState.DeathAnimation or AIState.Spawning;
             NPC.chaseable = !NPC.dontTakeDamage;
@@ -371,8 +368,9 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             }
 
             Vector2 spawnVelocity = Vector2.Normalize(Player.Center - NPC.Center) * velocity;
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spawnVelocity, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 25f), 0f, Main.myPlayer, 0f, 0f);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spawnVelocity, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(28f, 23f), 0f, Main.myPlayer, 0f, 0f);
         }
+
         private void HandleRotation()
         {
             if (CurrentAIState == AIState.DeathAnimation)
@@ -380,7 +378,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 return;
             }
 
-            Vector2 npcPlayerPos = new(NPC.Center.X - Player.Center.X, NPC.Center.Y - Player.Center.Y);
+            Vector2 npcPlayerPos = NPC.Center - Player.Center;
             float rotAcceleration = 0.075f;
             float newRotation = npcPlayerPos.ToRotation() + MathHelper.PiOver2;
 
