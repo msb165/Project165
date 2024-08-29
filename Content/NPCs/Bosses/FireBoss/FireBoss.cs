@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
 using Project165.Content.Projectiles.Hostile;
+using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
@@ -34,6 +35,18 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             set => NPC.ai[1] = value;
         }
 
+        public float Direction
+        {
+            get => NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
+
+        public float AICounter
+        {
+            get => NPC.ai[3];
+            set => NPC.ai[3] = value;
+        }
+
         public override void SetStaticDefaults()
         {
             NPCID.Sets.TrailingMode[Type] = 1;
@@ -49,8 +62,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPC.boss = true;
             NPC.lifeMax = 42000;
             NPC.defense = 30;
-            NPC.width = 60;
-            NPC.height = 60;
+            NPC.Size = new(60);
             NPC.scale = 2.5f;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -99,31 +111,126 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             if (NPC.localAI[0] == 0f)
             {
                 NPC.localAI[0] = 1f;
-                //NPC.alpha = 255;
+                NPC.alpha = 255;
                 CurrentAIState = AIState.Spawning;
             }
 
-            NPC.dontTakeDamage = CurrentAIState is not AIState.Spawning;
+            NPC.dontTakeDamage = CurrentAIState is AIState.Spawning;
 
             switch (CurrentAIState)
             {
                 case AIState.Spawning:
                     SpawnAnimation();
                     break;
+                case AIState.Flying:
+                    FlyAround();
+                    break;
+                case AIState.Unused:
+                    StayInFront();
+                    break;
             }
         }
 
         public void SpawnAnimation()
         {
-            AITimer++;
-            if (AITimer % 72f == 0f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (NPC.alpha > 0)
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    Vector2 newVelocity = (Vector2.UnitY * 4f).RotatedBy(MathHelper.TwoPi / 10f * i, Vector2.Zero);
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(23f, 25f), 2f, Main.myPlayer);
-                }
+                NPC.alpha--;
             }
+
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2 newVelocity = Main.rand.NextVector2Circular(200f, 200f).SafeNormalize(Vector2.UnitY) * 5f;
+
+                Dust dust = Dust.NewDustPerfect(NPC.Center - newVelocity * 20f, DustID.Torch, newVelocity, Scale:3f);
+                dust.noGravity = true;
+            }
+
+            if (NPC.alpha <= 0)
+            {
+                NPC.alpha = 0;
+                NPC.netUpdate = true;
+                CurrentAIState = AIState.Flying;
+            }
+        }
+
+        public void FlyAround()
+        {
+            NPC.TargetClosest();
+            Vector2 newVel = NPC.DirectionTo(Player.Center - Vector2.UnitY * 250f) * 12f;
+            NPC.rotation = NPC.velocity.X * 0.025f;
+
+            AITimer++;
+            if (AITimer > 90f)
+            {
+                AITimer = 0f;
+                Vector2 newPos = Main.rand.NextVector2Unit(1000f, 1000f).SafeNormalize(Vector2.UnitY) * 6f;
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        break;
+                    }
+                    Vector2 newVelocity = newPos.RotatedBy(MathHelper.ToRadians(j * 15f));
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center - newPos * 40, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(23f, 26f), 4f, Main.myPlayer);
+                }
+                AICounter++;
+            }
+
+            if (AICounter >= 5f)
+            {
+                AICounter = 0f;
+                AITimer = 0f;
+                NPC.netUpdate = true;
+                CurrentAIState = AIState.Unused;
+            }
+
+            NPC.SimpleFlyMovement(newVel, 0.25f);
+        }
+
+        public void StayInFront()
+        {
+            NPC.TargetClosest(true);
+            Vector2 offset = new(-150f, -200f);
+            Vector2 newVel = NPC.DirectionTo(Player.Center - Vector2.UnitY * 250f) * 10f;
+            Vector2 projVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 8f;
+
+            AITimer++;
+            if (AITimer > 60f)
+            {
+                AITimer = 0f;
+                for (int j = 0; j < 6; j++)
+                {
+                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                    {
+                        break;
+                    }
+                    Vector2 newPos = (Vector2.UnitY * 6f).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloat());
+                    newPos.X *= -NPC.direction;
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newPos, ProjectileID.CultistBossFireBall, NPC.GetAttackDamage_ForProjectiles(23f, 26f), 4f, Main.myPlayer);
+                }
+                AICounter++;
+            }
+
+            if (NPC.Distance(Player.Center + offset) > 40f)
+            {
+                NPC.SimpleFlyMovement(NPC.DirectionTo(Player.Center + offset).SafeNormalize(Vector2.Zero) * 12f, 0.25f);
+            }
+
+            if (AICounter >= 2f)
+            {
+                AICounter = 0f;
+                AITimer = 0f;
+                NPC.netUpdate = true;
+                //CurrentAIState = AIState.Flying;
+            }
+            NPC.SimpleFlyMovement(newVel, 0.1f);
+            NPC.rotation = NPC.velocity.X * 0.025f;
+        }
+
+        public void Spam()
+        {
+
         }
 
         public override void OnKill()
@@ -145,8 +252,9 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         {
             Texture2D texture = TextureAssets.Npc[Type].Value;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2 + 16);
-            Color npcDrawColorTrail = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 0);
             Color npcDrawColor = Color.White * NPC.Opacity;
+            Color npcDrawColorTrail = npcDrawColor with { A = 0 };
+
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {

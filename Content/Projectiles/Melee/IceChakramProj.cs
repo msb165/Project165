@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Project165.Content.Dusts;
 using Project165.Content.Items.Weapons.Melee;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -18,6 +16,7 @@ namespace Project165.Content.Projectiles.Melee
         {
             ProjectileID.Sets.TrailingMode[Type] = 3;
         }
+
         public override void SetDefaults()
         {
             Projectile.Size = new(30);
@@ -28,74 +27,40 @@ namespace Project165.Content.Projectiles.Melee
         }
 
         private Player Owner => Main.player[Projectile.owner];
-        private readonly float returnSpeed = 20f;
+
         private readonly float maxTime = 20f;
         private readonly float acceleration = 1.2f;
 
         public override void AI()
         {
             Projectile.rotation += 0.25f * Projectile.direction;
+
             if (Projectile.ai[0] == 0f)
             {
                 Projectile.ai[1] += 1f;
-                if (Projectile.ai[1] % 8f == 0)
+                if (Projectile.ai[1] % 8f == 0 && Projectile.owner == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.position, new Vector2(0, -8f), ProjectileID.NorthPoleSnowflake, Projectile.damage / 4, Projectile.knockBack, Owner.whoAmI, Main.rand.Next(3));
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.position, -Vector2.UnitY * 8f, ProjectileID.NorthPoleSnowflake, Projectile.damage / 4, Projectile.knockBack, Owner.whoAmI, Main.rand.Next(3));
                 }
 
                 if (Projectile.ai[1] >= maxTime)
-                {                    
+                {
                     Projectile.ai[0] = 1f;
                     Projectile.ai[1] = 0f;
+                    Projectile.tileCollide = false;
                     Projectile.netUpdate = true;
                 }
             }
             else
             {
-                Projectile.tileCollide = false;
-                Vector2 playerProjDistance = Owner.Center - Projectile.Center;
-                float distance = Vector2.Distance(Owner.Center, Projectile.Center);
-
-                if (distance > 3000f)
+                if (Vector2.Distance(Owner.Center, Projectile.Center) > 3000f)
                 {
                     Projectile.Kill();
                 }
 
-                playerProjDistance = Vector2.Normalize(playerProjDistance) * returnSpeed;
+                Vector2 vecTowardsPlayer = Projectile.DirectionTo(Owner.MountedCenter).SafeNormalize(Vector2.Zero);
+                Projectile.velocity = Projectile.velocity.MoveTowards(vecTowardsPlayer * Owner.inventory[Owner.selectedItem].shootSpeed, acceleration);
 
-                if (Projectile.velocity.X < playerProjDistance.X)
-                {
-                    Projectile.velocity.X += acceleration;
-                    if (Projectile.velocity.X < 0f && playerProjDistance.X > 0f)
-                    {
-                        Projectile.velocity.X += acceleration;
-                    }
-                }
-                else if (Projectile.velocity.X > playerProjDistance.X)
-                {
-                    Projectile.velocity.X -= acceleration;
-                    if (Projectile.velocity.X > 0f && playerProjDistance.X < 0f)
-                    {
-                        Projectile.velocity.X -= acceleration;
-                    }
-                }
-
-                if (Projectile.velocity.Y < playerProjDistance.Y)
-                {
-                    Projectile.velocity.Y += acceleration;
-                    if (Projectile.velocity.Y < 0f && playerProjDistance.Y > 0f)
-                    {
-                        Projectile.velocity.Y += acceleration;
-                    }
-                }
-                else if (Projectile.velocity.Y > playerProjDistance.Y)
-                {
-                    Projectile.velocity.Y -= acceleration;
-                    if (Projectile.velocity.Y > 0f && playerProjDistance.Y < 0f)
-                    {
-                        Projectile.velocity.Y -= acceleration;
-                    }
-                }
                 if (Main.myPlayer == Projectile.owner)
                 {
                     if (Projectile.Hitbox.Intersects(Owner.Hitbox))

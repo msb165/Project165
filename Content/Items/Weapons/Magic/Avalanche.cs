@@ -10,6 +10,11 @@ namespace Project165.Content.Items.Weapons.Magic
 {
     public class Avalanche : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.Size = new(32);
@@ -33,7 +38,8 @@ namespace Project165.Content.Items.Weapons.Magic
 
             for (int i = 0; i < 8; i++)
             {
-                Dust.NewDustDirect(position, player.width, player.height, DustID.Snow, velocity.X * 0.2f, velocity.Y * 0.2f, 100, default, 1f);
+                Dust dust = Dust.NewDustDirect(position, player.width, player.height, DustID.Snow, velocity.X * 0.2f, velocity.Y * 0.2f, 100);
+                dust.noGravity = true;
             }
 
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);

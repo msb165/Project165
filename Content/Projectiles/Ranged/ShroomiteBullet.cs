@@ -42,8 +42,7 @@ namespace Project165.Content.Projectiles.Ranged
             {
                 Projectile.ai[1] = -1f;
                 Vector2 newVelocity = Vector2.Normalize(Vector2.One * -100f);
-                newVelocity = Vector2.Normalize(newVelocity + Vector2.Normalize(Projectile.velocity) * 2f);
-                newVelocity *= Projectile.velocity.Length();
+                newVelocity = Vector2.Normalize(newVelocity + Vector2.Normalize(Projectile.velocity) * 2f) * Projectile.velocity.Length();
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, newVelocity, Type, Projectile.damage / 2, Projectile.knockBack, Projectile.owner, 0f, -1f);
             }
 

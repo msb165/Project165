@@ -25,7 +25,7 @@ Projectiles: {
 	ShroomiteBullet.DisplayName: Shroomite Bullet
 	BlueFire.DisplayName: Blue Fire
 	IceShockWave.DisplayName: Ice Shock Wave
-	FireBossProj.DisplayName: Fire Boss Proj
+	FireBossProj.DisplayName: Fire
 }
 
 Items: {
@@ -139,7 +139,7 @@ Items: {
 	}
 
 	SuperWaterBolt: {
-		DisplayName: Super Water Bolt
+		DisplayName: Rain
 		Tooltip: ""
 	}
 

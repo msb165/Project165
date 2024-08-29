@@ -77,7 +77,7 @@ namespace Project165.Content.Projectiles.Melee
             }
 
             SetPlayerValues();
-            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.8f, Projectile.velocity.Y * 0.8f, 100, Color.DarkSlateBlue, 1.25f);
+            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, Color.DarkSlateBlue, 1.25f);
         }
  
         public void SetPlayerValues()

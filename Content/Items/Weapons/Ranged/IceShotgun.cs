@@ -10,6 +10,11 @@ namespace Project165.Content.Items.Weapons.Ranged
 {
     public class IceShotgun : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.width = 60;
@@ -24,7 +29,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 28;
             Item.rare = ItemRarityID.Pink;
-            Item.buyPrice(gold: 20);
+            Item.value = Item.buyPrice(gold: 18);
             Item.autoReuse = true;
             Item.noMelee = true;
         }

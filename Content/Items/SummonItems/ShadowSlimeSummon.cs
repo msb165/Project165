@@ -7,11 +7,15 @@ namespace Project165.Content.Items.SummonItems
 {
     internal class ShadowSlimeSummon : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.Size = new(38);
             Item.rare = ItemRarityID.Pink;
-            Item.consumable = false;
             Item.maxStack = 1;
         }
 

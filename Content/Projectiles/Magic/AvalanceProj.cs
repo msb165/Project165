@@ -46,9 +46,10 @@ namespace Project165.Content.Projectiles.Magic
                 }
             }
 
-            if (Main.rand.NextBool(4))
+            if (Main.rand.NextBool(2))
             {
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 190);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0, 0, 190);
+                dust.noGravity = true;
             }
 
             Projectile.rotation += Projectile.velocity.X * 0.06f;

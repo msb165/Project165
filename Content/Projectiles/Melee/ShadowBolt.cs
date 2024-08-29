@@ -40,7 +40,6 @@ namespace Project165.Content.Projectiles.Melee
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0f, 0f, 100, Color.DarkSlateBlue, 0.75f);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -52,7 +51,8 @@ namespace Project165.Content.Projectiles.Melee
         {
             for (int i = 0; i < 8; i++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.75f, Projectile.velocity.Y * 0.75f, 100, Color.DarkSlateBlue, 0.75f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0f, 0f, 100, Color.DarkSlateBlue, 0.75f);
+                dust.velocity *= 4f;
             }
         }
 

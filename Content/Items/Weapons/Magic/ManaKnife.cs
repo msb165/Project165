@@ -6,6 +6,11 @@ namespace Project165.Content.Items.Weapons.Magic
 {
     public class ManaKnife : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.mana = 6;

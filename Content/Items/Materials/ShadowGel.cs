@@ -10,10 +10,10 @@ namespace Project165.Content.Items.Materials
         {
             Item.ResearchUnlockCount = 25;
         }
+
         public override void SetDefaults()
         {
-            Item.width = 16;
-            Item.height = 16;
+            Item.Size = new(16);
             Item.rare = ItemRarityID.Yellow;
             Item.maxStack = Item.CommonMaxStack;
             Item.alpha = 100;

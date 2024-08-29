@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Project165.Content.Projectiles.Summon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -14,6 +9,11 @@ namespace Project165.Content.Items.Weapons.Summon
 {
     public class MachineGunStaff : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.shoot = ModContent.ProjectileType<MachineGunProj>();

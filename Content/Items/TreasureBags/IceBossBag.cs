@@ -14,6 +14,7 @@ namespace Project165.Content.Items.TreasureBags
         public override void SetStaticDefaults()
         {
             ItemID.Sets.BossBag[Type] = true;
+            Item.ResearchUnlockCount = 3;
         }
         public override void SetDefaults()
         {

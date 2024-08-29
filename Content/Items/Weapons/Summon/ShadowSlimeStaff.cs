@@ -1,12 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Project165.Content.Projectiles.Summon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,6 +8,11 @@ namespace Project165.Content.Items.Weapons.Summon
 {
     public class ShadowSlimeStaff : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.width = 26;

@@ -12,6 +12,11 @@ namespace Project165.Content.Items.Weapons.Melee
     {
         public int currentAttack = 0;
 
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.Size = new(44);

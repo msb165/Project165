@@ -1,10 +1,4 @@
 ﻿using Project165.Content.Items.Materials;
-using Project165.Content.Tiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria.ID;
 using Terraria.ModLoader;
 

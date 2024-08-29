@@ -9,13 +9,17 @@ namespace Project165.Content.Items.SummonItems
 {
     internal class IceBossSummon : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Item.ResearchUnlockCount = 1;
+        }
+
         public override void SetDefaults()
         {
             Item.width = 26;
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.rare = ItemRarityID.Pink;
-            Item.consumable = false;
             Item.maxStack = 1;
         }
 
@@ -52,7 +56,7 @@ namespace Project165.Content.Items.SummonItems
                 }
                 else
                 {
-                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, player.whoAmI, ModContent.NPCType<IceBossFly>());
+                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, player.whoAmI, number:ModContent.NPCType<IceBossFly>());
                 }
             }
             return true;
