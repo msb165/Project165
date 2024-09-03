@@ -26,6 +26,7 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
+            Projectile.timeLeft = 250;
             Projectile.DamageType = DamageClass.Magic;
         }
 
@@ -58,6 +59,11 @@ namespace Project165.Content.Projectiles.Hostile
                     Projectile.frame = 0;
                 }
             }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.OnFire, 150);
         }
 
         public override bool PreDraw(ref Color lightColor)
