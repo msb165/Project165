@@ -61,7 +61,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             NPC.npcSlots = 5f;
             NPC.alpha = 128;
             NPC.knockBackResist = 0f;
-            NPC.npcSlots = 5f;
+            NPC.npcSlots = 6f;
             NPC.defense = 28;
             NPC.aiStyle = -1;
             NPC.lifeMax = 32000;
@@ -73,8 +73,6 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
             AnimationType = NPCID.KingSlime;
             Music = MusicID.Boss3;
         }
-
-        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => true;
 
         public override void BossLoot(ref string name, ref int potionType)
         {
