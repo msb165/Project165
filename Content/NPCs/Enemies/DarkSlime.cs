@@ -24,6 +24,8 @@ namespace Project165.Content.NPCs.Enemies
             NPC.damage = 13;
             NPC.lifeMax = 180;
             NPC.value = 50f;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
             AnimationType = NPCID.BlueSlime;
         }
 
