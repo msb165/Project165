@@ -3,11 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
 using Project165.Content.Projectiles.Hostile;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static System.Formats.Asn1.AsnWriter;
+using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace Project165.Content.NPCs.Bosses.FireBoss
 {
@@ -90,8 +93,6 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
-        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => true;
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
             NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
@@ -100,6 +101,18 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         Player Player => Main.player[NPC.target];
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(NPC.localAI[0]);
+            writer.Write(NPC.localAI[1]);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            NPC.localAI[0] = reader.ReadSingle();
+            NPC.localAI[1] = reader.ReadSingle();
+        }
+
         public override void AI()
         {
             if (NPC.target < 0 || NPC.target == 255 || Player.dead || !Player.active)
@@ -107,9 +120,9 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 NPC.TargetClosest();
             }
 
-            if (NPC.localAI[0] == 0f)
+            if (NPC.localAI[1] == 0f)
             {
-                NPC.localAI[0] = 1f;
+                NPC.localAI[1] = 1f;
                 NPC.alpha = 255;
                 CurrentAIState = AIState.Spawning;
             }
@@ -137,6 +150,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public void SpawnAnimation()
         {
             NPC.TargetClosest();
+            NPC.localAI[0]++;
             if (NPC.alpha > 0)
             {
                 NPC.alpha -= 4;
@@ -156,6 +170,15 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             {
                 Player.ClearBuff(BuffID.Slow);
                 NPC.alpha = 0;
+            }
+
+            if (NPC.localAI[0] > 180f)
+            {
+                NPC.localAI[0] = 180f;
+            }
+
+            if (NPC.localAI[0] >= 180f)
+            {
                 CurrentAIState = AIState.Flying;
                 NPC.netUpdate = true;
             }
@@ -169,8 +192,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 Direction = (NPC.Center.X < Player.Center.X).ToDirectionInt();
             }
             NPC.TargetClosest();
-            float moveAcceleration = 0.85f;
-            float moveSpeed = 10f;
+            float moveAcceleration = 0.5f;
+            float moveSpeed = 11f;
             float maxDistance = 600f;
             float distance = MathF.Abs(NPC.Center.X - Player.Center.X);
 
@@ -178,72 +201,58 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             {
                 Direction = 0f;
             }
-            if (NPC.life < NPC.lifeMax * 0.75)
-            {
-                moveAcceleration = 0.95f;
-                moveSpeed = 11f;
-            }
             if (NPC.life < NPC.lifeMax * 0.5)
             {
-                moveAcceleration = 1.15f;
+                moveAcceleration = 0.85f;
                 moveSpeed = 12f;
             }
             if (NPC.life < NPC.lifeMax * 0.25)
             {
-                moveAcceleration = 1.35f;
-                moveSpeed = 13f;
+                moveAcceleration = 1.15f;
+                moveSpeed = 15f;
             }
             NPC.velocity.X += Direction * moveAcceleration;
             NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -moveSpeed, moveSpeed);
-            float verticalDistance = Player.Center.Y - (NPC.position.Y + NPC.height);
-            if (verticalDistance < 150f)
+            float verticalDistance = Player.Center.Y - 200f - NPC.Center.Y;
+            if (NPC.velocity.Y < verticalDistance)
             {
-                NPC.velocity.Y -= 0.05f;
+                NPC.velocity.Y += 0.25f;
+                if (NPC.velocity.Y < 0f && verticalDistance > 0f)
+                {
+                    NPC.velocity.Y += 0.25f;
+                }
             }
-            if (verticalDistance > 200f)
+            else if (NPC.velocity.Y > verticalDistance)
             {
-                NPC.velocity.Y += 0.05f;
+                NPC.velocity.Y -= 0.25f;
+                if (NPC.velocity.Y > 0f && verticalDistance < 0f)
+                {
+                    NPC.velocity.Y -= 0.25f;
+                }
             }
             NPC.velocity.Y = MathHelper.Clamp(NPC.velocity.Y, -8f, 8f);
             NPC.rotation = NPC.velocity.X * 0.025f;
-            if (distance < 300f && NPC.position.Y < Player.position.Y)
+            if (distance < 800f && NPC.position.Y < Player.position.Y && AITimer > 35f)
             {
                 ShootTimer++;
-                int timeToShoot = 28;
-                if (NPC.life < NPC.lifeMax * 0.75)
-                {
-                    timeToShoot = 26;
-                }
+                int timeToShoot = 60;
                 if (NPC.life < NPC.lifeMax * 0.5)
                 {
-                    timeToShoot = 24;
+                    timeToShoot -= 4;
                 }
                 if (NPC.life < NPC.lifeMax * 0.25)
                 {
-                    timeToShoot = 22;
+                    timeToShoot -= 8;
                 }
                 if (ShootTimer >= timeToShoot && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     ShootTimer = 0f;
-                    Vector2 npcPos = NPC.Center;
-                    float newSpeed = 10f;
-                    if (NPC.life < NPC.lifeMax * 0.75)
-                    {
-                        newSpeed = 10.5f;
-                    }
-                    if (NPC.life < NPC.lifeMax * 0.5)
-                    {
-                        newSpeed = 11f;
-                    }
-                    if (NPC.life < NPC.lifeMax * 0.25)
-                    {
-                        newSpeed = 11.5f;
-                    }
-                    Vector2 newVelocity = Vector2.Normalize(Player.Center - npcPos) * newSpeed;
-                    for (int i = 0; i < 4; i++)
+                    float newSpeed = 12f;
+                    Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * newSpeed;
+                    for (int i = 0; i < 3; i++)
                     {
                         newVelocity *= Main.rand.NextFloat(0.9f, 1.1f);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), npcPos, newVelocity.RotatedByRandom(MathHelper.ToRadians(15f)), ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(38f, 42f), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity.RotatedByRandom(MathHelper.ToRadians(10f)), ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(38f, 42f), 0f, Main.myPlayer);
                     }
                 }
             }
@@ -262,30 +271,22 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public void StayAbove()
         {
             NPC.TargetClosest();
-            Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 10f;
+            Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 12f;
             NPC.rotation = (Player.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
             //NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
             NPC.SimpleFlyMovement(newPosition, 0.5f);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 30f)
             {
                 ShootTimer++;
-                int timeToShoot = 30;
+                int timeToShoot = 35;
                 if (NPC.life < NPC.lifeMax * 0.75)
                 {
-                    timeToShoot = 25;
+                    timeToShoot = 30;
                 }
                 if (NPC.life < NPC.lifeMax * 0.5)
                 {
-                    timeToShoot = 22;
-                }
-                if (NPC.life < NPC.lifeMax * 0.25)
-                {
-                    timeToShoot = 21;
-                }
-                if (NPC.life < NPC.lifeMax * 0.1)
-                {
-                    timeToShoot = 20;
+                    timeToShoot = 28;
                 }
                 if (ShootTimer >= timeToShoot)
                 {
@@ -293,7 +294,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                     Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 8f;
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + newVelocity * 8f, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
                     newVelocity.X *= -1f;
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center + Vector2.UnitX * 400f * -Player.direction, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center + Vector2.UnitX * -400f * -NPC.direction, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
                 }
             }
 
@@ -310,36 +311,31 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public void SpinState()
         {
             NPC.TargetClosest();
-            Vector2 npcVel = Vector2.Normalize(Player.Center + new Vector2(200f, -200f) - NPC.Center) * 8f;
-            NPC.SimpleFlyMovement(npcVel, 0.25f);
+            Vector2 npcVel = Vector2.Normalize(Player.Center + Vector2.One * 200f - NPC.Center) * 8f;
+            NPC.SimpleFlyMovement(npcVel, 0.5f);
             NPC.rotation = NPC.velocity.X * 0.05f;
             NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
-
-            ShootTimer += 1f;
-            int timeToShoot = 50;
-            if (NPC.life < NPC.lifeMax * 0.75)
+            
+            int timeToShoot = 80;
+            double difficultyValue = Main.expertMode ? 0.3 : 0.5;
+            if (NPC.life < NPC.lifeMax * difficultyValue)
             {
-                timeToShoot -= 2;
-            }
-            if (NPC.life < NPC.lifeMax * 0.5)
-            {
-                timeToShoot -= 4;
-            }
-            if (NPC.life < NPC.lifeMax * 0.25)
-            {
-                timeToShoot -= 5;
+                timeToShoot -= 8;
             }
             if (NPC.life < NPC.lifeMax * 0.1)
             {
-                timeToShoot -= 6;
+                timeToShoot -= 10;
             }
+            ShootTimer++;
             if (ShootTimer > timeToShoot)
             {
                 ShootTimer = 0f;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 6; i++)
                 {
-                    Vector2 newVelocity = (Vector2.UnitX * 4f).RotatedBy(i * MathHelper.TwoPi / 10f);
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(33f, 38f), 0f, Main.myPlayer);
+                    Vector2 newVelocity = (Vector2.UnitX * 16f).RotatedBy(i * MathHelper.TwoPi / 6f);
+                    Vector2 newPosition = Main.rand.NextVector2Circular(500f, 500f);
+
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center - newPosition * 2f, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(33f, 38f), 0f, Main.myPlayer);
                 }
             }
             AITimer++;
@@ -379,15 +375,22 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             Color npcDrawColor = Color.White * NPC.Opacity;
             Color npcDrawColorTrail = npcDrawColor with { A = 0 };
 
+            float offset = (float)Main.timeForVisualEffects / 240f + Main.GlobalTimeWrappedHourly * 0.5f;
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {
                 Vector2 drawPos = NPC.oldPos[i] + NPC.Size * 0.5f - screenPos;
-                npcDrawColorTrail *= 0.75f;
+                npcDrawColorTrail *= 0.5f;
                 spriteBatch.Draw(texture, drawPos, NPC.frame, npcDrawColorTrail, NPC.rotation, drawOrigin, NPC.scale, SpriteEffects.None, 0);
             }
 
+            for (float i = 0f; i < 1f; i += 0.25f)
+            {
+                spriteBatch.Draw(texture, NPC.Center - screenPos + (Vector2.UnitY * 8f).RotatedBy((i + offset) * MathHelper.TwoPi) * 3f, NPC.frame, Color.Yellow with { A = 0 } * NPC.Opacity * 0.2f, NPC.rotation, drawOrigin, NPC.scale, SpriteEffects.None, 0f);
+            }
+
             spriteBatch.Draw(texture, NPC.Center - screenPos, NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, SpriteEffects.None, 0);
+
             return false;
         }
     }
