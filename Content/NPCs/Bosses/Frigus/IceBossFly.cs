@@ -97,6 +97,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
+
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
             NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
@@ -119,11 +120,13 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(NPC.dontTakeDamage);
+            writer.Write(NPC.localAI[0]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             NPC.dontTakeDamage = reader.ReadBoolean();
+            NPC.localAI[0] = reader.ReadSingle();
         }
 
         public override void AI()
