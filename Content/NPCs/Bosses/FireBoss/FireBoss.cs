@@ -64,7 +64,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         {
             NPC.boss = true;
             NPC.lifeMax = 42000;
-            NPC.defense = 30;
+            NPC.defense = 56;
             NPC.Size = new(60);
             NPC.scale = 2.5f;
             NPC.knockBackResist = 0f;
@@ -271,9 +271,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public void StayAbove()
         {
             NPC.TargetClosest();
-            Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 12f;
+            Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 20f;
             NPC.rotation = (Player.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
-            //NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
             NPC.SimpleFlyMovement(newPosition, 0.5f);
 
             if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 30f)
@@ -311,8 +310,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public void SpinState()
         {
             NPC.TargetClosest();
-            Vector2 npcVel = Vector2.Normalize(Player.Center + Vector2.One * 200f - NPC.Center) * 8f;
-            NPC.SimpleFlyMovement(npcVel, 0.5f);
+            Vector2 npcVel = Vector2.Normalize(Player.Center + Vector2.One * 200f - NPC.Center) * 12f;
+            NPC.SimpleFlyMovement(npcVel, 0.25f);
             NPC.rotation = NPC.velocity.X * 0.05f;
             NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
             
@@ -334,6 +333,11 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 {
                     Vector2 newVelocity = (Vector2.UnitX * 16f).RotatedBy(i * MathHelper.TwoPi / 6f);
                     Vector2 newPosition = Main.rand.NextVector2Circular(500f, 500f);
+
+                    if (Vector2.Distance(newPosition, Player.Center) < 100f)
+                    {
+                        newPosition *= 1.5f;
+                    }
 
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center - newPosition * 2f, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(33f, 38f), 0f, Main.myPlayer);
                 }
