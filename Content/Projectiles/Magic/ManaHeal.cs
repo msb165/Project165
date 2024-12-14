@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 
-namespace Project165.Content.Items.Weapons.Magic
+namespace Project165.Content.Projectiles.Magic
 {
     internal class ManaHeal : ModProjectile
     {
@@ -16,7 +16,7 @@ namespace Project165.Content.Items.Weapons.Magic
             Projectile.aiStyle = -1;
             Projectile.tileCollide = false;
             Projectile.extraUpdates = 10;
-            Projectile.ignoreWater = true;            
+            Projectile.ignoreWater = true;
         }
 
         Player Owner => Main.player[(int)Projectile.ai[0]];
@@ -26,7 +26,7 @@ namespace Project165.Content.Items.Weapons.Magic
             float moveSpeed = 4f;
             Vector2 playerProjDistance = Owner.Center - Projectile.Center;
             float playerProjDist = playerProjDistance.Length();
-            
+
             if (playerProjDist < 50f && Projectile.Hitbox.Intersects(Owner.Hitbox))
             {
                 if (Projectile.owner == Main.myPlayer && !Main.player[Main.myPlayer].moonLeech)

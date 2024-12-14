@@ -5,6 +5,8 @@ using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
 using Project165.Content.Dusts;
 using Project165.Content.Projectiles.Ranged;
+using System;
+using Project165.Utilites;
 
 namespace Project165.Content.Items.Weapons.Ranged
 {
@@ -64,6 +66,12 @@ namespace Project165.Content.Items.Weapons.Ranged
             }
 
             return false;
+        }
+
+
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
+        {
+            Project165Utils.SmoothHoldStyle(player);
         }
 
         public override Vector2? HoldoutOffset() => new(-1.25f);

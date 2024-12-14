@@ -24,6 +24,13 @@ namespace Project165.Content.Items.SummonItems
             CreateRecipe()
                 .AddIngredient(ModContent.ItemType<ShadowGel>(), 20)
                 .AddIngredient(ItemID.LihzahrdPowerCell, 1)
+                .AddIngredient(ItemID.WormFood)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
+            CreateRecipe()
+                .AddIngredient(ModContent.ItemType<ShadowGel>(), 20)
+                .AddIngredient(ItemID.LihzahrdPowerCell, 1)
+                .AddIngredient(ItemID.BloodySpine)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }

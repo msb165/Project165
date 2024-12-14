@@ -40,6 +40,7 @@ namespace Project165.Content.Projectiles.Melee
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.alpha += Projectile.timeLeft;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -51,8 +52,8 @@ namespace Project165.Content.Projectiles.Melee
         {
             for (int i = 0; i < 8; i++)
             {
-                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0f, 0f, 100, Color.DarkSlateBlue, 0.75f);
-                dust.velocity *= 4f;
+                //Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0f, 0f, 100, Color.DarkSlateBlue, 0.75f);
+                //dust.velocity *= 4f;
             }
         }
 
@@ -60,16 +61,17 @@ namespace Project165.Content.Projectiles.Melee
         {
             Texture2D texture = TextureAssets.Extra[98].Value;
             SpriteBatch spriteBatch = Main.spriteBatch;
-            Color drawColorTrail = Color.DarkSlateBlue with { A = 0 };
+            Color drawColor = new Color(180, 80, 255, 0);
+            Color drawColorTrail = drawColor;
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 drawColorTrail *= 0.98f;
                 spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail, Projectile.rotation, texture.Size() / 2, Projectile.scale - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
-                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail * 0.35f, Projectile.rotation, texture.Size() / 2, (Projectile.scale * 1.5f) - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail * 0.125f, Projectile.rotation, texture.Size() / 2, (Projectile.scale * 1.5f) - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
             }
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkSlateBlue with { A = 0 } * 0.5f, Projectile.rotation, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
+            //spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, drawColor, Projectile.rotation, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
             return false;
         }
     }

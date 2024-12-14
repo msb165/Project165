@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Project165.Utilites;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -44,7 +45,7 @@ namespace Project165.Content.Projectiles.Summon
         public override void PostAI()
         {
             Projectile.rotation = Projectile.velocity.X * 0.05f;
-            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.CorruptSpray);
+            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, Alpha:220, Scale:2f);
             dust.velocity *= 0.5f;
             dust.noGravity = true;
         }
@@ -55,15 +56,12 @@ namespace Project165.Content.Projectiles.Summon
             return true;
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity)
-        {
-            return false;
-        }
+        public override bool OnTileCollide(Vector2 oldVelocity) => false;
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/RoquefortiExtra");
+            Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "RoquefortiExtra");
             Color drawColor = Color.White * Projectile.Opacity;
             Color drawColorThing = Color.Red with { A = 0, B = 255 };
             Color drawColorTrail = drawColor with { R = 200, B = 255 };
@@ -72,7 +70,7 @@ namespace Project165.Content.Projectiles.Summon
             int frameHeight = texture.Height / Main.projFrames[Type];
             int startY = frameHeight * Projectile.frame;
 
-            Rectangle sourceRectangle = new(0, startY, texture.Width, frameHeight );
+            Rectangle sourceRectangle = new(0, startY, texture.Width, frameHeight);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {

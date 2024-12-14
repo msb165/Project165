@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Project165.Content.Dusts;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -56,7 +57,7 @@ namespace Project165.Content.Projectiles.Melee
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
-                trailColor *= 0.8f;
+                trailColor *= 0.85f;
                 Main.spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), trailColor, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             }
 

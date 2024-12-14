@@ -47,10 +47,8 @@ namespace Project165.Content.Projectiles.Ranged
                 dust.position = Projectile.Center - Projectile.velocity / 10f * i + spinPosition;
                 dust.noGravity = true;
                 Vector2 spinPosition2 = new Vector2(10f, -40f).RotatedBy(Projectile.velocity.ToRotation());
-                Dust dust2 = Dust.NewDustDirect(Projectile.position, 0, 0, DustID.IceTorch, 0, 0, 100, default, 1.5f);
-                dust2.velocity *= 0.5f;
+                Dust dust2 = Dust.CloneDust(dust);
                 dust2.position = Projectile.Center - Projectile.velocity / 10f * i + spinPosition2;
-                dust2.noGravity = true;
             }
         }
 

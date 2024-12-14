@@ -89,7 +89,7 @@ namespace Project165.Content.Projectiles.Melee
             if (AITimer % 5f == 0f && Projectile.owner == Main.myPlayer)
             {
                 float speedX = MathF.Sign(Projectile.velocity.X) + Main.rand.NextFloat(0.1f, 1f) * MathF.Sign(Projectile.velocity.X);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Player.Center + new Vector2(Projectile.velocity.X * 10f, -250f), new(speedX, 2f), ModContent.ProjectileType<ShadowSlash>(), (int)(Projectile.damage * 1.3f), Projectile.knockBack * 2f, Projectile.owner, 0f, 1f);
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Player.Center + new Vector2(Projectile.velocity.X * 10f, -250f), new(speedX, 2f), ModContent.ProjectileType<ShadowSlash>(), (int)(Projectile.damage * 1.125f), Projectile.knockBack * 2f, Projectile.owner, 0f, 1f);
             }
 
             if (AITimer > 14f && Projectile.scale > 0.5f)

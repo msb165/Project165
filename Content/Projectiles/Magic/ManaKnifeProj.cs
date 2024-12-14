@@ -38,7 +38,7 @@ namespace Project165.Content.Projectiles.Magic
             Lighting.AddLight(Projectile.Center, 0.1f, 0.1f, 0.5f);
             if (Main.rand.NextBool(2))
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 100, Color.SkyBlue, 0.75f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Alpha:100, newColor:Color.SkyBlue, Scale:0.75f);
             }
         }
 

@@ -40,14 +40,13 @@ namespace Project165.Content.Projectiles.Melee
                 Projectile.ai[1] += 1f;
                 if (Projectile.ai[1] % 8f == 0 && Projectile.owner == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.position, -Vector2.UnitY * 8f, ProjectileID.NorthPoleSnowflake, Projectile.damage / 4, Projectile.knockBack, Owner.whoAmI, Main.rand.Next(3));
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.position, (Vector2.UnitY * 8f * -Projectile.direction).RotatedBy(Projectile.velocity.ToRotation()), ProjectileID.NorthPoleSnowflake, Projectile.damage / 4, Projectile.knockBack, Owner.whoAmI, Main.rand.Next(3));
                 }
 
                 if (Projectile.ai[1] >= maxTime)
                 {
                     Projectile.ai[0] = 1f;
                     Projectile.ai[1] = 0f;
-                    Projectile.tileCollide = false;
                     Projectile.netUpdate = true;
                 }
             }
@@ -78,13 +77,17 @@ namespace Project165.Content.Projectiles.Melee
             Vector2 dustPosition = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 16f;
             Vector2 dustVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * 0.33f + Projectile.velocity / 4f;
 
-            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 1.25f);
+            Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan);
+            iceDust.scale = 1.25f;
+            iceDust.frame.Y = 10 * 3;
             iceDust.position = dustPosition;
             iceDust.noGravity = true;
             iceDust.velocity = dustVelocity;
             iceDust.position += dustVelocity;
 
-            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 1.25f);
+            Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan);
+            iceDust2.scale = 1.25f;
+            iceDust2.frame.Y = 10 * 3;
             iceDust2.position = dustPosition;
             iceDust2.noGravity = true;
             iceDust2.velocity = -dustVelocity;
@@ -109,6 +112,7 @@ namespace Project165.Content.Projectiles.Melee
             }
 
             Projectile.ai[0] = 1f;
+            Projectile.tileCollide = false;
             if (Projectile.velocity.X != Projectile.oldVelocity.X)
             {
                 Projectile.velocity.X = -oldVelocity.X;

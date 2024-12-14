@@ -26,7 +26,7 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 250;
+            Projectile.timeLeft = 200;
             Projectile.DamageType = DamageClass.Magic;
         }
 
@@ -61,6 +61,16 @@ namespace Project165.Content.Projectiles.Hostile
             }
         }
 
+        public override void OnKill(int timeLeft)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.OrangeTorch, Scale: 3f);
+                dust.velocity *= 4f;
+                dust.noGravity = true;
+            }
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.OnFire, 150);
@@ -69,21 +79,25 @@ namespace Project165.Content.Projectiles.Hostile
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Main.instance.LoadProjectile(ProjectileID.StardustTowerMark);
+            Texture2D textureGlow = TextureAssets.Projectile[ProjectileID.StardustTowerMark].Value;
 
             int frameHeight = texture.Height / Main.projFrames[Type];
-
             int startY = frameHeight * Projectile.frame;
 
             Color drawColor = Color.White * Projectile.Opacity;
             Color trailColor = drawColor;
+            Color glowColor = Color.Orange with { A = 0 } * Projectile.Opacity;
             Rectangle sourceRectangle = new(0, startY, texture.Width, frameHeight);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 Vector2 trailPos = Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition;
                 trailColor *= 0.8f;
-                Main.EntitySpriteDraw(texture, trailPos, sourceRectangle, trailColor, Projectile.rotation, sourceRectangle.Size() / 2, Projectile.scale - i / (float)Projectile.oldPos.Length, SpriteEffects.None);
-                Main.EntitySpriteDraw(texture, trailPos, sourceRectangle, trailColor * 0.2f, Projectile.rotation, sourceRectangle.Size() / 2, (Projectile.scale * 1.75f) - i / (float)Projectile.oldPos.Length, SpriteEffects.None);
+                glowColor *= 0.8f;
+                Main.EntitySpriteDraw(textureGlow, trailPos, null, glowColor * 0.5f, Projectile.rotation, textureGlow.Size() / 2, 0.5f, SpriteEffects.None);
+                Main.EntitySpriteDraw(texture, trailPos, sourceRectangle, trailColor, Projectile.rotation, sourceRectangle.Size() / 2, Utils.GetLerpValue(Projectile.scale, 0f, i / (float)Projectile.oldPos.Length, true), SpriteEffects.None);
+                //Main.EntitySpriteDraw(texture, trailPos, sourceRectangle, trailColor * 0.2f, Projectile.rotation, sourceRectangle.Size() / 2, Utils.GetLerpValue(Projectile.scale, 0f, i / (float)Projectile.oldPos.Length, true), SpriteEffects.None);
             }
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, drawColor, Projectile.rotation, sourceRectangle.Size() / 2, Projectile.scale, SpriteEffects.None);

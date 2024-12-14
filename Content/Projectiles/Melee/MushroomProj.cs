@@ -35,6 +35,6 @@ namespace Project165.Content.Projectiles.Melee
                 }
             }
         }
-        public override Color? GetAlpha(Color lightColor) => new Color(255 - Projectile.alpha, 255 - Projectile.alpha, 255 - Projectile.alpha, 0);
+        public override Color? GetAlpha(Color lightColor) => Color.White with { A = 0 } * Projectile.Opacity;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Project165.Utilites;
 using System;
 using System.IO;
 using Terraria;
@@ -13,8 +14,8 @@ namespace Project165.Content.Projectiles.Melee
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 400f;
-            ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 16.5f;
+            ProjectileID.Sets.YoyosMaximumRange[Type] = 400f;
+            ProjectileID.Sets.YoyosTopSpeed[Type] = 16.5f;
         }
 
         public override void SetDefaults()
@@ -45,11 +46,10 @@ namespace Project165.Content.Projectiles.Melee
             target.AddBuff(BuffID.ShadowFlame, 300);
         }
 
-
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/RoquefortiExtra");
+            Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "RoquefortiExtra");
 
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.White, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             Main.spriteBatch.Draw(extraThingTexture, Projectile.Center - Main.screenPosition, extraThingTexture.Frame(), Color.Purple with { A = 0 }, Projectile.rotation, extraThingTexture.Size() / 2, 0.75f, SpriteEffects.None, 0);

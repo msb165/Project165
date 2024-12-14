@@ -5,7 +5,6 @@ using Terraria.ModLoader;
 using Terraria.GameContent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Project165.Content.Dusts;
 
 namespace Project165.Content.Projectiles.Ranged
 {
@@ -13,7 +12,7 @@ namespace Project165.Content.Projectiles.Ranged
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Type] = 20;
+            ProjectileID.Sets.TrailCacheLength[Type] = 60;
             ProjectileID.Sets.TrailingMode[Type] = 2;
         }
 
@@ -48,13 +47,12 @@ namespace Project165.Content.Projectiles.Ranged
 
             if (Projectile.alpha < 127)
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    Dust trailDust = Dust.NewDustDirect(Projectile.Center, 1, 1, ModContent.DustType<GlowDust>(), 0, 0, 100, new(100, 100, 255), 0.25f);
-                    trailDust.position = Projectile.Center - Projectile.velocity / 10f * i;
-                    trailDust.noGravity = true;
-                    trailDust.velocity *= 0f;
-                }
+                //Dust trailDust = Dust.NewDustDirect(Projectile.Center, 1, 1, DustID.BlueTorch, newColor:new(100, 100, 255), Scale:1f);
+                Dust trailDust = Dust.NewDustDirect(Projectile.Center, 1, 1, DustID.MushroomTorch, Scale: 1f);
+                trailDust.scale = 1f;
+                trailDust.position = Projectile.Center - Projectile.velocity / 10f;
+                trailDust.noGravity = true;
+                trailDust.velocity *= 2f;
             }
         }
 
@@ -63,9 +61,9 @@ namespace Project165.Content.Projectiles.Ranged
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
             for (int i = 0; i < 20; i++)
             {
-                Dust trailDust = Dust.NewDustDirect(Projectile.position, 1, 1, ModContent.DustType<GlowDust>(), 0, 0, 100, new(100, 100, 255), 1f);
+                Dust trailDust = Dust.NewDustDirect(Projectile.position, 1, 1, DustID.MushroomTorch, Scale: 1.5f);
                 trailDust.noGravity = true;
-                trailDust.velocity *= 4f;
+                trailDust.velocity *= 8f;
             }
 
             Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
@@ -73,20 +71,22 @@ namespace Project165.Content.Projectiles.Ranged
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Main.instance.LoadProjectile(ProjectileID.FairyQueenMagicItemShot);
+            //Texture2D texture = TextureAssets.Projectile[ProjectileID.FairyQueenMagicItemShot].Value;
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Texture2D trailTexture = TextureAssets.Extra[ExtrasID.SharpTears].Value;
-            Color drawColor = Projectile.GetAlpha(lightColor);
-            Color drawColorTrail = Color.SkyBlue with { A = 64 };
+            float rotation = Projectile.rotation + MathHelper.PiOver2;
+            Vector2 drawOrigin = new Vector2(texture.Width / 2, texture.Height / 8);
+            Color drawColor = Color.DeepSkyBlue with { A = 0 } * Projectile.Opacity;
+            Color drawColorTrail = drawColor;
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
 
-            /*for (int i = 0; i < Projectile.oldPos.Length; i++)
+            for (int i = 0; i < 10; i++)
             {
-                Vector2 newDrawPos = Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition;
-                drawColorTrail *= 0.9f;
-                Main.EntitySpriteDraw(trailTexture, newDrawPos, null, drawColorTrail, Projectile.rotation + MathHelper.PiOver2, trailTexture.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None, 0);
-            }*/
+                drawColorTrail *= 0.75f;
+                Main.EntitySpriteDraw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, null, drawColorTrail, rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+            }
 
-            Main.EntitySpriteDraw(texture, drawPos, null, drawColor, Projectile.rotation, texture.Size(), Projectile.scale, SpriteEffects.None, 0);
+            //Main.EntitySpriteDraw(texture, drawPos, null, drawColor, rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
     }

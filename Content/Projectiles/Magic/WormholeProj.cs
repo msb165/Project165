@@ -18,13 +18,12 @@ namespace Project165.Content.Projectiles.Magic
             Projectile.Size = new(30);
             Projectile.DamageType = DamageClass.Default;
             Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = true;
             Projectile.timeLeft = 500;
             Projectile.penetrate = -1;
         }
 
         public float maxTime = 500;
-
         public float AITimer
         {
             get => Projectile.ai[0];
@@ -52,6 +51,7 @@ namespace Project165.Content.Projectiles.Magic
             if (Projectile.timeLeft <= maxTime * 0.125f && Projectile.scale > 0f)
             {
                 Projectile.scale -= 0.0125f;
+                Projectile.alpha += 4;
             }
 
             Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X, Projectile.velocity.Y, 0, Color.LightPink, 0.5f);
@@ -72,21 +72,35 @@ namespace Project165.Content.Projectiles.Magic
             }
         }
 
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.velocity.X != oldVelocity.X)
+            {
+                Projectile.velocity.X = -oldVelocity.X;
+            }
+            if (Projectile.velocity.Y != oldVelocity.Y)
+            {
+                Projectile.velocity.Y = -oldVelocity.Y;
+            }
+            return false;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Texture2D texture2 = (Texture2D)ModContent.Request<Texture2D>($"Terraria/Images/Projectile_{ProjectileID.StardustTowerMark}");
+            Main.instance.LoadProjectile(ProjectileID.StardustTowerMark);
+            Texture2D glowTexture = TextureAssets.Projectile[ProjectileID.StardustTowerMark].Value;
 
             // Shadow at the back
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Black * 0.45f, Projectile.rotation, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Black * 0.45f * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
             // Subtle glow
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Blue with { A = 0 } * 0.2f, -Projectile.rotation * 0.5f, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Purple with { A = 0 }, -Projectile.rotation * 0.75f, texture.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0);
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Purple with { A = 0 }, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Blue with { A = 0 } * 0.2f * Projectile.Opacity, -Projectile.rotation * 0.5f, texture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Purple with { A = 0 } * Projectile.Opacity, -Projectile.rotation * 0.75f, texture.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.Purple with { A = 0 } * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             // Glow in the middle
-            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.White with { A = 0 } * 0.75f, Projectile.rotation, texture.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Color.White with { A = 0 } * 0.75f * Projectile.Opacity, Projectile.rotation, texture.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None, 0);
             // Glow around the thing
-            Main.spriteBatch.Draw(texture2, Projectile.Center - Main.screenPosition, texture2.Frame(), new Color(100, 100, 255, 0) * 0.35f, Projectile.rotation, texture2.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);            
+            Main.spriteBatch.Draw(glowTexture, Projectile.Center - Main.screenPosition, glowTexture.Frame(), new Color(100, 100, 255, 0) * 0.35f * Projectile.Opacity, Projectile.rotation, glowTexture.Size() / 2, Projectile.scale * 2f, SpriteEffects.None, 0);            
             return false;
         }
     }

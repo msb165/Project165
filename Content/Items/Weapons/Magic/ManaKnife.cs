@@ -1,4 +1,7 @@
-﻿using Project165.Content.Projectiles.Magic;
+﻿using Microsoft.Xna.Framework;
+using Project165.Content.Projectiles.Magic;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -25,6 +28,12 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.rare = ItemRarityID.Yellow;
+        }
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            Projectile.NewProjectile(source, position + velocity, velocity, type, damage, knockback, player.whoAmI);
+            return false;
         }
 
         public override void AddRecipes()

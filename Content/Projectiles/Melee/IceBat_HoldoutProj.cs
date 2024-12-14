@@ -59,14 +59,6 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.extraUpdates = 1;
         }
 
-        private float EaseInBack(float value)
-        {
-            float c1 = 1.70158f;
-            float c3 = c1 + 1;
-
-            return c3 * value * value * value - c1 * value * value;
-        }
-
         public Player Player => Main.player[Projectile.owner];
 
         public float defaultScale = 2f;
@@ -85,12 +77,11 @@ namespace Project165.Content.Projectiles.Melee
             Projectile.scale = defaultScale + MathF.Sin(AITimer) * 0.5f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.SmoothStep(projRotation * Player.direction, -projRotation * Player.direction, AITimer * 0.3f);
             Projectile.Center = Player.Center + Projectile.rotation.ToRotationVector2() * 32f * Projectile.scale;
-            Lighting.AddLight(Projectile.position, 0.5f, 0.8f, 1f);
-
+            Lighting.AddLight(Projectile.position, Color.LightCyan.ToVector3());
 
             for (int i = 0; i < 2; i++)
             {
-                Dust.NewDustDirect(Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 8, 8, ModContent.DustType<CloudDust>(), 0, 0, 0, default, 0.5f);
+                Dust.NewDustDirect(Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 8, 8, ModContent.DustType<CloudDust>(), Scale:0.5f);
             }
 
             SetPlayerValues();
@@ -98,14 +89,16 @@ namespace Project165.Content.Projectiles.Melee
 
         public void SetPlayerValues()
         {
+            float rotation = Projectile.rotation - MathHelper.PiOver2;
             Player.heldProj = Projectile.whoAmI;
+            Player.itemRotation = Projectile.rotation;
+            Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, rotation);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Frostburn2, 300);
             target.AddBuff(BuffID.Weak, 300);
-
             if (Main.myPlayer == Projectile.owner)
             {
                 Projectile.NewProjectileDirect(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<BlueFire>(), Projectile.damage / 2, 0f, Projectile.owner);

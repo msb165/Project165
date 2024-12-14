@@ -73,6 +73,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.boss = true;
+            NPC.scale = 1.25f;
             NPC.value = 120000f;
             NPC.npcSlots = 5f;
             NPC.aiStyle = -1;
@@ -452,8 +453,9 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             Texture2D texture = TextureAssets.Npc[Type].Value;
             SpriteEffects spriteEffects = SpriteEffects.None;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
-            Color npcDrawColorTrail = new(255 - NPC.alpha, 255 - NPC.alpha, 255 - NPC.alpha, 0);
             Color npcDrawColor = Color.White * NPC.Opacity;
+            Color npcDrawColorTrail = npcDrawColor with { A = 0 };
+
 
             if (NPC.spriteDirection == -1)
             {

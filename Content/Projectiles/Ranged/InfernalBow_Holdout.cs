@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Project165.Content.Dusts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,11 +77,20 @@ namespace Project165.Content.Projectiles.Ranged
 
                     SoundEngine.PlaySound(SoundID.Item5, Projectile.position);
 
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVelocity, projVelocity, shootType, damage, knockback, Projectile.owner);
-
-                    if (Main.rand.NextBool(2))
+                    for (int i = 0; i < 15; i++)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVelocity, projVelocity, ProjectileID.JestersArrow, damage, knockback, Projectile.owner);
+                        Vector2 newVel = Vector2.UnitY.RotatedBy(i * MathHelper.TwoPi / 15f);
+                        Vector2 spawnPos = Projectile.Center + Projectile.rotation.ToRotationVector2() * 32f;
+                        Dust dust = Dust.NewDustPerfect(spawnPos, ModContent.DustType<GlowDust>(), newColor: Color.Orange, Scale: 0.75f);
+                        dust.noGravity = true;
+                        dust.velocity = newVel;
+                    }
+
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVelocity * 2f, projVelocity, shootType, damage, knockback, Projectile.owner);
+
+                    if (Main.rand.NextBool(3))
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVelocity * 3f, projVelocity, ModContent.ProjectileType<InfernalArrow>(), damage, knockback, Projectile.owner);
                     }
                 }
                 else
@@ -88,8 +98,6 @@ namespace Project165.Content.Projectiles.Ranged
                     Projectile.Kill();
                 }
             }
-
-
 
             SetProjectileValues();
             SetPlayerValues();            
@@ -114,7 +122,7 @@ namespace Project165.Content.Projectiles.Ranged
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
-            Vector2 drawOrigin = new Vector2(0, texture.Height / 2);
+            Vector2 drawOrigin = new(0, texture.Height / 2);
 
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, spriteEffects, 0);
             return false;

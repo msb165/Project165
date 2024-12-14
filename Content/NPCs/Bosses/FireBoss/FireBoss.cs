@@ -1,16 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
+using Project165.Content.Items.Weapons.Melee;
+using Project165.Content.Items.Weapons.Ranged;
 using Project165.Content.Projectiles.Hostile;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static System.Formats.Asn1.AsnWriter;
-using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace Project165.Content.NPCs.Bosses.FireBoss
 {
@@ -64,7 +65,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         {
             NPC.boss = true;
             NPC.lifeMax = 42000;
-            NPC.defense = 56;
+            NPC.defense = 100;
             NPC.Size = new(60);
             NPC.scale = 2.5f;
             NPC.knockBackResist = 0f;
@@ -247,8 +248,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 if (ShootTimer >= timeToShoot && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     ShootTimer = 0f;
-                    float newSpeed = 12f;
-                    Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * newSpeed;
+                    Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 12f;
                     for (int i = 0; i < 3; i++)
                     {
                         newVelocity *= Main.rand.NextFloat(0.9f, 1.1f);
@@ -309,14 +309,15 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public void SpinState()
         {
+            int timeToShoot = 80;
+            double difficultyValue = Main.expertMode ? 0.3 : 0.5;
+
             NPC.TargetClosest();
             Vector2 npcVel = Vector2.Normalize(Player.Center + Vector2.One * 200f - NPC.Center) * 12f;
             NPC.SimpleFlyMovement(npcVel, 0.25f);
             NPC.rotation = NPC.velocity.X * 0.05f;
             NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
             
-            int timeToShoot = 80;
-            double difficultyValue = Main.expertMode ? 0.3 : 0.5;
             if (NPC.life < NPC.lifeMax * difficultyValue)
             {
                 timeToShoot -= 8;
@@ -331,15 +332,21 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 ShootTimer = 0f;
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 newVelocity = (Vector2.UnitX * 16f).RotatedBy(i * MathHelper.TwoPi / 6f);
-                    Vector2 newPosition = Main.rand.NextVector2Circular(500f, 500f);
+                    //Vector2 newVelocity = (Vector2.UnitX * 16f).RotatedBy(i * MathHelper.TwoPi / 6f);
+                    //Vector2 newPosition = Main.rand.NextVector2Circular(500f, 500f);
+                    Vector2 newPosition = new(Main.screenPosition.X, Main.screenPosition.Y + Main.rand.Next(Main.screenHeight));
+                    if (Main.rand.NextBool(2))
+                    {
+                        newPosition.X += Main.screenWidth;
+                    }
+                    Vector2 newVelocity = Vector2.Normalize(Player.Center - newPosition) * 8f;
 
                     if (Vector2.Distance(newPosition, Player.Center) < 100f)
                     {
-                        newPosition *= 1.5f;
+                        //newPosition *= 1.5f;
                     }
 
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center - newPosition * 2f, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(33f, 38f), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), newPosition, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(33f, 38f), 0f, Main.myPlayer);
                 }
             }
             AITimer++;
@@ -354,7 +361,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            base.ModifyNPCLoot(npcLoot);
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InfernalBow>(), 3));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SuperFireSword>(), 3));
         }
 
         public override void OnKill()

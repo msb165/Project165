@@ -45,14 +45,16 @@ namespace Project165.Content.Projectiles.Melee
         {
             float velocityToRotation = Projectile.velocity.ToRotation();
             float velocityLength = Projectile.velocity.Length();
+            float itemAnimation = Player.itemAnimation / (float)Player.itemAnimationMax;
+            float completionTime = 1f - itemAnimation;
             Vector2 projPos = Player.RotatedRelativePoint(Player.MountedCenter);
 
             Projectile.Center = projPos;
             Projectile.direction = Projectile.spriteDirection = Player.direction;
 
-            Vector2 spinningpoint = new Vector2(0.4f, 0.9f).RotatedBy(MathHelper.PiOver4 * AITimer * 0.34f * -Player.direction + 64f * Player.direction) * new Vector2(velocityLength, AITimer);
-            Projectile.position += (Projectile.velocity * 4f) + spinningpoint.RotatedBy(velocityToRotation) + new Vector2(velocityLength + 44f, 0f).RotatedBy(velocityToRotation);
-            Vector2 target = projPos + spinningpoint.RotatedBy(velocityToRotation) + new Vector2(velocityLength + 64f, 0f).RotatedBy(velocityToRotation);
+            Vector2 spinningpoint = Vector2.UnitX.RotatedBy(MathHelper.Pi + completionTime * MathHelper.TwoPi) * new Vector2(velocityLength, AITimer);
+            Projectile.position += spinningpoint.RotatedBy(velocityToRotation) + new Vector2(velocityLength + 22f, 0f).RotatedBy(velocityToRotation);
+            Vector2 target = projPos + spinningpoint.RotatedBy(velocityToRotation) + (Vector2.UnitX * (velocityLength + 62f)).RotatedBy(velocityToRotation);
 
             Projectile.rotation = projPos.AngleTo(target) + MathHelper.PiOver4 + MathHelper.PiOver2 * Player.direction;
             if (Projectile.spriteDirection == -1)
@@ -67,24 +69,26 @@ namespace Project165.Content.Projectiles.Melee
                 Projectile.netUpdate = true;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * AITimer, Projectile.velocity * 0.75f, ModContent.ProjectileType<ShadowBolt>(), (int)(Projectile.damage * 1.5f), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * AITimer, Projectile.velocity * 0.3f, ModContent.ProjectileType<ShadowBolt>(), (int)(Projectile.damage * 1.5f), 0f, Projectile.owner);
                 }
             }
 
-            if (AITimer >= 20f)
+            if (Player.whoAmI == Main.myPlayer && Player.itemAnimation <= 2)
             {
                 Projectile.Kill();
+                Player.reuseDelay = 2;
             }
 
             SetPlayerValues();
-            Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, Color.DarkSlateBlue, 1.25f);
+            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 100, Color.DarkSlateBlue, 1.25f);
+            dust.position = Projectile.Center + Projectile.velocity;
+            dust.velocity *= 0f;
         }
  
         public void SetPlayerValues()
         {
             Player.heldProj = Projectile.whoAmI;
-            Player.SetDummyItemTime(2);
-            //Player.MatchItemTimeToItemAnimation();
+            //Player.SetDummyItemTime(2);
             Player.direction = Player.direction;
             Player.ChangeDir((Projectile.velocity.X > 0f).ToDirectionInt());
         }
@@ -99,9 +103,8 @@ namespace Project165.Content.Projectiles.Melee
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             SpriteBatch spriteBatch = Main.spriteBatch;
 
-
             spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, Vector2.Zero, Projectile.scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkSlateBlue with { A = 0 }, Projectile.rotation, Vector2.Zero, 1.35f, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.DarkSlateBlue with { A = 100 }, Projectile.rotation, Vector2.Zero, 1.35f, SpriteEffects.None, 0);
             return false;
         }
     }
