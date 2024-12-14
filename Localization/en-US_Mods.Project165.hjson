@@ -25,7 +25,18 @@ Projectiles: {
 	ShroomiteBullet.DisplayName: Shroomite Bullet
 	BlueFire.DisplayName: Blue Fire
 	IceShockWave.DisplayName: Ice Shock Wave
-	FireBossProj.DisplayName: Fire
+	FireBossProj.DisplayName: Raging Fire
+	FireBossProjHoming.DisplayName: Fire Boss Proj Homing
+	InfernalBow.DisplayName: Infernal Bow
+	GolemArrow.DisplayName: Golem Arrow
+	InfernalArrow.DisplayName: Infernal Arrow
+	InfernalFire.DisplayName: Infernal Fire
+	SuperFireSwordHoldoutProj.DisplayName: Super Fire Sword Holdout Proj
+	SuperFire.DisplayName: Super Fire
+	AdamantiteBolt.DisplayName: Adamantite Bolt
+	AdamantiteEnergy.DisplayName: Adamantite Energy
+	ShroomiteMinigun.DisplayName: Shroomite Minigun
+	LuminiteShortProj.DisplayName: Luminite Short Proj
 }
 
 Items: {
@@ -145,6 +156,41 @@ Items: {
 
 	ShroomiteBullet: {
 		DisplayName: Shroomite Bullet
+		Tooltip: ""
+	}
+
+	InfernalBow: {
+		DisplayName: Infernal Bow
+		Tooltip: ""
+	}
+
+	GolemBow: {
+		DisplayName: Golem Bow
+		Tooltip: ""
+	}
+
+	MeteorMinionStaff: {
+		DisplayName: Meteor Minion Staff
+		Tooltip: ""
+	}
+
+	SuperFireSword: {
+		DisplayName: Super Fire Sword
+		Tooltip: ""
+	}
+
+	AdamantiteStaff: {
+		DisplayName: Adamantite Staff
+		Tooltip: ""
+	}
+
+	ShroomiteMinigun: {
+		DisplayName: Shroomite Minigun
+		Tooltip: ""
+	}
+
+	LuminiteShortsword: {
+		DisplayName: Radiance
 		Tooltip: ""
 	}
 }
