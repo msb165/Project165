@@ -6,11 +6,9 @@ using Project165.Content.Items.Weapons.Melee;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using System;
-using rail;
 using Terraria.Audio;
 using Project165.Content.Dusts;
-using Terraria.Graphics.Shaders;
-using Terraria.Graphics;
+
 
 namespace Project165.Content.Projectiles.Melee
 {

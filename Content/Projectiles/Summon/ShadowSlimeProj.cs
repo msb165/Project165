@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Project165.Buffs;
 using Project165.Utilites;
 using Terraria;
 using Terraria.GameContent;
@@ -41,6 +42,31 @@ namespace Project165.Content.Projectiles.Summon
         }
 
         Player Player => Main.player[Projectile.owner];
+
+        public bool CheckActive(Player player)
+        {
+            if (player.dead || !player.active)
+            {
+                player.ClearBuff(ModContent.BuffType<ShadowMinionBuff>());
+                return false;
+            }
+
+            if (player.HasBuff(ModContent.BuffType<ShadowMinionBuff>()))
+            {
+                Projectile.timeLeft = 2;
+            }
+
+            return true;
+        }
+
+        public override bool PreAI()
+        {
+            if (!CheckActive(Player))
+            {
+                return false;
+            }
+            return true;
+        }
 
         public override void PostAI()
         {

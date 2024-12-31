@@ -14,7 +14,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.width = 36;
             Item.height = 36;
             Item.rare = ItemRarityID.Red;
-            Item.damage = 80;
+            Item.damage = 110;
             Item.crit = 10;
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.shoot = ModContent.ProjectileType<LuminiteShortProj>();
@@ -24,6 +24,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.useAnimation = 18;
             Item.useTime = 6;
             Item.knockBack = 4f;
+            Item.ArmorPenetration = 10;
             Item.autoReuse = false;
             Item.noMelee = true;
             Item.noUseGraphic = true;
