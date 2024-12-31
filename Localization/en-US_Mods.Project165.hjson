@@ -37,6 +37,7 @@ Projectiles: {
 	AdamantiteEnergy.DisplayName: Adamantite Energy
 	ShroomiteMinigun.DisplayName: Shroomite Minigun
 	LuminiteShortProj.DisplayName: Luminite Short Proj
+	JellyfishProj.DisplayName: Jellyfish Proj
 }
 
 Items: {
@@ -135,7 +136,7 @@ Items: {
 		Tooltip:
 			'''
 			Summons a sentry
-			An high speed machine gun that shoots high velocity bullets
+			A high speed machine gun that shoots high velocity bullets
 			'''
 	}
 
@@ -193,6 +194,11 @@ Items: {
 		DisplayName: Radiance
 		Tooltip: ""
 	}
+
+	JellyfishStaff: {
+		DisplayName: Jellyfish Staff
+		Tooltip: ""
+	}
 }
 
 NPCs: {
@@ -201,7 +207,6 @@ NPCs: {
 	DarkSlime.DisplayName: Dark Slime
 	ShadowSlime.DisplayName: Shadow Slime
 	FlyingIce.DisplayName: Flying Ice
-	Tortoise.DisplayName: Armed Tortoise
 	FireBoss.DisplayName: Raging Flame
 	ShadowMinion.DisplayName: Shadow Minion
 }
@@ -209,4 +214,21 @@ NPCs: {
 Tiles: {
 	SlimeAltar.MapEntry: Slime Altar
 	ShadowSlimeBlock.MapEntry: Shadow Slime Block
+}
+
+Buffs: {
+	MoonFire: {
+		DisplayName: Lunar Fire
+		Description: Mods.Project165.Buffs.MoonFire.Description
+	}
+
+	ShadowMinionBuff: {
+		DisplayName: Shadow Minion Buff
+		Description: Mods.Project165.Buffs.ShadowMinionBuff.Description
+	}
+
+	JellyfishBuff: {
+		DisplayName: Jellyfish Buff
+		Description: Mods.Project165.Buffs.JellyfishBuff.Description
+	}
 }
