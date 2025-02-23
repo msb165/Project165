@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
+using Project165.Content.Items.TreasureBags;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Ranged;
 using Project165.Content.Projectiles.Hostile;
@@ -96,7 +97,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
+            NPC.lifeMax = (int)(NPC.lifeMax * 0.75f * balance);
             NPC.damage = (int)(NPC.damage * 0.6f);
         }
 
@@ -361,6 +362,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<FireBossBag>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InfernalBow>(), 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SuperFireSword>(), 3));
         }

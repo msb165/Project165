@@ -17,8 +17,8 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.channel = true;
             Item.useStyle = ItemUseStyleID.Shoot;
+            Item.UseSound = SoundID.Item1;
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.shoot = ModContent.ProjectileType<StellaRodHoldoutProj>();

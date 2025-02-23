@@ -98,7 +98,6 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
-
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
             NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
