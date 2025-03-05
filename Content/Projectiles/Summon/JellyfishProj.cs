@@ -18,6 +18,25 @@ namespace Project165.Content.Projectiles.Summon
     {
         public override string Texture => $"Terraria/Images/NPC_{NPCID.BlueJellyfish}";
 
+        public enum AIState : int
+        {
+            Idling = 0,
+            Returning = 1,
+            Attacking = 2
+        }
+
+        public AIState CurrentState
+        {
+            get => (AIState)Projectile.ai[0];
+            set => Projectile.ai[0] = (float)value;
+        }
+
+        public float AttackTargetTimer
+        {
+            get => Projectile.ai[1];
+            set => Projectile.ai[1] = value;
+        }
+
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 2;
@@ -40,8 +59,8 @@ namespace Project165.Content.Projectiles.Summon
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.friendly = true;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 12;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 40;
         }
 
         Player Player => Main.player[Projectile.owner];
@@ -65,8 +84,8 @@ namespace Project165.Content.Projectiles.Summon
 
         public void FindFrame()
         {
-            int projFrames = Projectile.ai[0] == 2f ? Main.projFrames[Type] : Main.projFrames[Type] - 3;
-
+            bool isAttacking = CurrentState is AIState.Attacking or AIState.Returning;
+            int projFrames = isAttacking ? Main.projFrames[Type] - 3 : Main.projFrames[Type];
             Projectile.frameCounter++;
             if (Projectile.frameCounter >= projFrames)
             {
@@ -76,7 +95,7 @@ namespace Project165.Content.Projectiles.Summon
             if (Projectile.frame >= projFrames)
             {
                 Projectile.frame = 0;
-                if (Projectile.ai[0] == 2f)
+                if (isAttacking)
                 {
                     Projectile.frame = 4;
                 }
@@ -92,220 +111,116 @@ namespace Project165.Content.Projectiles.Summon
 
             FindFrame();
 
+            switch (CurrentState)
+            {
+                case AIState.Idling:
+                    Idle();
+                    break;
+                case AIState.Returning:
+                    Return();
+                    break;
+                case AIState.Attacking:
+                    Attack();
+                    break;
+            }
+
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.spriteDirection = Projectile.direction;
+        }
 
-            float maxDistance = 2000f;
-            float maxPlayerDist = 1000f;
-            float maxPlrDistWithTarget = 1400f;
-            float num558 = 150f;
-            float acceleration = 0.1f;
-            for (int i = 0; i < Main.maxProjectiles; i++)
+        public void Idle()
+        {
+            Vector2 newSpeed = Player.Center - Projectile.Center - Vector2.UnitY * 60f;
+            float distance = newSpeed.Length();
+            float multiplier = 12f;
+            newSpeed.Normalize();
+
+            if (distance > 70f)
             {
-                if (i != Projectile.whoAmI && Main.projectile[i].active && Main.projectile[i].owner == Projectile.owner && Math.Abs(Projectile.position.X - Main.projectile[i].position.X) + Math.Abs(Projectile.position.Y - Main.projectile[i].position.Y) < Projectile.width)
-                {
-                    Projectile.velocity.X += acceleration * -(Projectile.position.X < Main.projectile[i].position.X).ToDirectionInt();
-                    Projectile.velocity.Y += acceleration * -(Projectile.position.Y < Main.projectile[i].position.Y).ToDirectionInt();
-                }
+                newSpeed *= multiplier;
+                Projectile.velocity = (Projectile.velocity * 40f + newSpeed) / 41f;
             }
-            bool isAttacking = false;
-            if (Projectile.ai[0] == 2f)
+            if (distance > 2000f)
             {
-                Projectile.ai[1]++;
-                Projectile.extraUpdates = 1;
-                if (Projectile.ai[1] > 60f)
-                {
-                    Projectile.ai[1] = 1f;
-                    Projectile.ai[0] = 0f;
-                    Projectile.extraUpdates = 0;
-                    Projectile.numUpdates = 0;
-                    Projectile.netUpdate = true;
-                }
-                else
-                {
-                    isAttacking = true;
-                }
-            }
-            if (isAttacking)
-            {
-                int dustType = DustID.Electric;
-                switch (JellyFishColor)
-                {
-                    case 0:
-                        dustType = DustID.Electric;
-                        break;
-                    case 1:
-                        dustType = DustID.GreenTorch;
-                        break;
-                    case 2:
-                        dustType = DustID.WitherLightning;
-                        break;
-                }
-                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustType);
-                dust.velocity *= 0.3f;
-                dust.position = Projectile.Center - Projectile.velocity / 10f;
-                dust.noGravity = true;
-                return;
-            }
-            Vector2 projPos = Projectile.position;
-            Vector2 targetVelocity = Vector2.Zero;
-            bool foundTarget = false;
-            NPC ownerMinionAttackTargetNPC = Projectile.OwnerMinionAttackTargetNPC;
-            if (ownerMinionAttackTargetNPC != null && ownerMinionAttackTargetNPC.CanBeChasedBy(this))
-            {
-                float targetDist = Vector2.Distance(ownerMinionAttackTargetNPC.Center, Projectile.Center);
-                float tripleMaxDist = maxDistance * 3f;
-                if (targetDist < tripleMaxDist && !foundTarget && Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, ownerMinionAttackTargetNPC.position, ownerMinionAttackTargetNPC.width, ownerMinionAttackTargetNPC.height))
-                {
-                    maxDistance = targetDist;
-                    projPos = ownerMinionAttackTargetNPC.Center;
-                    foundTarget = true;
-                }
-            }
-            if (!foundTarget)
-            {
-                for (int j = 0; j < Main.maxNPCs; j++)
-                {
-                    NPC target = Main.npc[j];
-                    if (target.CanBeChasedBy(this))
-                    {
-                        float distance = Vector2.Distance(target.Center, Projectile.Center);
-                        if (distance <= maxDistance && Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, target.position, target.width, target.height))
-                        {
-                            maxDistance = distance;
-                            projPos = target.Center;
-                            targetVelocity = target.velocity;
-                            foundTarget = true;
-                        }
-                    }
-                }
-            }
-            float projPlayerDist = maxPlayerDist;
-            if (foundTarget)
-            {
-                projPlayerDist = maxPlrDistWithTarget;
-            }
-            if (Vector2.Distance(Player.Center, Projectile.Center) > projPlayerDist)
-            {
-                Projectile.ai[0] = 1f;
-                Projectile.tileCollide = false;
+                Projectile.position = Player.Center - Vector2.UnitY * 60f;
                 Projectile.netUpdate = true;
             }
-            if (foundTarget && Projectile.ai[0] == 0f)
+
+            if (Projectile.velocity.Length() > multiplier)
             {
-                Vector2 newVelocity = Vector2.Normalize(projPos - Projectile.Center);
-                if (Vector2.Distance(projPos, Projectile.Center) > 200f)
-                {
-                    newVelocity *= 10f;
-                    Projectile.velocity = (Projectile.velocity * 40f + newVelocity) / 41f;
-                }
-                else
-                {
-                    newVelocity *= -4f;
-                    Projectile.velocity = (Projectile.velocity * 40f + newVelocity) / 41f;
-                }
+                Projectile.velocity *= 0.95f;
             }
-            else
+
+            int attackRange = 800;
+            int attackTarget = -1;
+            Projectile.Minion_FindTargetInRange(attackRange, ref attackTarget, skipIfCannotHitWithOwnBody: false);
+            if (attackTarget != -1)
             {
-                bool isIdling = Projectile.ai[0] == 1f;
-                float maxSpeed = 6f;
-                float num576 = 40f;
-                if (isIdling)
-                {
-                    maxSpeed = 15f;
-                }
-                Vector2 playerProjOffset = Player.Center - Projectile.Center - new Vector2(0, 60f);
-                float playerProjDist = playerProjOffset.Length();
-                if (playerProjDist > 200f && maxSpeed < 8f)
-                {
-                    maxSpeed = 8f;
-                }
-                if (maxSpeed < Math.Abs(Player.velocity.X) + Math.Abs(Player.velocity.Y))
-                {
-                    num576 = 30f;
-                    maxSpeed = Math.Abs(Player.velocity.X) + Math.Abs(Player.velocity.Y);
-                    if (playerProjDist > 200f)
-                    {
-                        num576 = 20f;
-                        maxSpeed += 4f;
-                    }
-                    else if (playerProjDist > 100f)
-                    {
-                        maxSpeed += 3f;
-                    }
-                }
-                if (isIdling && playerProjDist > 300f)
-                {
-                    maxSpeed += 6f;
-                    num576 -= 10f;
-                }
-                if (playerProjDist < num558 && isIdling && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
-                {
-                    Projectile.ai[0] = 0f;
-                    Projectile.netUpdate = true;
-                }
-                if (playerProjDist > 2000f)
-                {
-                    Projectile.position.X = Player.Center.X - Projectile.width / 2;
-                    Projectile.position.Y = Player.Center.Y - Projectile.height / 2;
-                    Projectile.netUpdate = true;
-                }
-                if (playerProjDist > 70f)
-                {
-                    Vector2 vector46 = Vector2.Normalize(playerProjOffset) * maxSpeed;
-                    Projectile.velocity = (Projectile.velocity * num576 + vector46) / (num576 + 1f);
-                }
-                else if (Projectile.velocity.X == 0f && Projectile.velocity.Y == 0f)
-                {
-                    Projectile.velocity.X = -0.15f;
-                    Projectile.velocity.Y = -0.05f;
-                }
-                if (Projectile.velocity.Length() > maxSpeed)
-                {
-                    Projectile.velocity *= 0.95f;
-                }
-            }
-            if (Projectile.ai[1] > 0f)
-            {
-                Projectile.ai[1] += Main.rand.Next(1, 4);
-            }
-            Projectile.ai[1] = 0f;
-            Projectile.netUpdate = true;
-            if (Projectile.ai[0] == 0f)
-            {
-                if (Projectile.ai[1] == 0f && foundTarget && maxDistance < 500f)
-                {
-                    Projectile.ai[1]++;
-                    if (Main.myPlayer == Projectile.owner)
-                    {
-                        Projectile.ai[0] = 2f;
-                        Vector2 targetVel = projPos - Projectile.Center;
-                        targetVel = targetVel.SafeNormalize(Projectile.velocity);
-                        float speedMult = 6f;
-                        Projectile.velocity = targetVel * speedMult;
-                        TryInterceptingTarget(projPos, targetVelocity, speedMult);
-                        Projectile.netUpdate = true;
-                    }
-                }
+                Projectile.netUpdate = true;
+                CurrentState = AIState.Attacking;
+                AttackTargetTimer = attackTarget;
             }
         }
 
-        public void TryInterceptingTarget(Vector2 targetDir, Vector2 targetVelocity, float speed)
+        public void Return()
         {
-            for (float i = 1f; i <= 1.5f; i += 0.1f)
+            if (AttackTargetTimer == 0f) 
             {
-                Utils.ChaseResults chaseResults = Utils.GetChaseResults(Projectile.Center, speed, targetDir, targetVelocity / 2);
-                if (chaseResults.InterceptionHappens && chaseResults.InterceptionTime <= 45f)
+                Projectile.velocity += Main.rand.NextVector2CircularEdge(2f, 8f);
+            }
+            AttackTargetTimer++;
+            Projectile.velocity *= 0.92f;
+            if (AttackTargetTimer >= 18f)
+            {
+                CurrentState = AIState.Idling;
+                AttackTargetTimer = 0f;
+            }
+        }
+
+        public void Attack()
+        {
+            NPC target = null;
+            int targetIndex = (int)AttackTargetTimer;
+            if (Main.npc.IndexInRange(targetIndex) && Main.npc[targetIndex].CanBeChasedBy(this))
+            {
+                target = Main.npc[targetIndex];
+            }
+            if (target == null)
+            {
+                CurrentState = AIState.Returning;
+                AttackTargetTimer = 0f;
+                Projectile.netUpdate = true;
+            }      
+            else if (Player.Distance(target.Center) >= 1000f)
+            {
+                CurrentState = AIState.Idling;
+                AttackTargetTimer = 0f;
+                Projectile.netUpdate = true;
+            }
+            else
+            {
+                Vector2 targetSpeed = target.Center - Projectile.Center;
+                float maxSpeed = 16f;
+                Projectile.velocity = targetSpeed;
+                if (Projectile.velocity.Length() > maxSpeed)
                 {
-                    Projectile.velocity = chaseResults.ChaserVelocity;
-                    break;
+                    Projectile.velocity *= maxSpeed / Projectile.velocity.Length();
                 }
+                Projectile.rotation = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation() + MathHelper.PiOver2;
             }
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Electrified, 300);
+            Projectile.localNPCImmunity[target.whoAmI] = 10;
+            target.immune[Projectile.owner] = 0;
+            if (CurrentState != AIState.Idling) 
+            {
+                CurrentState = AIState.Returning;
+                AttackTargetTimer = 0f;
+                Projectile.netUpdate = true;
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -338,7 +253,7 @@ namespace Project165.Content.Projectiles.Summon
             Rectangle sourceRectangle = new(0, startY, texture.Width, frameHeight);
 
             // Show afterimages only when it's attacking
-            if (Projectile.ai[0] == 2f)
+            if (CurrentState is AIState.Attacking or AIState.Returning)
             {
                 for (int i = 0; i < Projectile.oldPos.Length; i++)
                 {
