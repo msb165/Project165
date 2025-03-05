@@ -199,13 +199,8 @@ namespace Project165.Content.Projectiles.Summon
             }
             else
             {
-                Vector2 targetSpeed = target.Center - Projectile.Center;
-                float maxSpeed = 16f;
+                Vector2 targetSpeed = Vector2.Normalize(target.Center - Projectile.Center) * 16f;
                 Projectile.velocity = targetSpeed;
-                if (Projectile.velocity.Length() > maxSpeed)
-                {
-                    Projectile.velocity *= maxSpeed / Projectile.velocity.Length();
-                }
                 Projectile.rotation = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation() + MathHelper.PiOver2;
             }
         }
