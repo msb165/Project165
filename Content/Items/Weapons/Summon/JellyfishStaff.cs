@@ -26,7 +26,7 @@ namespace Project165.Content.Items.Weapons.Summon
             Item.height = 32;
             Item.useTime = 36;
             Item.useAnimation = 36;
-            Item.damage = 7;
+            Item.damage = 4;
             Item.DamageType = DamageClass.Summon;
             Item.shoot = ModContent.ProjectileType<JellyfishProj>();
             Item.mana = 10;

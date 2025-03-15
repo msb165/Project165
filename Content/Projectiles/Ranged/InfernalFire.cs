@@ -25,6 +25,8 @@ namespace Project165.Content.Projectiles.Ranged
             Projectile.DamageType = DamageClass.Melee;
             Projectile.timeLeft = 70;
             Projectile.penetrate = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 25;
         }
 
         public override void AI()

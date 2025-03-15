@@ -35,7 +35,7 @@ namespace Project165.Content.Items.SummonItems
             }
 
 
-            Main.NewText("[c/50F8FF:Looks like nothing happened. It seems that it can only be used in the snow at night time.]");
+            Main.NewText("[c/50F8FF:Looks like nothing happened. It seems that it can only be used in the snow at night time...]");
             return false;
         }
 
@@ -52,7 +52,6 @@ namespace Project165.Content.Items.SummonItems
                 {
                     Vector2 spawnPos = player.Center + new Vector2(0f, -200f) + Main.rand.NextVector2Circular(50f, 50f);
                     NPC.SpawnBoss((int)spawnPos.X, (int)spawnPos.Y, ModContent.NPCType<IceBossFly>(), player.whoAmI);
-                    //NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<IceBossFly>());
                 }
                 else
                 {

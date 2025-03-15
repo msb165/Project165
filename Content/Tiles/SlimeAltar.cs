@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Project165.Content.Items.SummonItems;
-using Project165.Content.NPCs.Bosses.ShadowSlime;
+using Project165.Content.NPCs.Bosses.ShadowHand;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,15 +40,15 @@ namespace Project165.Content.Tiles
 
         public override bool RightClick(int i, int j)
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowSlime>()) && NPC.downedGolemBoss && Main.LocalPlayer.HasItemInAnyInventory(ModContent.ItemType<ShadowSlimeSummon>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowHand>()) && NPC.downedGolemBoss && Main.LocalPlayer.HasItemInAnyInventory(ModContent.ItemType<ShadowSlimeSummon>()))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.SpawnOnPlayer(Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowSlime>());
+                    NPC.SpawnOnPlayer(Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowHand>());
                 }
                 else
                 {
-                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowSlime>());
+                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowHand>());
                 }
             }
             return true;

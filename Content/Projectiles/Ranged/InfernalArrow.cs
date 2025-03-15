@@ -23,6 +23,7 @@ namespace Project165.Content.Projectiles.Ranged
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.arrow = true;
             Projectile.friendly = true;
+            Projectile.penetrate = 2;
         }
 
         public override void AI()

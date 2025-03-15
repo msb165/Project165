@@ -28,39 +28,26 @@ namespace Project165.Content.Projectiles.Ranged
             Projectile.Size = new(16);
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
         }
 
         Player Player => Main.player[Projectile.owner];
+
+        public override bool? CanDamage() => false;
 
         public override void AI()
         {
             bool canShoot = Player.HasAmmo(Player.HeldItem) && Player.controlUseItem && !Player.noItems && !Player.CCed;
             bool shouldShoot = false;
-
             int shootTimer = 24;
-            int valueToSubtract = 6;
 
-            Vector2 newVelocity = Vector2.Normalize(Main.MouseWorld - Projectile.Center);
-            Projectile.velocity = newVelocity;
+            Projectile.velocity = Vector2.Normalize(Main.MouseWorld - Projectile.Center);
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.ai[0] += 1f;
-            int multiplier = 0;
-
-            if (Projectile.ai[0] >= 40f)
-            {
-                multiplier++;
-            }
-            if (Projectile.ai[0] >= 80f)
-            {
-                multiplier++;
-            }
-            if (Projectile.ai[0] >= 120f)
-            {
-                multiplier++;
-            }
+            Projectile.ai[0]++;
+            int multiplier = (int)MathHelper.Clamp(Projectile.ai[0], 0, 120) / 40;
 
             Projectile.ai[1]++;
-            if (Projectile.ai[1] >= shootTimer - valueToSubtract * multiplier)
+            if (Projectile.ai[1] >= shootTimer - 6 * multiplier)
             {
                 Projectile.ai[1] = 0f;
                 shouldShoot = true;
@@ -70,7 +57,7 @@ namespace Project165.Content.Projectiles.Ranged
             {
                 if (canShoot)
                 {
-                    Vector2 projVelocity = Vector2.Normalize(Main.MouseWorld - Player.Center).RotatedByRandom(MathHelper.ToRadians(15f)) * Player.HeldItem.shootSpeed;
+                    Vector2 projVelocity = Vector2.Normalize(Main.MouseWorld - Player.Center).RotatedByRandom(MathHelper.ToRadians(2f)) * Player.HeldItem.shootSpeed;
                     int damage = Player.HeldItem.damage;
                     float knockback = Player.HeldItem.knockBack;
                     int shootType = (int)Projectile.ai[2];

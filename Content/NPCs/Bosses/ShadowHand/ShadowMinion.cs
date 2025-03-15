@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace Project165.Content.NPCs.Bosses.ShadowSlime
+namespace Project165.Content.NPCs.Bosses.ShadowHand
 {
     public class ShadowMinion : ModNPC
     {
@@ -43,7 +43,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowSlime
 
         public override void AI()
         {
-            int shadowSlime = NPC.FindFirstNPC(ModContent.NPCType<ShadowSlime>());
+            int shadowSlime = NPC.FindFirstNPC(ModContent.NPCType<ShadowHand>());
             if (shadowSlime < 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)

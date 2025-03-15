@@ -2,11 +2,6 @@
 using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Summon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -14,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace Project165.Content.Items.TreasureBags
 {
-    public class DarkSlimeBag : ModItem
+    public class ShadowHandBag : ModItem
     {
         public override void SetStaticDefaults()
         {

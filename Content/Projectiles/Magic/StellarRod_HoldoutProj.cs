@@ -1,22 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+﻿using System;
+using Terraria;
+using Terraria.ID;
+using Terraria.Audio;
+using Terraria.ModLoader;
+using Project165.Utilites;
+using Terraria.GameContent;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Items.Weapons.Magic;
-using Project165.Utilites;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace Project165.Content.Projectiles.Magic
 {
-    public class StellaRodHoldoutProj : ModProjectile
+    public class StellarRodHoldoutProj : ModProjectile
     {
         public override string Texture => ModContent.GetInstance<StellarRod>().Texture;
 
@@ -86,7 +81,6 @@ namespace Project165.Content.Projectiles.Magic
             if (!HasShot)
             {
                 Projectile.rotation += 0.6f * Player.direction;
-
                 for (int i = 0; i < 3; i++)
                 {
                     Dust dust = Dust.NewDustPerfect(Projectile.Center + Projectile.rotation.ToRotationVector2() * 80f - Projectile.velocity / 10f * i, DustID.Clentaminator_Purple, Scale:0.75f);
@@ -94,6 +88,7 @@ namespace Project165.Content.Projectiles.Magic
                     dust.noGravity = true;
                 }
             }
+            Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3());
         }
 
         public void ShootStar()
@@ -102,7 +97,10 @@ namespace Project165.Content.Projectiles.Magic
             Player.ChangeDir(-MathF.Sign(starShootSpeed.X));
             Projectile.rotation = starShootSpeed.SafeNormalize(Vector2.Zero).ToRotation() - MathHelper.PiOver2;
             Projectile.timeLeft = 20;
-            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - starShootSpeed * 14f, -starShootSpeed * 14f, ModContent.ProjectileType<UltraStar>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Projectile.owner);
+            for (int i = 0; i < 3; i++)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - starShootSpeed * 14f, -(starShootSpeed * 14f) + (2f * i).ToRotationVector2() * Player.direction, ModContent.ProjectileType<UltraStar>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Projectile.owner);
+            }
             Player.reuseDelay = 8;
         }
 
@@ -117,9 +115,11 @@ namespace Project165.Content.Projectiles.Magic
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Texture2D extraTexture = TextureAssets.Extra[ExtrasID.SharpTears].Value;
             Texture2D textureOutline = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "StellarRod_Outline");
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height);
+            Vector2 drawOriginExtra = new(extraTexture.Width / 2, extraTexture.Height);
             Color drawColor = Projectile.GetAlpha(lightColor);
             Color trailColor = Projectile.GetAlpha(lightColor) with { A = 0 };
             SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -133,6 +133,7 @@ namespace Project165.Content.Projectiles.Magic
             }
 
             Main.EntitySpriteDraw(texture, drawPos, texture.Frame(), drawColor, rotation, drawOrigin, Projectile.scale, spriteEffects);
+            Main.EntitySpriteDraw(extraTexture, drawPos, extraTexture.Frame(), drawColor with { A = 0 } * 0.125f, rotation, drawOriginExtra, Projectile.scale * 1.25f, spriteEffects);
             Main.EntitySpriteDraw(textureOutline, drawPos, null, drawColor with { A = 0 } * 0.1f, rotation, drawOrigin, Projectile.scale * 1.09f, spriteEffects);
             return false;
         }

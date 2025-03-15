@@ -29,6 +29,7 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.useTime = 17;
             Item.UseSound = SoundID.Item43;
             Item.shoot = ModContent.ProjectileType<SuperWaterBoltProj>();
+            Item.value = Item.sellPrice(silver: 25);
             Item.shootSpeed = 12f;
             Item.autoReuse = true;
             Item.noMelee = true;

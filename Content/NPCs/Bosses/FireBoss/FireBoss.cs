@@ -122,6 +122,12 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 NPC.TargetClosest();
             }
 
+            if (Player.dead)
+            {
+                NPC.velocity.Y += 0.2f;
+                NPC.EncourageDespawn(despawnTime: 10);
+            }
+
             if (NPC.localAI[1] == 0f)
             {
                 NPC.localAI[1] = 1f;
@@ -163,7 +169,6 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             for (int i = 0; i < 3; i++)
             {
                 Vector2 newVelocity = Main.rand.NextVector2Circular(200f, 200f).SafeNormalize(Vector2.UnitY) * 5f;
-
                 Dust dust = Dust.NewDustPerfect(NPC.Center - newVelocity * 20f, DustID.Torch, newVelocity, Scale: 3f);
                 dust.noGravity = true;
             }
@@ -195,7 +200,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             }
             NPC.TargetClosest();
             float moveAcceleration = 0.5f;
-            float moveSpeed = 11f;
+            float maxSpeed = 11f;
             float maxDistance = 600f;
             float distance = MathF.Abs(NPC.Center.X - Player.Center.X);
 
@@ -206,15 +211,15 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             if (NPC.life < NPC.lifeMax * 0.5)
             {
                 moveAcceleration = 0.85f;
-                moveSpeed = 12f;
+                maxSpeed = 12f;
             }
             if (NPC.life < NPC.lifeMax * 0.25)
             {
                 moveAcceleration = 1.15f;
-                moveSpeed = 15f;
+                maxSpeed = 15f;
             }
             NPC.velocity.X += Direction * moveAcceleration;
-            NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -moveSpeed, moveSpeed);
+            NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -maxSpeed, maxSpeed);
             float verticalDistance = Player.Center.Y - 200f - NPC.Center.Y;
             if (NPC.velocity.Y < verticalDistance)
             {

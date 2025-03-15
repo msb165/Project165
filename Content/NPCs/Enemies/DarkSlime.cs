@@ -10,23 +10,16 @@ namespace Project165.Content.NPCs.Enemies
 {
     public class DarkSlime : ModNPC
     {
-        public override void SetStaticDefaults()
-        {
-            Main.npcFrameCount[Type] = 2;
-        }
-
         public override void SetDefaults()
         {
             NPC.aiStyle = NPCAIStyleID.Slime;
-            NPC.alpha = 127;
-            NPC.width = 44;
-            NPC.height = 34;
+            NPC.width = 26;
+            NPC.height = 32;
             NPC.damage = 13;
             NPC.lifeMax = 180;
             NPC.value = 50f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            AnimationType = NPCID.BlueSlime;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

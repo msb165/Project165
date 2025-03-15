@@ -13,7 +13,7 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             Item.width = 22;
             Item.height = 46;
-            Item.damage = 46;
+            Item.damage = 52;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -21,7 +21,7 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.UseSound = SoundID.Item1;
             Item.useTime = 20;
             Item.useAnimation = 20;
-            Item.shoot = ModContent.ProjectileType<StellaRodHoldoutProj>();
+            Item.shoot = ModContent.ProjectileType<StellarRodHoldoutProj>();
             Item.shootSpeed = 1f;            
         }
 
