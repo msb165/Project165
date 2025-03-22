@@ -12,11 +12,6 @@ namespace Project165.Content.Items.Weapons.Ranged
 {
     public class IceShotgun : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.width = 60;
@@ -29,9 +24,9 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.useAnimation = 42;
             Item.useTime = 42;
             Item.DamageType = DamageClass.Ranged;
-            Item.damage = 28;
+            Item.damage = 35;
             Item.rare = ItemRarityID.Pink;
-            Item.value = Item.sellPrice(gold: 12);
+            Item.value = Item.sellPrice(gold: 1);
             Item.autoReuse = true;
             Item.noMelee = true;
         }
@@ -58,11 +53,13 @@ namespace Project165.Content.Items.Weapons.Ranged
                 Vector2 newVelocity = velocity.RotatedByRandom(MathHelper.ToRadians(15f));
                 newVelocity *= 1f - Main.rand.NextFloat(0.4f);
 
-                Projectile crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 2.5f, ProjectileID.CrystalShard, damage, knockback);
+                Projectile crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 2.5f, ProjectileID.CrystalShard, damage / 4, knockback);
                 crystalShard.tileCollide = true;
                 crystalShard.scale = 1.75f;
-                crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 2, knockback);
+                crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 4, knockback);
                 crystalShard.penetrate = -1;
+
+                Projectile.NewProjectileDirect(source, position, newVelocity, type, damage, knockback);
             }
 
             return false;

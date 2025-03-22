@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.Audio;
 using Project165.Content.Dusts;
 using System;
+using Project165.Utilites;
 
 namespace Project165.Content.Projectiles.Hostile
 {
@@ -14,9 +15,11 @@ namespace Project165.Content.Projectiles.Hostile
     {
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 15;
+            ProjectileID.Sets.TrailCacheLength[Type] = 15;
             ProjectileID.Sets.TrailingMode[Type] = 3;
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 1600;
         }
+
         public override void SetDefaults()
         {
             Projectile.width = 20;
@@ -70,7 +73,7 @@ namespace Project165.Content.Projectiles.Hostile
 
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Texture2D textureExtra = TextureAssets.Extra[ExtrasID.FairyQueenLance].Value;
-            Texture2D glowTexture = (Texture2D)ModContent.Request<Texture2D>("Project165/Assets/Images/GlowSphere");
+            Texture2D glowTexture = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "GlowSphere");
 
             Color drawColor = Color.LightCyan with { A = 0 };
             Color drawColorTrail = new(0, 200, 255, 0);            

@@ -64,7 +64,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         {
             NPC.width = 110;
             NPC.height = 98;            
-            NPC.defense = 10;
+            NPC.defense = 15;
             NPC.damage = 1;
             NPC.lifeMax = 25000;
             NPC.HitSound = SoundID.NPCHit5;
@@ -220,14 +220,14 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         private void StayOnPlace()
         {
-            float timeToShoot = 16f;
+            float timeToShoot = 12f;
 
             if (PhaseTwo)
             {
-                timeToShoot = 12f;
+                timeToShoot = 10f;
             }
 
-            NPC.velocity *= 0.5f;
+            NPC.velocity *= 0.65f;
 
             // Teleport in front of the player if they get too far.
             if (NPC.Distance(Player.Center) > 1300f)

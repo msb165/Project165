@@ -54,7 +54,7 @@ namespace Project165.Content.Projectiles.Magic
             {
                 manaAmount *= 2;
             }
-            Projectile.NewProjectile(Projectile.GetSource_OnHit(target), target.Center, new Vector2(0), ModContent.ProjectileType<ManaHeal>(), 0, 0f, Projectile.owner, Projectile.owner, manaAmount); 
+            Projectile.NewProjectile(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<ManaHeal>(), 0, 0f, Projectile.owner, Projectile.owner, manaAmount); 
         }
 
         public override void OnKill(int timeLeft)

@@ -8,12 +8,12 @@ namespace Project165.Common.Systems
     public class DownedBossSystem : ModSystem
     {
         public static bool downedFrigus;
-        public static bool downedShadowSlime;
+        public static bool downedShadowHand;
         public static bool downedFireBoss;
         public override void ClearWorld()
         {
             downedFrigus = false;
-            downedShadowSlime = false;
+            downedShadowHand = false;
             downedFireBoss = false;
         }
 
@@ -23,26 +23,26 @@ namespace Project165.Common.Systems
             {
                 tag["downedFrigus"] = true;
             }
-            if (downedShadowSlime)
+            if (downedShadowHand)
             {
                 tag["downedShadowSlime"] = true;
             }
             if (downedFireBoss)
             {
                 tag["downedFireBoss"] = true;
-            }            
+            }
         }
 
         public override void LoadWorldData(TagCompound tag)
         {
             downedFrigus = tag.ContainsKey("downedFrigus");
-            downedShadowSlime = tag.ContainsKey("downedShadowSlime");
+            downedShadowHand = tag.ContainsKey("downedShadowSlime");
             downedFireBoss = tag.ContainsKey("downedFireBoss");
         }
 
         public override void NetSend(BinaryWriter writer)
         {
-            BitsByte flags = new(downedFrigus, downedShadowSlime, downedFireBoss);
+            BitsByte flags = new(downedFrigus, downedShadowHand, downedFireBoss);
             writer.Write(flags);
         }
 
@@ -50,7 +50,7 @@ namespace Project165.Common.Systems
         {
             BitsByte flags = reader.ReadByte();
             downedFrigus = flags[0];
-            downedShadowSlime = flags[1];
+            downedShadowHand = flags[1];
             downedFireBoss = flags[2];
         }
     }

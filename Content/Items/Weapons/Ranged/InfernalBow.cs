@@ -22,6 +22,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.shoot = ModContent.ProjectileType<Projectiles.Ranged.InfernalBow>();
             Item.shootSpeed = 20f;
             Item.autoReuse = true;
+            Item.rare = ItemRarityID.Red;
             Item.useAmmo = AmmoID.Arrow;
         }
 
@@ -29,6 +30,11 @@ namespace Project165.Content.Items.Weapons.Ranged
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            if (type == ProjectileID.WoodenArrowFriendly)
+            {
+                type = ProjectileID.HellfireArrow;
+            }
+
             Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Ranged.InfernalBow>(), damage, knockback, player.whoAmI, ai2: type);
             return false;
         }

@@ -4,4 +4,4 @@ hideCode = false
 hideResources = false
 includeSource = true
 includePDB = true
-version = 1.0
+version = 0.1

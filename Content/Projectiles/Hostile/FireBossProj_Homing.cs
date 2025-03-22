@@ -35,10 +35,12 @@ namespace Project165.Content.Projectiles.Hostile
             {
                 Projectile.ai[0] = 1f;
                 SoundEngine.PlaySound(SoundID.Item34, Projectile.position);
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 16; i++)
                 {
-                    Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.OrangeTorch, Scale: 3f);
-                    dust.velocity *= 4f;
+                    Vector2 spinPoint = Vector2.UnitY.RotatedBy(i * MathHelper.TwoPi / 16f) * new Vector2(1f, 4f);
+                    Dust dust = Dust.NewDustPerfect(Projectile.position, DustID.OrangeTorch, Scale: 3f);
+                    dust.position = Projectile.Center - spinPoint;
+                    dust.velocity = Vector2.Normalize(spinPoint);
                     dust.noGravity = true;
                 }
             }

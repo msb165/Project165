@@ -17,7 +17,7 @@ namespace Project165.Content.Items.Materials
             Item.rare = ItemRarityID.Yellow;
             Item.maxStack = Item.CommonMaxStack;
             Item.alpha = 100;
-            Item.value = Item.buyPrice(silver:1);
+            Item.value = Item.buyPrice(silver:2);
         }
     }
 }

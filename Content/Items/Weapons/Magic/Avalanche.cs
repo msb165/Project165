@@ -1,19 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using Project165.Content.Dusts;
-using Project165.Content.Projectiles.Magic;
-using Terraria;
-using Terraria.DataStructures;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
+using Microsoft.Xna.Framework;
+using Project165.Content.Projectiles.Magic;
+
 
 namespace Project165.Content.Items.Weapons.Magic
 {
     public class Avalanche : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
 
         public override void SetDefaults()
         {

@@ -14,8 +14,8 @@ Projectiles: {
 	WormholeProj.DisplayName: Wormhole
 	WormholeBolt.DisplayName: Wormhole
 	ShadowBall.DisplayName: Shadow Ball
-	ShadowYoYoProj.DisplayName: Shadow Yo Yo
-	SlimeBossProj.DisplayName: Slime Boss Proj
+	ShadowYoYoProj.DisplayName: Lightless
+	SlimeBossProj.DisplayName: Slime
 	MachineGunProj.DisplayName: Machine Gun
 	GravityKnives.DisplayName: Gravity Defying Knives
 	IceBatHoldoutProj.DisplayName: Ice Bat
@@ -26,18 +26,28 @@ Projectiles: {
 	BlueFire.DisplayName: Blue Fire
 	IceShockWave.DisplayName: Ice Shock Wave
 	FireBossProj.DisplayName: Raging Fire
-	FireBossProjHoming.DisplayName: Fire Boss Proj Homing
+	FireBossProjHoming.DisplayName: Fire
 	InfernalBow.DisplayName: Infernal Bow
 	GolemArrow.DisplayName: Golem Arrow
 	InfernalArrow.DisplayName: Infernal Arrow
 	InfernalFire.DisplayName: Infernal Fire
-	SuperFireSwordHoldoutProj.DisplayName: Super Fire Sword Holdout Proj
+	SuperFireSwordHoldoutProj.DisplayName: Super Fire Sword
 	SuperFire.DisplayName: Super Fire
 	AdamantiteBolt.DisplayName: Adamantite Bolt
 	AdamantiteEnergy.DisplayName: Adamantite Energy
 	ShroomiteMinigun.DisplayName: Shroomite Minigun
-	LuminiteShortProj.DisplayName: Luminite Short Proj
-	JellyfishProj.DisplayName: Jellyfish Proj
+	LuminiteShortProj.DisplayName: Radiance
+	JellyfishProj.DisplayName: Jellyfish
+	StellarRodHoldoutProj.DisplayName: Stellar Rod
+	UltraStar.DisplayName: Ultra Star
+	YellowBeam.DisplayName: Yellow Beam
+	BlackHoleProj.DisplayName: Black Hole
+	ShadowWave.DisplayName: Shadow Wave
+	ShadowGas.DisplayName: Shadow Gas
+	ShadowStomp.DisplayName: Shadow Stomp
+	ShadowMinionProj.DisplayName: Shadow Minion Proj
+	BouncyFire.DisplayName: Bouncy Fire
+	BigMagicExplosion.DisplayName: Big Magic Explosion
 }
 
 Items: {
@@ -58,11 +68,11 @@ Items: {
 
 	IceChakram: {
 		DisplayName: Ice Chakram
-		Tooltip: ""
+		Tooltip: Has a chance of inflicting Frostburn
 	}
 
 	IceShotgun: {
-		DisplayName: Frostick
+		DisplayName: Frostkick
 		Tooltip: Shoots crystal shards and a big shockwave
 	}
 
@@ -73,7 +83,7 @@ Items: {
 
 	ManaKnife: {
 		DisplayName: Mana Knife
-		Tooltip: ""
+		Tooltip: Gives between 4 and 11 mana upon hitting an enemy
 	}
 
 	ShadowPike: {
@@ -93,27 +103,22 @@ Items: {
 
 	ShadowSlimeStaff: {
 		DisplayName: Shadow Slime Staff
-		Tooltip: Summons a shadow slime to help you on your fights
-	}
-
-	DarkSlimeBag: {
-		DisplayName: Treasure Box (Shadow Slime)
-		Tooltip: ""
+		Tooltip: Summons a Shadow Slime to help you
 	}
 
 	SlimeAltar: {
-		DisplayName: Slime Altar
+		DisplayName: Shadow Altar
 		Tooltip: ""
 	}
 
 	ShadowSlimeSummon: {
 		DisplayName: Slimy Shadow Sphere
-		Tooltip: Used at the Slime Altar
+		Tooltip: Used at the Shadow Altar
 	}
 
 	ShadowEssence: {
 		DisplayName: Shadow Essence
-		Tooltip: ""
+		Tooltip: From the depths of the void
 	}
 
 	Wormhole: {
@@ -152,17 +157,21 @@ Items: {
 
 	SuperWaterBolt: {
 		DisplayName: Rain
-		Tooltip: ""
+		Tooltip: Summons bolts of water
 	}
 
 	ShroomiteBullet: {
 		DisplayName: Shroomite Bullet
-		Tooltip: ""
+		Tooltip: Bursts into two bullets
 	}
 
 	InfernalBow: {
 		DisplayName: Infernal Bow
-		Tooltip: ""
+		Tooltip:
+			'''
+			Converts Wooden Arrows into Hellfire Arrows
+			Has a chance to shoot an additional arrow
+			'''
 	}
 
 	GolemBow: {
@@ -199,36 +208,71 @@ Items: {
 		DisplayName: Jellyfish Staff
 		Tooltip: ""
 	}
+
+	FireBossBag: {
+		DisplayName: Treasure Box (Raging Flame)
+		Tooltip: ""
+	}
+
+	StellarRod: {
+		DisplayName: Stellar Rod
+		Tooltip: ""
+	}
+
+	FireBossSummon: {
+		DisplayName: Blazing Stone
+		Tooltip: Summons the Raging Flame
+	}
+
+	BlackHoleStaff: {
+		DisplayName: Black Hole Staff
+		Tooltip: Casts a controllable shadow that explodes on impact
+	}
+
+	ShadowHandBag: {
+		DisplayName: Treasure Bag (Hand of the Shadows)
+		Tooltip: ""
+	}
+
+	TestExperiment: {
+		DisplayName: Test Experiment
+		Tooltip: Test...
+	}
+
+	UltraFireStaff: {
+		DisplayName: Chaos
+		Tooltip: ""
+	}
 }
 
 NPCs: {
 	IceBossFly.DisplayName: Frigus
 	MiniDungeonGuardian.DisplayName: Small Guardian
-	DarkSlime.DisplayName: Dark Slime
-	ShadowSlime.DisplayName: Shadow Slime
+	DarkSlime.DisplayName: Nightmare Hand
+	ShadowHand.DisplayName: Hand of the Shadows
 	FlyingIce.DisplayName: Flying Ice
 	FireBoss.DisplayName: Raging Flame
 	ShadowMinion.DisplayName: Shadow Minion
 }
 
 Tiles: {
-	SlimeAltar.MapEntry: Slime Altar
-	ShadowSlimeBlock.MapEntry: Shadow Slime Block
+	SlimeAltar.MapEntry: Shadow Altar
+	ShadowSlimeBlock.MapEntry: Shadow Block
 }
 
 Buffs: {
 	MoonFire: {
 		DisplayName: Lunar Fire
-		Description: Mods.Project165.Buffs.MoonFire.Description
+		Description: It burns!
 	}
 
 	ShadowMinionBuff: {
-		DisplayName: Shadow Minion Buff
-		Description: Mods.Project165.Buffs.ShadowMinionBuff.Description
+		DisplayName: Shadow Hand
+		Description: A hand fights for you
 	}
 
 	JellyfishBuff: {
 		DisplayName: Jellyfish Buff
-		Description: Mods.Project165.Buffs.JellyfishBuff.Description
+		Description: A jellyfish fights for you
 	}
 }

@@ -13,7 +13,7 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             Item.width = 22;
             Item.height = 46;
-            Item.damage = 52;
+            Item.damage = 15;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -26,12 +26,5 @@ namespace Project165.Content.Items.Weapons.Magic
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
-
-        public override void AddRecipes()
-        {
-            CreateRecipe()
-                .AddIngredient(ItemID.FallenStar, 15)
-                .Register();
-        }
     }
 }

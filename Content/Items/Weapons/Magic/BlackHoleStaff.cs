@@ -23,13 +23,13 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.useStyle = ItemUseStyleID.Swing;
             Item.shoot = ModContent.ProjectileType<BlackHoleProj>();
             Item.shootSpeed = 1f;
-            Item.width = 28;
-            Item.height = 28;
+            Item.width = 38;
+            Item.height = 36;
             Item.UseSound = SoundID.Item43;
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.knockBack = 5f;
-            Item.value = Item.sellPrice(gold:4, silver:12);            
+            Item.value = Item.sellPrice(gold: 4, silver: 12);
             Item.damage = 90;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;

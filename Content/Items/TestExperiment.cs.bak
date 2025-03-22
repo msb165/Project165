@@ -1,0 +1,19 @@
+﻿using Terraria;
+using Terraria.Enums;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace Project165.Content.Items
+{
+    internal class TestExperiment : ModItem
+    {
+        public override void SetDefaults()
+        {
+            Item.DefaultToPlaceableTile(TileID.LargePiles2, 17);
+            Item.SetShopValues(ItemRarityColor.White0, 300);
+            Item.maxStack = Item.CommonMaxStack;
+            Item.width = 20;
+            Item.height = 20;
+        }
+    }
+}

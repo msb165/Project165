@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent.ItemDropRules;
 using Project165.Content.Items.Weapons.Ranged;
+using Project165.Content.Items.Weapons.Summon;
 
 
 namespace Project165.Common.Globals.NPCs
@@ -18,6 +19,11 @@ namespace Project165.Common.Globals.NPCs
                     break;
                 case NPCID.Golem:
                     npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GolemBow>(), 8));
+                    break;
+                case NPCID.BlueJellyfish:
+                case NPCID.GreenJellyfish:
+                case NPCID.PinkJellyfish:
+                    npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<JellyfishStaff>(), 10));
                     break;
             }
         }

@@ -1,11 +1,4 @@
-﻿using Project165.Content.NPCs.Bosses.Frigus;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.Audio;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
 using Project165.Content.NPCs.Bosses.FireBoss;
@@ -15,11 +8,6 @@ namespace Project165.Content.Items.SummonItems
 {
     public class FireBossSummon : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.width = 26;

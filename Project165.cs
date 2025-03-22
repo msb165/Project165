@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Project165.Common.Systems;
 using Project165.Content.NPCs.Bosses.Frigus;
 using Project165.Skies;
 using Terraria;
@@ -7,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace Project165
 {
-	public class Project165 : Mod
+    public class Project165 : Mod
 	{
         public override void Load()
         {

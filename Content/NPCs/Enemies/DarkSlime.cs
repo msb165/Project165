@@ -14,7 +14,7 @@ namespace Project165.Content.NPCs.Enemies
         {
             NPC.aiStyle = NPCAIStyleID.Slime;
             NPC.width = 26;
-            NPC.height = 32;
+            NPC.height = 30;
             NPC.damage = 13;
             NPC.lifeMax = 180;
             NPC.value = 50f;

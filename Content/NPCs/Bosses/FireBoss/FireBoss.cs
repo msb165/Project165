@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Common.Systems;
 using Project165.Content.Items.TreasureBags;
+using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Ranged;
 using Project165.Content.Projectiles.Hostile;
@@ -65,8 +66,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public override void SetDefaults()
         {
             NPC.boss = true;
-            NPC.lifeMax = 42000;
-            NPC.defense = 100;
+            NPC.lifeMax = 70000;
+            NPC.defense = 150;
             NPC.Size = new(60);
             NPC.scale = 2.5f;
             NPC.knockBackResist = 0f;
@@ -78,6 +79,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPC.dontTakeDamageFromHostiles = true;
             NPC.aiStyle = -1;
             NPC.npcSlots = 10f;
+            Music = MusicID.OtherworldlyLunarBoss;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -338,8 +340,6 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 ShootTimer = 0f;
                 for (int i = 0; i < 6; i++)
                 {
-                    //Vector2 newVelocity = (Vector2.UnitX * 16f).RotatedBy(i * MathHelper.TwoPi / 6f);
-                    //Vector2 newPosition = Main.rand.NextVector2Circular(500f, 500f);
                     Vector2 newPosition = new(Main.screenPosition.X, Main.screenPosition.Y + Main.rand.Next(Main.screenHeight));
                     if (Main.rand.NextBool(2))
                     {
@@ -347,12 +347,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                     }
                     Vector2 newVelocity = Vector2.Normalize(Player.Center - newPosition) * 8f;
 
-                    if (Vector2.Distance(newPosition, Player.Center) < 100f)
-                    {
-                        //newPosition *= 1.5f;
-                    }
-
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), newPosition, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(33f, 38f), 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), newPosition, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(20f, 23f), 0f, Main.myPlayer);
                 }
             }
             AITimer++;
@@ -368,6 +363,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<FireBossBag>()));
+
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<UltraFireStaff>(), 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InfernalBow>(), 3));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SuperFireSword>(), 3));
         }

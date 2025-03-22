@@ -1,4 +1,4 @@
-﻿using Project165.Content.Tiles;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace Project165.Content.Items.Placeables
@@ -10,7 +10,6 @@ namespace Project165.Content.Items.Placeables
             Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.SlimeAltar>());
             Item.width = 48;
             Item.height = 32;
-            Item.value = 150;
         }
     }
 }

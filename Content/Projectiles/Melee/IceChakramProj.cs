@@ -80,18 +80,16 @@ namespace Project165.Content.Projectiles.Melee
             Dust iceDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan);
             iceDust.scale = 1.25f;
             iceDust.frame.Y = 10 * 3;
-            iceDust.position = dustPosition;
+            iceDust.position = dustPosition + dustVelocity;
             iceDust.noGravity = true;
             iceDust.velocity = dustVelocity;
-            iceDust.position += dustVelocity;
 
             Dust iceDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan);
             iceDust2.scale = 1.25f;
             iceDust2.frame.Y = 10 * 3;
-            iceDust2.position = dustPosition;
+            iceDust2.position = dustPosition - dustVelocity;
             iceDust2.noGravity = true;
             iceDust2.velocity = -dustVelocity;
-            iceDust2.position -= dustVelocity;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)

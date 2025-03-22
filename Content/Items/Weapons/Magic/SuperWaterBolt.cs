@@ -4,23 +4,16 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
 using Project165.Content.Projectiles.Magic;
-using System;
-
 
 namespace Project165.Content.Items.Weapons.Magic
 {
     public class SuperWaterBolt : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.width = 30;
             Item.height = 38;
-            Item.damage = 43;
+            Item.damage = 50;
             Item.mana = 10;
             Item.DamageType = DamageClass.Magic;
             Item.rare = ItemRarityID.Pink;
@@ -58,7 +51,10 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             CreateRecipe()
                 .AddIngredient(ItemID.SpellTome, 1)
+                .AddIngredient(ItemID.WaterBolt, 1)
                 .AddIngredient(ItemID.WaterCandle, 1)
+                .AddIngredient(ItemID.BottledWater, 5)
+                .AddIngredient(ItemID.ChlorophyteBar, 5)
                 .AddTile(TileID.Bookcases)
                 .Register();
         }

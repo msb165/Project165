@@ -1,10 +1,8 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent;
 using Microsoft.Xna.Framework;
-using Project165.Content.Dusts;
 using Project165.Common.Systems;
 using Microsoft.Xna.Framework.Graphics;
 using Project165.Content.Items.Materials;
@@ -14,8 +12,8 @@ using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Summon;
 using Project165.Content.Projectiles.Hostile;
 using System.IO;
-using Project165.Utilites;
 using Terraria.Audio;
+using System;
 
 
 namespace Project165.Content.NPCs.Bosses.ShadowHand
@@ -45,6 +43,12 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
             NPCID.Sets.TrailingMode[Type] = 1;
+            NPCID.Sets.NPCBestiaryDrawModifiers npcBestiaryDrawModifiers = new()
+            {
+                PortraitScale = 1.25f,
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, npcBestiaryDrawModifiers);
+            NPCID.Sets.BossBestiaryPriority.Add(Type);
             NPCID.Sets.MPAllowedEnemies[Type] = true;
         }
 
@@ -61,8 +65,9 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             NPC.aiStyle = -1;
             NPC.lifeMax = 32000;
             NPC.lavaImmune = true;
+            NPC.noTileCollide = false;
             NPC.GravityIgnoresLiquid = true;
-            NPC.HitSound = SoundID.NPCHit1;
+            NPC.HitSound = SoundID.Tink with { PitchVariance = 1f };
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.scale = 1.25f;
             Music = MusicID.Boss3;
@@ -100,19 +105,46 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
 
         private Player Player => Main.player[NPC.target];
 
-
         public override void AI()
         {
             NPC.dontTakeDamage = false;
             NPC.noGravity = false;
 
-            if (Player.dead)
+
+
+            if (NPC.target < 0 || NPC.target == Main.maxPlayers || Player.dead || !Player.active)
+            {
+                NPC.TargetClosest();
+            }
+
+            if (Player.dead || NPC.Distance(Player.Center) > 1000f)
             {
                 CurrentAIState = AIState.None;
+                NPC.noTileCollide = true;
+                NPC.noGravity = true;
+                NPC.velocity.Y += 0.2f;
                 NPC.EncourageDespawn(12);
                 return;
             }
 
+            foreach (Player p in Main.player)
+            {
+                if (!p.active && p.Distance(NPC.Center) > 2000f)
+                {
+                    break;
+                }
+
+                if (p.grapCount > 0)
+                {
+                    p.RemoveAllGrapplingHooks();
+                }
+                if (p.mount.Active)
+                {
+                    p.mount.Dismount(p);
+                }
+            }
+
+            SecondPhase = NPC.life < NPC.lifeMax * 0.5;
             if (SecondPhase && NPC.localAI[0] == 0f)
             {
                 SoundEngine.PlaySound(SoundID.Roar, NPC.position);
@@ -124,6 +156,8 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, minionNPC);
                     }
                 }
+                NPC.localAI[0] = 1f;
+                NPC.netUpdate = true;
             }
 
             switch (CurrentAIState)
@@ -143,13 +177,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                 case AIState.JumpingFast:
                     JumpFaster();
                     break;
-                default:
-                    NPC.damage = 0;
-                    NPC.life = NPC.lifeMax;
-                    NPC.dontTakeDamage = true;
-                    NPC.noTileCollide = true;
-                    NPC.velocity.X *= 0f;
-                    NPC.velocity.Y += 0.1f;
+                case AIState.None:
                     break;
             }
         }
@@ -159,9 +187,12 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
 
         public void Jump()
         {
-            float maxTime = 45f;
+            float maxTime = 20f;
             float horizontalSpeed = 7f;
-            float jumpSpeed = 4f;
+            float jumpSpeed = 6f;
+
+            NPC.noGravity = false;
+            NPC.noTileCollide = false;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Vector2.Distance(Player.Center, NPC.Center) > 600f)
             {
@@ -202,26 +233,10 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                 }
             }
             AICounter++;
-            if (AICounter > 210.0 && NPC.velocity.Y == 0f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (AICounter > 210f && NPC.velocity.Y == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                switch (Main.rand.Next(3))
-                {
-                    case 0:
-                        CurrentAIState = AIState.Flying;
-                        break;
-                    case 1:
-                        CurrentAIState = AIState.AbovePlayer;
-                        NPC.noTileCollide = true;
-                        NPC.velocity.Y = -8f;
-                        break;
-                    case 2:
-                        CurrentAIState = AIState.JumpingFast;
-                        NPC.ai[0] = 6f;
-                        break;
-                    default:
-                        CurrentAIState = AIState.Jumping;
-                        break;
-                }
+                SoundEngine.PlaySound(SoundID.Roar with { PitchVariance = 1f }, NPC.position);
+                CurrentAIState = AIState.AbovePlayer;
                 AITimer = 0f;
                 AICounter = 0f;
                 NPC.netUpdate = true;
@@ -232,18 +247,14 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
         {
             NPC.noTileCollide = true;
             NPC.noGravity = true;
-            NPC.direction = -(NPC.velocity.X < 0f).ToDirectionInt();
-            NPC.spriteDirection = NPC.direction;
             NPC.TargetClosest();
             Vector2 playerCenter = Player.Center;
-            Vector2 targetPos = playerCenter - Vector2.UnitY * 350f - NPC.Center;
+            Vector2 targetPos = playerCenter - Vector2.UnitY * 250f - NPC.Center;
             if (AICounter == 1f)
             {
                 AITimer++;
-                targetPos = Player.Center - NPC.Center;
-                targetPos.Normalize();
-                targetPos *= 8f;
-                NPC.velocity = (NPC.velocity * 4f + targetPos) / 5f;
+                targetPos = Vector2.Normalize(Player.Center - NPC.Center) * 6f;
+                NPC.velocity = Vector2.Lerp(NPC.velocity, targetPos, 0.1f);
                 if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 6f)
                 {
                     AITimer = 0f;
@@ -253,84 +264,89 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                     NPC.netUpdate = true;
                 }
             }
-            else if (Math.Abs(NPC.Center.X - Player.Center.X) < 40f && NPC.Center.Y < Player.Center.Y - 300f)
+            else if (NPC.position.Y < Player.position.Y - 200f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    CurrentAIState = AIState.Jumping;
+                    AITimer = 0f;
                     AICounter = 1f;
                     NPC.netUpdate = true;
                 }
             }
             else
             {
-                targetPos.Normalize();
-                targetPos *= 12f;
-                NPC.velocity = (NPC.velocity * 5f + targetPos) / 6f;
+                targetPos = Vector2.Normalize(targetPos) * 20f;
+                NPC.velocity = Vector2.Lerp(NPC.velocity, targetPos, 0.2f);
             }
         }
 
         public void Land()
         {
-            if (AICounter == 0f && Collision.CanHit(NPC.Center, 1, 1, Player.Center, 1, 1) && !Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
-            {
-                AICounter = 1f;
-            }
-            if (NPC.position.Y + NPC.height >= Player.position.Y || NPC.velocity.Y <= 0f)
+            NPC.noGravity = true;
+            NPC.noTileCollide = false;
+            if (NPC.position.Y + NPC.height >= Player.Center.Y || NPC.velocity.Y == 0f)
             {
                 AITimer++;
-                SoundEngine.PlaySound(SoundID.Item14, NPC.position);
-                if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 10f)
+                if (AITimer >= 5f)
                 {
-                    for (int i = 1; i < 3; i++)
+                    SoundEngine.PlaySound(SoundID.Item14, NPC.position);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int j = i > 1 ? 1 : -1;  
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.UnitX * 6f * j, ModContent.ProjectileType<ShadowWave>(), NPC.GetAttackDamage_ForProjectiles(23f, 25f), 0f, Main.myPlayer);
+                        for (int i = 1; i < 3; i++)
+                        {
+                            int j = i > 1 ? 1 : -1;
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.UnitX * 6f * j, ModContent.ProjectileType<ShadowWave>(), NPC.GetAttackDamage_ForProjectiles(23f, 25f), 0f, Main.myPlayer);
+                        }
+                        if (!Collision.CanHitLine(NPC.Center, 0, 0, Player.Center, 0, 0))
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, Vector2.Zero, ModContent.ProjectileType<ShadowStomp>(), NPC.GetAttackDamage_ForProjectiles(18f, 20f), 0f, Main.myPlayer);
+                        }
                     }
-
-                    CurrentAIState = AIState.Jumping;
+                    CurrentAIState = SecondPhase ? AIState.JumpingFast : AIState.Jumping;
                     AITimer = 0f;
                     AICounter = 0f;
                     NPC.netUpdate = true;
-                    if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
-                    {
-                        CurrentAIState = AIState.Flying;
-                    }
+                }
+
+                if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
+                {
+                    CurrentAIState = AIState.Flying;
                 }
             }
-            else if (AICounter == 0f)
+
+            if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
             {
                 NPC.noTileCollide = true;
-                NPC.noGravity = true;
             }
-            NPC.velocity.Y += 0.2f;
-            if (NPC.velocity.Y > 16f)
+
+            NPC.velocity.Y += 1f;
+            if (NPC.velocity.Y > 8f)
             {
-                NPC.velocity.Y = 16f;
+                NPC.velocity.Y = 8f;
             }
         }
 
         public void FlyAround()
         {
-            NPC.direction = (NPC.velocity.X > 0f).ToDirectionInt();
-            NPC.spriteDirection = NPC.direction;
             NPC.noTileCollide = true;
             NPC.noGravity = true;
-            Vector2 targetPos = Player.Center - NPC.Center;
-            targetPos.Y -= 4f;
+            NPC.direction = (NPC.velocity.X > 0f).ToDirectionInt();
+            NPC.spriteDirection = NPC.direction;
+            Vector2 targetPos = Player.Center + Vector2.UnitX * 32f - NPC.Center;
+            targetPos.Y -= 24f;
             if (Main.netMode != NetmodeID.MultiplayerClient && targetPos.Length() < 200f && !Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
             {
-                CurrentAIState = AIState.Jumping;
+                CurrentAIState = SecondPhase ? AIState.AbovePlayer : AIState.Jumping;
                 AITimer = 0f;
                 AICounter = 0f;
                 NPC.netUpdate = true;
             }
-            if (targetPos.Length() > 10f)
+            if (targetPos.Length() > 20f)
             {
                 targetPos.Normalize();
-                targetPos *= 10f;
+                targetPos *= 20f;
             }
-            NPC.velocity = (NPC.velocity * 4f + targetPos) / 5f;
+            NPC.SimpleFlyMovement(Vector2.Normalize(targetPos) * 20f, 0.2f);
         }
 
         public void JumpFaster()
@@ -339,10 +355,10 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             {
                 NPC.TargetClosest();
                 NPC.velocity.X *= 0.8f;
-                NPC.ai[1] += 1f;
-                if (NPC.ai[1] > 5f)
+                AITimer++;
+                if (AITimer > 5f)
                 {
-                    NPC.ai[1] = 0f;
+                    AITimer = 0f;
                     NPC.velocity.Y -= 4f;
                     if (Player.position.Y + Player.height < NPC.Center.Y)
                     {
@@ -373,7 +389,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                         NPC.velocity.Y -= 2f;
                     }
                     NPC.velocity.X = 12 * NPC.direction;
-                    NPC.ai[2] += 1f;
+                    AICounter++;
                     NPC.netUpdate = true;
                 }
             }
@@ -389,9 +405,14 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                     NPC.velocity.X = 8f;
                 }
             }
-            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.ai[2] >= 3f && NPC.velocity.Y == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && AICounter >= 3f && NPC.velocity.Y == 0f)
             {
-                CurrentAIState = AIState.Jumping;
+                if (SecondPhase)
+                {
+                    SoundEngine.PlaySound(SoundID.Roar, NPC.position);
+                }
+
+                CurrentAIState = SecondPhase ? AIState.AbovePlayer : AIState.Jumping;
                 AITimer = 0f;
                 AICounter = 0f;
                 NPC.netUpdate = true;
@@ -401,8 +422,8 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
         #endregion
 
         public override void OnKill()
-        {            
-            NPC.SetEventFlagCleared(ref DownedBossSystem.downedShadowSlime, -1);
+        {
+            NPC.SetEventFlagCleared(ref DownedBossSystem.downedShadowHand, -1);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -419,13 +440,11 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[Type].Value;
-            Texture2D extraThingTexture = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "RoquefortiExtra");
             SpriteEffects spriteEffects = NPC.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
-            float intensity = 0.2f;
-            
+            float intensity = 0.4f;
+
             Color npcDrawColor = NPC.GetAlpha(drawColor);
-            Color drawColorThing = Color.Red with { A = 0, B = 255 };
             Color npcDrawColorTrail = Color.DarkBlue;
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
@@ -433,7 +452,17 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                 npcDrawColorTrail *= 0.75f;
                 spriteBatch.Draw(texture, NPC.oldPos[i] + NPC.Size / 2f - screenPos, NPC.frame, npcDrawColorTrail * intensity, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             }
-            
+
+            float offset = MathF.Cos((float)Main.timeForVisualEffects * MathHelper.Pi / 15f);
+            Color glowColor = Color.Purple * 0.2f * NPC.Opacity;
+            glowColor *= 0.75f + 0.25f * offset;
+
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 glowDrawPos = NPC.Center - screenPos + Vector2.One.RotatedBy(MathHelper.PiOver4 * i) * (4f + 1f * offset);
+                Main.EntitySpriteDraw(texture, glowDrawPos, NPC.frame, glowColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects);
+            }
+
             spriteBatch.Draw(texture, NPC.Center - screenPos, NPC.frame, npcDrawColor, NPC.rotation, drawOrigin, NPC.scale, spriteEffects, 0);
             return false;
         }

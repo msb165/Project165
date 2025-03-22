@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System;
+using Project165.Content.Projectiles.Hostile;
 
 namespace Project165.Content.NPCs.Bosses.ShadowHand
 {
@@ -27,7 +28,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             NPC.dontTakeDamage = true;
         }
 
-        public float AITimer 
+        public float AITimer
         {
             get => NPC.ai[0];
             set => NPC.ai[0] = value;
@@ -43,8 +44,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
 
         public override void AI()
         {
-            int shadowSlime = NPC.FindFirstNPC(ModContent.NPCType<ShadowHand>());
-            if (shadowSlime < 0)
+            if (NPC.FindFirstNPC(ModContent.NPCType<ShadowHand>()) < 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -60,13 +60,13 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             AITimer++;
             MovementTimer += 0.01f;
 
-            NPC.Center = Vector2.Lerp(NPC.Center, Player.Center + new Vector2(MathF.Sin(MovementTimer) * 500f, -200f) , 0.01f);
+            NPC.Center = Vector2.Lerp(NPC.Center, Player.Center + new Vector2(MathF.Sin(MovementTimer) * 500f, -200f), 0.01f);
 
-            if (Main.netMode != NetmodeID.Server && NPC.ai[0] >= 100f) 
+            if (Main.netMode != NetmodeID.Server && NPC.ai[0] >= 100f)
             {
                 NPC.ai[0] = 0f;
-                Vector2 newProjVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 6f;
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newProjVelocity, ProjectileID.EyeLaser, 9, 2f, Main.myPlayer);
+                Vector2 newProjVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 8f;
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newProjVelocity, ModContent.ProjectileType<ShadowMinionProj>(), NPC.GetAttackDamage_ForProjectiles(10f, 12f), 2f, Main.myPlayer);
                 NPC.netUpdate = true;
             }
         }
