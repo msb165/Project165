@@ -14,7 +14,7 @@ using Terraria.ObjectData;
 
 namespace Project165.Content.Tiles
 {
-    public class SlimeAltar : ModTile
+    public class ShadowAltar : ModTile
     {
         public override void SetStaticDefaults()
         {
@@ -40,7 +40,7 @@ namespace Project165.Content.Tiles
 
         public override bool RightClick(int i, int j)
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowHand>()) && NPC.downedGolemBoss && Main.LocalPlayer.HasItemInAnyInventory(ModContent.ItemType<ShadowSlimeSummon>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowHand>()) && Main.hardMode && NPC.downedGolemBoss && Main.LocalPlayer.HasItem(ModContent.ItemType<ShadowSlimeSummon>()))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

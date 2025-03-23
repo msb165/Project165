@@ -7,7 +7,7 @@ namespace Project165.Content.Items.Placeables
     {
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.SlimeAltar>());
+            Item.DefaultToPlaceableTile(ModContent.TileType<Tiles.ShadowAltar>());
             Item.width = 48;
             Item.height = 32;
         }
