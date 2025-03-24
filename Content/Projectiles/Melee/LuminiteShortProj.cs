@@ -17,8 +17,7 @@ namespace Project165.Content.Projectiles.Melee
         public override string Texture => ModContent.GetInstance<LuminiteShortsword>().Texture;
         public override void SetDefaults()
         {
-            Projectile.width = 45;
-            Projectile.height = 45;
+            Projectile.Size = new(45);
             Projectile.aiStyle = -1;
             Projectile.scale = 1.25f;
             Projectile.friendly = true;
@@ -34,7 +33,7 @@ namespace Project165.Content.Projectiles.Melee
         public override void AI()
         {
             Projectile.scale = Projectile.ai[1];
-            Projectile.ai[0] += 1f;
+            Projectile.ai[0]++;
             if (Projectile.ai[0] >= 8f)
             {
                 Projectile.ai[0] = 0f;
@@ -50,12 +49,8 @@ namespace Project165.Content.Projectiles.Melee
                 if (Player.channel && !Player.noItems && !Player.CCed)
                 {
                     float scaleFactor = Player.HeldItem.shootSpeed;
-                    Vector2 vec = Vector2.Normalize(Main.MouseWorld - Player.RotatedRelativePoint(Player.MountedCenter));
-                    if (vec.HasNaNs())
-                    {
-                        vec = Vector2.UnitX * Player.direction;
-                    }
-                    vec *= scaleFactor;
+                    Vector2 vec = Main.MouseWorld - Player.RotatedRelativePoint(Player.MountedCenter);
+                    vec = vec.SafeNormalize(Vector2.UnitX * Player.direction) * scaleFactor;
                     if (vec.X != Projectile.velocity.X || vec.Y != Projectile.velocity.Y)
                     {
                         Projectile.netUpdate = true;
@@ -83,9 +78,7 @@ namespace Project165.Content.Projectiles.Melee
         public void CreateDust()
         {
             Vector2 spawnPos = Projectile.Center + Projectile.velocity * 6f - Projectile.Size / 2;
-            //Dust dust = Dust.NewDustDirect(spawnPos, Projectile.width, Projectile.height, DustID.Vortex, Scale: 1.25f);
             Dust dust = Dust.NewDustDirect(spawnPos, Projectile.width, Projectile.height, DustID.RainbowMk2, newColor:new(34, 221, 151, 0), Scale: 1.25f);
-            //dust.fadeIn = 1.1f;
             dust.velocity = Projectile.velocity * 2f;
             dust.noGravity = true;
         }
