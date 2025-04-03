@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace Project165.Content.Tiles
 {
-    public class ShadowSlimeBlock : ModTile
+    public class HardenedGelBlock : ModTile
     {
         public override void SetStaticDefaults()
         {
@@ -25,5 +25,7 @@ namespace Project165.Content.Tiles
             DustType = DustID.Crimslime;
             MinPick = 215;
         }
+
+        public override bool CanExplode(int i, int j) => false;
     }
 }

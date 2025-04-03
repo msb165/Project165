@@ -152,12 +152,13 @@ namespace Project165.Common.Globals.Projectiles
                 float scale = projectile.scale;
                 Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
                 Vector2 origin = Vector2.UnitX * texture.Width;
+                //float rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
 
                 for (int i = 0; i < projectile.oldPos.Length; i++)
                 {
                     trailColor *= 0.75f;
                     scale *= 1.03f;
-                    Main.EntitySpriteDraw(texture, projectile.oldPos[i] + projectile.Size / 2 - Main.screenPosition, null, trailColor, projectile.rotation, origin, scale, SpriteEffects.None);
+                    Main.EntitySpriteDraw(texture, projectile.oldPos[i] + projectile.Size / 2 - Main.screenPosition, null, trailColor, projectile.oldRot[i], origin, scale, SpriteEffects.None);
                 }
 
                 Main.EntitySpriteDraw(texture, projectile.Center - Main.screenPosition, null, drawColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None);

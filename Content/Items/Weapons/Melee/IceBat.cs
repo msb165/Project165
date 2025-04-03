@@ -23,7 +23,7 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 56;
+            Item.damage = 73;
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.shoot = ModContent.ProjectileType<IceBatHoldoutProj>();
             Item.shootSpeed = 1f;

@@ -79,7 +79,7 @@ namespace Project165.Content.Projectiles.Melee
 
             for (int i = 0; i < 2; i++)
             {
-                Dust.NewDustDirect(Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 8, 8, ModContent.DustType<CloudDust>(), Scale:0.5f);
+                Dust.NewDustDirect(Projectile.Center + 32f * Projectile.rotation.ToRotationVector2() * Projectile.scale, 8, 8, ModContent.DustType<CloudDust>(), Scale: 0.5f);
             }
 
             SetPlayerValues();
@@ -133,7 +133,6 @@ namespace Project165.Content.Projectiles.Melee
                 }
 
                 trailColor *= 0.65f;
-
                 Main.EntitySpriteDraw(texture, oldDrawPos, texture.Frame(), trailColor, oldRotation, texture.Size() / 2, Projectile.scale, spriteEffects);
             }
 

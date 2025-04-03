@@ -15,7 +15,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 20;
-            Item.damage = 55;
+            Item.damage = 60;
             Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -24,18 +24,16 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.autoReuse = true;
             Item.rare = ItemRarityID.Red;
             Item.useAmmo = AmmoID.Arrow;
+            Item.value = Item.sellPrice(gold: 12);
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
 
+        public override bool CanConsumeAmmo(Item ammo, Player player) => Main.rand.NextBool(3);
+
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (type == ProjectileID.WoodenArrowFriendly)
-            {
-                type = ProjectileID.HellfireArrow;
-            }
-
-            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Ranged.InfernalBow>(), damage, knockback, player.whoAmI, ai2: type);
+            Projectile.NewProjectile(source, position, velocity, ModContent.ProjectileType<Projectiles.Ranged.InfernalBow>(), damage, knockback, player.whoAmI);
             return false;
         }
     }

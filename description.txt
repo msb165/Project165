@@ -14,3 +14,4 @@ Besides adding more content, this mod makes some changes to the vanilla game, he
 - Enchances Frost Bolt Staff's projectile visuals.
 - Changes some of the gem staves to make them a bit different from each other.
 - Increases Terragrim's drop chance from 2% to 50%.
+- Makes the hold animation of staves smoother.

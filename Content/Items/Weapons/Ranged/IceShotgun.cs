@@ -26,7 +26,7 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.DamageType = DamageClass.Ranged;
             Item.damage = 35;
             Item.rare = ItemRarityID.Pink;
-            Item.value = Item.sellPrice(gold: 1);
+            Item.value = Item.sellPrice(gold: 4);
             Item.autoReuse = true;
             Item.noMelee = true;
         }
@@ -35,9 +35,9 @@ namespace Project165.Content.Items.Weapons.Ranged
         {
             if (player.whoAmI == Main.myPlayer)
             {
-                player.velocity.X += -3.5f * player.direction;
+                player.velocity -= velocity / 2;
             }
-
+            
             for (int m = 0; m < 5; m++)
             {
                 Vector2 offset = Vector2.UnitX.RotatedBy(velocity.ToRotation());
@@ -46,18 +46,15 @@ namespace Project165.Content.Items.Weapons.Ranged
                 Dust.NewDustDirect(player.Center, Item.width, Item.height, ModContent.DustType<CloudDust>(), 0, 0, 100, Color.White with { A = 0 }, Main.rand.NextFloat(0.75f, 1.1f));
             }
 
-            Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<IceShockWave>(), damage, knockback);
+            Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<IceShockWave>(), damage / 2, knockback);
 
             for (int i = 0; i < 4; i++)
             {
                 Vector2 newVelocity = velocity.RotatedByRandom(MathHelper.ToRadians(15f));
                 newVelocity *= 1f - Main.rand.NextFloat(0.4f);
 
-                Projectile crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 2.5f, ProjectileID.CrystalShard, damage / 4, knockback);
-                crystalShard.tileCollide = true;
-                crystalShard.scale = 1.75f;
-                crystalShard = Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 4, knockback);
-                crystalShard.penetrate = -1;
+                Projectile.NewProjectileDirect(source, position, newVelocity * 2.5f, ProjectileID.CrystalShard, damage / 4, knockback);
+                Projectile.NewProjectileDirect(source, position, newVelocity * 4f, ProjectileID.CrystalShard, damage / 4, knockback);
 
                 Projectile.NewProjectileDirect(source, position, newVelocity, type, damage, knockback);
             }
@@ -68,7 +65,7 @@ namespace Project165.Content.Items.Weapons.Ranged
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            Project165Utils.SmoothHoldStyle(player);
+            Project165Utils.RecoilEffect(player);
         }
 
         public override Vector2? HoldoutOffset() => new(-1.25f);

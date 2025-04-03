@@ -70,7 +70,7 @@ namespace Project165.Content.Projectiles.Magic
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.4f, PitchVariance = 0.3f }, Projectile.position);
             if (Main.myPlayer == Projectile.owner)
             {
-                int projAmount = Main.rand.Next(2, 5);
+                int projAmount = Main.rand.Next(1, 2);
                 for (int i = 0; i < projAmount; i++)
                 {
                     Vector2 spawnPos = Projectile.Center + Utils.RandomVector2(Main.rand, -30f, 30f);

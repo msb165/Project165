@@ -38,7 +38,7 @@ namespace Project165.Content.Items.Weapons.Magic
 
         public override bool CanUseItem(Player player) => !player.channel;
 
-        public override void AddRecipes()
+        /*public override void AddRecipes()
         {
             CreateRecipe()
                 .AddIngredient(ItemID.RainbowRod)
@@ -46,6 +46,6 @@ namespace Project165.Content.Items.Weapons.Magic
                 .AddIngredient(ModContent.ItemType<ShadowEssence>(), 10)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
-        }
+        }*/
     }
 }

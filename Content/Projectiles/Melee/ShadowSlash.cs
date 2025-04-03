@@ -39,7 +39,8 @@ namespace Project165.Content.Projectiles.Melee
 
             if (Main.rand.NextBool(25))
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height * 4, DustID.Clentaminator_Purple, Alpha:100, Scale:0.75f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height * 4, DustID.Clentaminator_Purple, Alpha:100, Scale:0.75f);
+                dust.velocity *= 0.5f;
             }
 
             if (Projectile.frameCounter++ >= 1)

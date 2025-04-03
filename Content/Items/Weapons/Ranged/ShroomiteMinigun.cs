@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Project165.Utilites;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -7,7 +8,7 @@ using Terraria.ModLoader;
 namespace Project165.Content.Items.Weapons.Ranged
 {
     public class ShroomiteMinigun : ModItem
-    { 
+    {
         public override void SetDefaults()
         {
             Item.autoReuse = true;

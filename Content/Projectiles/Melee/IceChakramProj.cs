@@ -58,7 +58,7 @@ namespace Project165.Content.Projectiles.Melee
                 }
 
                 Vector2 vecTowardsPlayer = Projectile.DirectionTo(Owner.MountedCenter).SafeNormalize(Vector2.Zero);
-                Projectile.velocity = Projectile.velocity.MoveTowards(vecTowardsPlayer * Owner.inventory[Owner.selectedItem].shootSpeed, acceleration);
+                Projectile.velocity = Projectile.velocity.MoveTowards(vecTowardsPlayer * 9.5f, acceleration);
 
                 if (Main.myPlayer == Projectile.owner)
                 {

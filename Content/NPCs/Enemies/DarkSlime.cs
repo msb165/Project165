@@ -18,8 +18,9 @@ namespace Project165.Content.NPCs.Enemies
             NPC.damage = 13;
             NPC.lifeMax = 180;
             NPC.value = 50f;
-            NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.GravityIgnoresLiquid = true;
+            NPC.HitSound = SoundID.Tink with { PitchVariance = 1f };
+            NPC.DeathSound = SoundID.NPCDeath43;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

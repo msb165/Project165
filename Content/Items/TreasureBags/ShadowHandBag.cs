@@ -30,9 +30,10 @@ namespace Project165.Content.Items.TreasureBags
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowBlade>(), 3));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowPike>(), 3));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowSlimeStaff>(), 3));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowBlade>(), 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowPike>(), 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowSlimeStaff>(), 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BlackHoleStaff>(), 4));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShadowEssence>(), 1, 8, 30));
         }
     }

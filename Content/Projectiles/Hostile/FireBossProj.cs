@@ -26,7 +26,7 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 600;
             Projectile.DamageType = DamageClass.Magic;
         }
 
@@ -87,16 +87,16 @@ namespace Project165.Content.Projectiles.Hostile
 
             Color drawColor = Color.White * Projectile.Opacity;
             Color trailColor = drawColor;
-            Color glowColor = Color.Orange with { A = 0 } * Projectile.Opacity;
+            Color glowColor = Color.Red with { A = 0 } * Projectile.Opacity;
             Rectangle sourceRectangle = new(0, startY, texture.Width, frameHeight);
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 Vector2 trailPos = Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition;
-                trailColor *= 0.8f;
-                glowColor *= 0.8f;
-                Main.EntitySpriteDraw(textureGlow, trailPos, null, glowColor * 0.5f, Projectile.rotation, textureGlow.Size() / 2, 0.5f, SpriteEffects.None);
-                Main.EntitySpriteDraw(texture, trailPos, sourceRectangle, trailColor, Projectile.rotation, sourceRectangle.Size() / 2, Utils.GetLerpValue(Projectile.scale, 0f, i / (float)Projectile.oldPos.Length, true), SpriteEffects.None);
+                trailColor *= 0.75f;
+                glowColor *= 0.75f;
+                Main.EntitySpriteDraw(textureGlow, trailPos - Projectile.velocity / 10f * i, null, glowColor * 0.5f, Projectile.rotation, textureGlow.Size() / 2, 0.5f, SpriteEffects.None);
+                Main.EntitySpriteDraw(texture, trailPos - Projectile.velocity / 10f * i, sourceRectangle, trailColor, Projectile.rotation, sourceRectangle.Size() / 2, Projectile.scale, SpriteEffects.None);
                 //Main.EntitySpriteDraw(texture, trailPos, sourceRectangle, trailColor * 0.2f, Projectile.rotation, sourceRectangle.Size() / 2, Utils.GetLerpValue(Projectile.scale, 0f, i / (float)Projectile.oldPos.Length, true), SpriteEffects.None);
             }
 

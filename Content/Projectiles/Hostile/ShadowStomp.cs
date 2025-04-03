@@ -72,7 +72,7 @@ namespace Project165.Content.Projectiles.Hostile
                     {
                         for (int l = 0; l < dustAmount - 1; l++)
                         {
-                            Dust dust = Dust.NewDustDirect(Projectile.position, 12, 12, DustID.CorruptSpray, 0f, 0f, 50, Scale: 1.5f);
+                            Dust dust = Dust.NewDustDirect(Projectile.position, 12, 12, DustID.Corruption, 0f, 0f, 50, Scale: 2f);
                             dust.noGravity = true;
                             dust.velocity.Y *= -Main.rand.NextFloat(1f, 4f);
                             dust.velocity.X *= Main.rand.NextFloatDirection() * 3f;

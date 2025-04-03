@@ -39,16 +39,17 @@ namespace Project165.Content.Projectiles.Ranged
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Vector2 spinPosition = new Vector2(10f, 40f).RotatedBy(Projectile.velocity.ToRotation());
                 Dust dust = Dust.NewDustDirect(Projectile.position, 0, 0, DustID.IceTorch, 0, 0, 100, default, 1.5f);
-                dust.velocity *= 0.5f;
-                dust.position = Projectile.Center - Projectile.velocity / 10f * i + spinPosition;
+                dust.velocity *= 0.25f;
+                dust.position = Projectile.Center - Projectile.velocity / 5f * i + spinPosition;
                 dust.noGravity = true;
-                Vector2 spinPosition2 = new Vector2(10f, -40f).RotatedBy(Projectile.velocity.ToRotation());
+
+                spinPosition = new Vector2(10f, -40f).RotatedBy(Projectile.velocity.ToRotation());
                 Dust dust2 = Dust.CloneDust(dust);
-                dust2.position = Projectile.Center - Projectile.velocity / 10f * i + spinPosition2;
+                dust2.position = Projectile.Center - Projectile.velocity / 5f * i + spinPosition;
             }
         }
 
@@ -64,7 +65,7 @@ namespace Project165.Content.Projectiles.Ranged
         {
             for (int i = 0; i < 30; i++)
             {
-                Dust dust = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.IceTorch, 0, 0, 0, default, 2f);
+                Dust dust = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.IceTorch, Scale: 2f);
                 dust.noGravity = true;
                 dust.velocity *= 8f;
                 dust.position += dust.velocity * 4f;
@@ -76,17 +77,26 @@ namespace Project165.Content.Projectiles.Ranged
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 origin = texture.Size() / 2;
-            Color drawColor = Color.SkyBlue with { A = 127 } * Projectile.Opacity;
-            Color trailColor = drawColor with { A = 0 };
+            Color drawColor = new Color(94, 167, 232, 127) * Projectile.Opacity;
+            Color trailColor = drawColor;
+            Vector2 drawPos = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 Vector2 oldPos = Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition;
                 trailColor *= 0.75f;
                 Main.EntitySpriteDraw(texture, oldPos, texture.Frame(), trailColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(texture, oldPos, texture.Frame(), trailColor with { A = 0 } * 0.3f, Projectile.rotation, origin, Projectile.scale * 1.25f, SpriteEffects.None, 0);
             }
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, texture.Frame(), drawColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+
+            float timer = MathF.Cos((float)Main.timeForVisualEffects * MathHelper.TwoPi / 22.5f);
+
+            for (int i = 0; i < 8; i++)
+            {
+                Main.EntitySpriteDraw(texture, drawPos + Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * i) * (4f + 1f * timer), texture.Frame(), new Color(94, 167, 232, 0) * 0.125f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+            }
 
             return false;
         }

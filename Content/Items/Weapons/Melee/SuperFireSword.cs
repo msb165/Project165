@@ -18,12 +18,13 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 20;
             Item.useTime = 20;
-            Item.damage = 190;
+            Item.damage = 200;
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.shoot = ModContent.ProjectileType<SuperFireSwordHoldoutProj>();
             Item.shootSpeed = 1f;
             Item.rare = ItemRarityID.Red;
             Item.value = Item.buyPrice(gold: 20);
+            Item.crit = 10;
             Item.knockBack = 8f;
             Item.noUseGraphic = true;
             Item.noMelee = true;

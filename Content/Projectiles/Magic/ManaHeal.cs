@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Project165.Content.Dusts;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -52,11 +53,11 @@ namespace Project165.Content.Projectiles.Magic
             {
                 Vector2 speed = new(Projectile.velocity.X * 0.25f * i, -Projectile.velocity.Y * 0.25f * i);
                 Dust manaDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.SpectreStaff, 0f, 0f, 100, Color.Blue, 1.5f);
+                manaDust.scale = 1.5f;
                 manaDust.noGravity = true;
                 Dust secondManaDust = manaDust;
                 secondManaDust.velocity *= 0f;
-                manaDust.position.X -= speed.X;
-                manaDust.position.Y -= speed.Y;
+                manaDust.position -= speed;
             }
         }
     }

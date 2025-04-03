@@ -24,7 +24,7 @@ namespace Project165.Common.Systems.World
                 tasks.Insert(microBiomesIndex + 1, new PassLegacy("Shadow Arena", (progress, config) =>
                 {
                     progress.Message = "Project 165: Shadow Arena";
-                    SlimeArena slimeArena = GenVars.configuration.CreateBiome<SlimeArena>();
+                    ShadowHandArena slimeArena = GenVars.configuration.CreateBiome<ShadowHandArena>();
 
                     Point origin2 = default;
                     for (int i = 0; i < 2; i++)

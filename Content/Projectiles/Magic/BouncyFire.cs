@@ -21,7 +21,7 @@ namespace Project165.Content.Projectiles.Magic
         public override void SetDefaults()
         {
             Projectile.friendly = true;
-            Projectile.Size = new(16);
+            Projectile.Size = new(30);
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
             Projectile.aiStyle = -1;
@@ -44,7 +44,7 @@ namespace Project165.Content.Projectiles.Magic
                     Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.InfernoFork, Scale: 2f);
                     dust.noGravity = true;
                     dust.position = Projectile.Center;
-                    dust.velocity *= 2f;
+                    dust.velocity *= 4f;
                 }
                 Projectile.ai[1] = 1f;
             }
@@ -88,8 +88,8 @@ namespace Project165.Content.Projectiles.Magic
                 Main.EntitySpriteDraw(texture, drawPosTrail - Main.screenPosition, null, trailColor * 0.3f, Projectile.oldRot[i], drawOrigin, Projectile.scale * 1.5f, SpriteEffects.None, 0);
 
                 // "Glow" effect
-                Main.EntitySpriteDraw(texture, drawPosTrail - Main.screenPosition - Vector2.UnitY.RotatedBy(MathHelper.Pi * i) * (4f + 1f * offset), null, trailColor * 0.15f, Projectile.oldRot[i], drawOrigin, Projectile.scale * 2f, SpriteEffects.None, 0);
-                Main.EntitySpriteDraw(texture, drawPosTrail - Main.screenPosition + Vector2.UnitY.RotatedBy(MathHelper.Pi * i) * (4f + 1f * offset), null, trailColor * 0.15f, Projectile.oldRot[i], drawOrigin, Projectile.scale * 2f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(texture, drawPosTrail - Main.screenPosition - Vector2.UnitY.RotatedBy(MathHelper.Pi * i) * (4f + 1f * offset), null, trailColor * 0.15f, Projectile.oldRot[i], drawOrigin, Projectile.scale * 1.5f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(texture, drawPosTrail - Main.screenPosition + Vector2.UnitY.RotatedBy(MathHelper.Pi * i) * (4f + 1f * offset), null, trailColor * 0.15f, Projectile.oldRot[i], drawOrigin, Projectile.scale * 1.5f, SpriteEffects.None, 0);
 
                 Main.EntitySpriteDraw(texture, drawPosTrail - Main.screenPosition, null, trailColor, Projectile.oldRot[i], drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             }

@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
 namespace Project165.ILEdits

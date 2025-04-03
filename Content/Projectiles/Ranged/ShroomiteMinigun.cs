@@ -17,7 +17,7 @@ namespace Project165.Content.Projectiles.Ranged
 {
     public class ShroomiteMinigun : ModProjectile
     {
-        public override string Texture => ModContent.GetInstance < Items.Weapons.Ranged.ShroomiteMinigun>().Texture;
+        public override string Texture => ModContent.GetInstance<Items.Weapons.Ranged.ShroomiteMinigun>().Texture;
         public override void SetDefaults()
         {
             Projectile.Size = new(16);
@@ -57,7 +57,7 @@ namespace Project165.Content.Projectiles.Ranged
                     Projectile.NewProjectile(source, Projectile.Center + Vector2.UnitY * 4f + Projectile.velocity * 4f, spawnVel, projToShoot, Damage, KnockBack, Projectile.owner);
                     if (Main.rand.NextBool(4))
                     {
-                        for (int i = 0;  i < 4; i++)
+                        for (int i = 0; i < 4; i++)
                         {
                             Projectile.NewProjectile(source, Projectile.Center + Vector2.UnitY * 4f + Projectile.velocity * 5f, spawnVel.RotatedByRandom(MathHelper.ToRadians(15f)) * Main.rand.Next(1, 8), ProjectileID.Mushroom, Damage / 2, KnockBack, Projectile.owner);
                         }
@@ -83,7 +83,7 @@ namespace Project165.Content.Projectiles.Ranged
             Player.heldProj = Projectile.whoAmI;
             Player.ChangeDir(Projectile.direction);
             Player.SetDummyItemTime(2);
-            // Make it so it looks like the player is holding the weapon with both arms
+            // Make it so it looks like the player is holding the weapon with both hands
             Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
             Player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
         }
@@ -92,12 +92,12 @@ namespace Project165.Content.Projectiles.Ranged
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
-            Vector2 origin = new(0,texture.Height / 2 + -4f);
+            Vector2 origin = new(0, texture.Height / 2 + -4f);
             if (Projectile.spriteDirection == -1)
             {
                 origin.Y += 8f;
             }
-            SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipVertically: SpriteEffects.None;
+            SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
             Main.EntitySpriteDraw(texture, drawPos, null, Color.White, Projectile.rotation, origin, Projectile.scale, spriteEffects);
             return false;

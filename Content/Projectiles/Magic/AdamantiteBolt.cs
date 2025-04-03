@@ -84,7 +84,7 @@ namespace Project165.Content.Projectiles.Magic
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 newVelocity = (Vector2.UnitX * 8f).RotatedBy(i * MathHelper.TwoPi / 10f);
-                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.position, newVelocity, ModContent.ProjectileType<AdamantiteEnergy>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.position, newVelocity, ModContent.ProjectileType<AdamantiteEnergy>(), (int)(Projectile.damage / 3.5f), Projectile.knockBack, Projectile.owner);
                 }
             }
         }

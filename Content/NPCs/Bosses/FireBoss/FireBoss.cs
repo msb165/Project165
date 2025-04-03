@@ -8,10 +8,12 @@ using Project165.Content.Items.Weapons.Ranged;
 using Project165.Content.Projectiles.Hostile;
 using System;
 using System.IO;
+using System.Runtime.Intrinsics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.GameContent.UI;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,8 +26,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         {
             Spawning = 0,
             Flying = 1,
-            Unused = 2,
-            Unused2 = 3,
+            SpamProjectiles = 2,
+            ShootSpheres = 3,
             Death = 4
         }
 
@@ -60,6 +62,9 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPCID.Sets.MPAllowedEnemies[Type] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Bleeding] = true;
             Main.npcFrameCount[Type] = 4;
         }
 
@@ -135,10 +140,19 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 NPC.localAI[1] = 1f;
                 NPC.alpha = 255;
                 CurrentAIState = AIState.Spawning;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int direction = i == 0 ? 1 : -1;
+                        Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center + Vector2.UnitX * 800f * -direction, Vector2.Zero, ModContent.ProjectileType<FireTornado>(), NPC.GetAttackDamage_ForProjectiles(10f, 13f), 8f, Main.myPlayer, NPC.whoAmI, direction);
+                    }
+                }
             }
 
             Lighting.AddLight(NPC.Center, 2f, 2f, 2f);
-            NPC.dontTakeDamage = CurrentAIState is AIState.Spawning or AIState.Death;
+            HandleRotation();
 
             switch (CurrentAIState)
             {
@@ -146,15 +160,18 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                     SpawnAnimation();
                     break;
                 case AIState.Flying:
-                    FlyAround();
+                    FlyAbove();
                     break;
-                case AIState.Unused:
-                    StayAbove();
+                case AIState.SpamProjectiles:
+                    SpamProjectiles();
                     break;
-                case AIState.Unused2:
-                    SpinState();
+                case AIState.ShootSpheres:
+                    ShootSpheres();
                     break;
             }
+
+            NPC.dontTakeDamage = CurrentAIState is AIState.Spawning or AIState.Death;
+            NPC.chaseable = CurrentAIState is not AIState.Spawning or AIState.Death;
         }
 
         public void SpawnAnimation()
@@ -166,18 +183,17 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 NPC.alpha -= 4;
             }
 
-            Player.AddBuff(BuffID.Slow, 300);
-
             for (int i = 0; i < 3; i++)
             {
                 Vector2 newVelocity = Main.rand.NextVector2Circular(200f, 200f).SafeNormalize(Vector2.UnitY) * 5f;
+                NPC.position += NPC.netOffset;
                 Dust dust = Dust.NewDustPerfect(NPC.Center - newVelocity * 20f, DustID.Torch, newVelocity, Scale: 3f);
                 dust.noGravity = true;
+                NPC.position -= NPC.netOffset;
             }
 
-            if (NPC.alpha <= 0)
+            if (NPC.alpha < 0)
             {
-                Player.ClearBuff(BuffID.Slow);
                 NPC.alpha = 0;
             }
 
@@ -193,54 +209,36 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             }
         }
 
-        public void FlyAround()
+        public void FlyAbove()
         {
             if (Direction == 0f)
             {
                 NPC.TargetClosest();
                 Direction = (NPC.Center.X < Player.Center.X).ToDirectionInt();
             }
+
             NPC.TargetClosest();
-            float moveAcceleration = 0.5f;
+            float moveAcceleration = 0.4f;
             float maxSpeed = 11f;
-            float maxDistance = 600f;
+            float maxDistance = 500f;
             float distance = MathF.Abs(NPC.Center.X - Player.Center.X);
 
             if ((NPC.Center.X < Player.Center.X && Direction < 0f || NPC.Center.X > Player.Center.X && Direction > 0f) && distance > maxDistance)
             {
                 Direction = 0f;
             }
-            if (NPC.life < NPC.lifeMax * 0.5)
-            {
-                moveAcceleration = 0.85f;
-                maxSpeed = 12f;
-            }
-            if (NPC.life < NPC.lifeMax * 0.25)
-            {
-                moveAcceleration = 1.15f;
-                maxSpeed = 15f;
-            }
+
             NPC.velocity.X += Direction * moveAcceleration;
             NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -maxSpeed, maxSpeed);
             float verticalDistance = Player.Center.Y - 200f - NPC.Center.Y;
-            if (NPC.velocity.Y < verticalDistance)
+            if (MathF.Abs(verticalDistance) > 4f)
             {
-                NPC.velocity.Y += 0.25f;
-                if (NPC.velocity.Y < 0f && verticalDistance > 0f)
-                {
-                    NPC.velocity.Y += 0.25f;
-                }
+                maxSpeed = 15f;
             }
-            else if (NPC.velocity.Y > verticalDistance)
-            {
-                NPC.velocity.Y -= 0.25f;
-                if (NPC.velocity.Y > 0f && verticalDistance < 0f)
-                {
-                    NPC.velocity.Y -= 0.25f;
-                }
-            }
-            NPC.velocity.Y = MathHelper.Clamp(NPC.velocity.Y, -8f, 8f);
-            NPC.rotation = NPC.velocity.X * 0.025f;
+            verticalDistance = MathHelper.Clamp(verticalDistance, -16f, 16f);
+
+            NPC.velocity.Y = (NPC.velocity.Y * (maxSpeed - 1f) + verticalDistance) / maxSpeed;
+            NPC.rotation = MathHelper.Lerp(NPC.rotation, NPC.velocity.X * 0.025f, 0.05f);
             if (distance < 800f && NPC.position.Y < Player.position.Y && AITimer > 35f)
             {
                 ShootTimer++;
@@ -259,15 +257,15 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                     Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 12f;
                     for (int i = 0; i < 3; i++)
                     {
-                        newVelocity *= Main.rand.NextFloat(0.9f, 1.1f);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity.RotatedByRandom(MathHelper.ToRadians(10f)), ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(38f, 42f), 0f, Main.myPlayer);
+                        newVelocity = newVelocity.RotatedByRandom(MathHelper.ToRadians(5f)) * Main.rand.NextFloat(0.9f, 1.1f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(38f, 42f), 0f, Main.myPlayer);
                     }
                 }
             }
             AITimer++;
             if (AITimer > 600f && distance < 600f)
             {
-                CurrentAIState = AIState.Unused;
+                CurrentAIState = AIState.ShootSpheres;
                 AITimer = 0f;
                 Direction = 0f;
                 ShootTimer = 0f;
@@ -276,97 +274,133 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             }
         }
 
-        public void StayAbove()
+        public void SpamProjectiles()
         {
             NPC.TargetClosest();
-            Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 20f;
-            NPC.rotation = (Player.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
-            NPC.SimpleFlyMovement(newPosition, 0.5f);
+            //Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 20f;
+            NPC.velocity *= 0.7f;
+            //NPC.SimpleFlyMovement(newPosition, 0.5f);
 
             if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 30f)
             {
                 ShootTimer++;
-                int timeToShoot = 35;
+                int timeToShoot = 14;
                 if (NPC.life < NPC.lifeMax * 0.75)
                 {
-                    timeToShoot = 30;
+                    timeToShoot = 12;
                 }
                 if (NPC.life < NPC.lifeMax * 0.5)
                 {
-                    timeToShoot = 28;
+                    timeToShoot = 10;
                 }
-                if (ShootTimer >= timeToShoot)
+                if (ShootTimer % timeToShoot == 0f)
                 {
                     ShootTimer = 0f;
                     Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 8f;
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + newVelocity * 8f, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
-                    newVelocity.X *= -1f;
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center + Vector2.UnitX * -400f * -NPC.direction, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
+                    for (int i = 0; i < 6; i++)
+                    {
+                        newVelocity *= Main.rand.NextFloat(0.85f, 1.1f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + newVelocity * 4f, newVelocity.RotatedByRandom(MathHelper.ToRadians(85f)), ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
+                    }
+                    //newVelocity.X *= -1f;
+                    //Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center + Vector2.UnitX * -400f * -NPC.direction, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
                 }
             }
 
             AITimer++;
             if (AITimer > 600f)
             {
-                CurrentAIState = AIState.Unused2;
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].type == ModContent.ProjectileType<FireBossProj>())
+                    {
+                        Main.projectile[i].Kill();
+                    }
+                }
+
                 ShootTimer = 0f;
+                CurrentAIState = AIState.Flying;
                 AITimer = 0f;
                 NPC.netUpdate = true;
             }
         }
 
-        public void SpinState()
+        public void ShootSpheres()
         {
-            int timeToShoot = 80;
-            double difficultyValue = Main.expertMode ? 0.3 : 0.5;
+            int timeToShoot = 30;
+            double difficultyValue = Main.expertMode ? 0.5 : 0.3;
 
             NPC.TargetClosest();
-            Vector2 npcVel = Vector2.Normalize(Player.Center + Vector2.One * 200f - NPC.Center) * 12f;
-            NPC.SimpleFlyMovement(npcVel, 0.25f);
+
+            Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 4.5f;
+            NPC.rotation = Vector2.Normalize(Player.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
+            NPC.SimpleFlyMovement(newVelocity, 0.5f);
+
+            //NPC.velocity *= 0.7f;
             NPC.rotation = NPC.velocity.X * 0.05f;
             NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
-            
+
             if (NPC.life < NPC.lifeMax * difficultyValue)
             {
                 timeToShoot -= 8;
             }
-            if (NPC.life < NPC.lifeMax * 0.1)
+            if (NPC.life < NPC.lifeMax * 0.2)
             {
-                timeToShoot -= 10;
+                timeToShoot -= 8;
             }
+
+            float projAmount = 6;
             ShootTimer++;
-            if (ShootTimer > timeToShoot)
+            if (ShootTimer >= timeToShoot && ShootTimer > 0f)
             {
                 ShootTimer = 0f;
-                for (int i = 0; i < 6; i++)
+                Vector2 center = Vector2.Normalize(NPC.Center) * 40f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 newPosition = new(Main.screenPosition.X, Main.screenPosition.Y + Main.rand.Next(Main.screenHeight));
-                    if (Main.rand.NextBool(2))
+                    for (int i = 0; i < projAmount; i++)
                     {
-                        newPosition.X += Main.screenWidth;
-                    }
-                    Vector2 newVelocity = Vector2.Normalize(Player.Center - newPosition) * 8f;
+                        float rotate = i - (projAmount - 1f) / 2f;
+                        Vector2 offset = center.RotatedBy(MathHelper.TwoPi / projAmount * rotate);
+                        Vector2 newVel = Vector2.Normalize(Player.Center - NPC.Center) * 12f;
 
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), newPosition, newVelocity, ModContent.ProjectileType<FireBossProjHoming>(), NPC.GetAttackDamage_ForProjectiles(20f, 23f), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset.RotatedBy(newVel.ToRotation()), newVel, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(23f, 26f), 0f, Main.myPlayer);
+                    }
                 }
             }
             AITimer++;
-            if (AITimer > 500f)
+            if (AITimer > 800f)
             {
-                CurrentAIState = AIState.Flying;
+                CurrentAIState = AIState.SpamProjectiles;
                 ShootTimer = 0f;
                 AITimer = 0f;
                 NPC.netUpdate = true;
             }
         }
 
+        #region Misc
+        private void HandleRotation()
+        {
+            if (CurrentAIState is AIState.Death or AIState.Spawning or AIState.Flying)
+            {
+                return;
+            }
+
+            Vector2 npcPlayerPos = Vector2.Normalize(NPC.Center - Player.Center);
+            float newRotation = npcPlayerPos.ToRotation() - MathHelper.PiOver2;
+
+            NPC.rotation = NPC.rotation.AngleTowards(newRotation, 0.4f);
+        }
+
+        #endregion
+
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            Conditions.NotExpert notExpert = new();
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<FireBossBag>()));
 
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<UltraFireStaff>(), 3));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InfernalBow>(), 3));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<SuperFireSword>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<UltraFireStaff>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<InfernalBow>(), 3));
+            npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<SuperFireSword>(), 3));
         }
 
         public override void OnKill()

@@ -20,11 +20,12 @@ namespace Project165.Content.Tiles
         {
             Main.tileFrameImportant[Type] = true;
             Main.tileNoFail[Type] = true;
-            Main.tileObsidianKill[Type] = true;
+            Main.tileObsidianKill[Type] = false;
             Main.tileLighted[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
             TileObjectData.newTile.DrawYOffset = 2;
+            TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
 
             LocalizedText slimeAltarName = CreateMapEntryName();
@@ -37,6 +38,8 @@ namespace Project165.Content.Tiles
             Main.LocalPlayer.cursorItemIconEnabled = true;
             Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ShadowSlimeSummon>();
         }
+
+        public override bool CanExplode(int i, int j) => false;
 
         public override bool RightClick(int i, int j)
         {

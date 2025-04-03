@@ -1,3 +1,3 @@
 Frigus.SpawnInfo: Use a [i:Project165/IceBossSummon] in the snow biome at night.
-FlameBoss.SpawnInfo: Use a [i:Project165/FireBossSummon] in the underworld.
-ShadowHand.SpawnInfo: Use a [i:Project165/ShadowSlimeSummon] in at at [i:Project165/SlimeAltar].
+FireBoss.SpawnInfo: Use a [i:Project165/FireBossSummon] in the underworld.
+ShadowHand.SpawnInfo: Use a [i:Project165/ShadowSlimeSummon] at the [i:Project165/ShadowAltar].

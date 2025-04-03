@@ -12,7 +12,7 @@ namespace Project165.Content.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Item.staff[Type] = true;
+            //Item.staff[Type] = true;
         }
 
         public override void SetDefaults()
@@ -23,7 +23,7 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.damage = 120;
             Item.noMelee = true;
             Item.autoReuse = true;
-            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.useStyle = ItemUseStyleID.HoldUp;
             Item.UseSound = SoundID.Item73;
             Item.useTime = 30;
             Item.useAnimation = 30;
@@ -36,14 +36,16 @@ namespace Project165.Content.Items.Weapons.Magic
 
         public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            Project165Utils.SmoothHoldStyle(player);
+            player.itemRotation += MathHelper.PiOver4 * -player.direction;
+            player.itemLocation = player.Center + Vector2.One;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             for (int i = 0; i < 3; i++)
             {
-                Projectile.NewProjectile(source, position + velocity * 5f, velocity.RotatedByRandom(MathHelper.ToRadians(15f)) * Main.rand.NextFloat(1f, 1.5f), type, damage, knockback, player.whoAmI);
+                Vector2 newVel = new Vector2(4f * player.direction, -12f);
+                Projectile.NewProjectile(source, new Vector2(position.X, player.Center.Y - player.height) + newVel * 8f, newVel.RotatedByRandom(MathHelper.ToRadians(15f)) * Main.rand.NextFloat(1f, 1.5f), type, damage, knockback, player.whoAmI);
             }
 
             return false;

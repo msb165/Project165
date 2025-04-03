@@ -69,7 +69,7 @@ namespace Project165.Content.Projectiles.Melee
                 Projectile.netUpdate = true;
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * AITimer, Projectile.velocity * 0.3f, ModContent.ProjectileType<ShadowBolt>(), (int)(Projectile.damage * 1.5f), 0f, Projectile.owner);
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 1.25f, Projectile.velocity * 0.3f, ModContent.ProjectileType<ShadowBolt>(), (int)(Projectile.damage * 1.5f), 0f, Projectile.owner);
                 }
             }
 

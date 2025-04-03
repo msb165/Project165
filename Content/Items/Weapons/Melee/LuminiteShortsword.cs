@@ -11,15 +11,14 @@ namespace Project165.Content.Items.Weapons.Melee
     {
         public override void SetDefaults()
         {
-            Item.width = 36;
-            Item.height = 36;
+            Item.Size = new(36);
             Item.rare = ItemRarityID.Red;
-            Item.damage = 110;
+            Item.damage = 170;
             Item.crit = 10;
             Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.shoot = ModContent.ProjectileType<LuminiteShortProj>();
             Item.shootSpeed = 15f;
-            Item.value = Item.sellPrice(0, 5);
+            Item.value = Item.sellPrice(gold: 5);
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.useAnimation = 18;
             Item.useTime = 6;

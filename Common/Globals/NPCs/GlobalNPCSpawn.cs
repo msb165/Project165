@@ -17,7 +17,7 @@ namespace Project165.Common.Globals.NPCs
 
             if (Main.hardMode && spawnInfo.Player.ZoneSnow && spawnInfo.Player.ZoneOverworldHeight)
             {
-                pool[NPCID.IceGolem] = SpawnCondition.Overworld.Chance * 0.2f;
+                pool[NPCID.IceGolem] = SpawnCondition.OverworldDay.Chance * 0.25f;
             }
         }
     }

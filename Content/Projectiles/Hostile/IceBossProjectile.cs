@@ -22,8 +22,8 @@ namespace Project165.Content.Projectiles.Hostile
 
         public override void SetDefaults()
         {
-            Projectile.width = 20;
-            Projectile.height = 18;
+            Projectile.width = 40;
+            Projectile.height = 40;
             Projectile.extraUpdates = 1;
             Projectile.ignoreWater = true;
             Projectile.hostile = true;
@@ -73,16 +73,24 @@ namespace Project165.Content.Projectiles.Hostile
 
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Texture2D textureExtra = TextureAssets.Extra[ExtrasID.FairyQueenLance].Value;
-            Texture2D glowTexture = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "GlowSphere");
+            //Texture2D glowTexture = (Texture2D)ModContent.Request<Texture2D>(Project165Utils.ImagesPath + "GlowSphere");
+            Main.instance.LoadProjectile(ProjectileID.StardustTowerMark);
+            Texture2D glowTexture = TextureAssets.Projectile[ProjectileID.StardustTowerMark].Value;
 
-            Color drawColor = Color.LightCyan with { A = 0 };
-            Color drawColorTrail = new(0, 200, 255, 0);            
-            Color drawColorTelegraph = new(0, 200, 255, 0);            
+            Color drawColor = Color.White with { A = 0 };
+            Color drawColorTrail = new(0, 250, 255, 0);            
+            Color drawColorTelegraph = new(0, 200, 255, 0);
+            Color drawColorEffect = new(153, 217, 254, 0);     
 
             Vector2 drawOrigin = texture.Frame().Size() / 2f;
             Vector2 drawOriginGlow = glowTexture.Frame().Size() / 2f;
             Vector2 drawOriginTelegraph = textureExtra.Frame().Size() / 2f;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
+
+            SpriteEffects spriteEffects = Projectile.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+
+            float timer = (float)Math.Cos(Main.timeForVisualEffects * MathHelper.TwoPi / 30f);
 
             if (drawLaser)
             {                
@@ -93,11 +101,16 @@ namespace Project165.Content.Projectiles.Hostile
             {
                 Vector2 drawPosTrail = Projectile.oldPos[i] + Projectile.Size / 2f - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
 
-                drawColorTrail *= 0.75f;
-                drawColor *= 0.75f;
+                drawColorTrail *= 0.9f;
+                drawColor *= 0.9f;
 
-                spriteBatch.Draw(glowTexture, drawPosTrail, null, drawColorTrail, Projectile.rotation, drawOriginGlow, glowScale - i / Projectile.oldPos.Length, SpriteEffects.None, 0);
-                spriteBatch.Draw(texture, drawPosTrail, null, drawColor, Projectile.rotation, drawOrigin, Projectile.scale - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
+                //spriteBatch.Draw(glowTexture, drawPosTrail, null, drawColorTrail, Projectile.rotation, drawOriginGlow, glowScale - i / (float)Projectile.oldPos.Length, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, drawPosTrail, null, drawColor * 0.4f, Projectile.rotation, drawOrigin, MathHelper.SmoothStep(Projectile.scale, 0f, i * 0.05f), SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, drawPosTrail, null, drawColorTrail * 0.5f, Projectile.rotation, drawOrigin, MathHelper.SmoothStep(Projectile.scale * 1.5f, 0f, i * 0.05f), SpriteEffects.None, 0);
+
+                spriteBatch.Draw(glowTexture, drawPosTrail + Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * i) * (8f + 1f * timer), null, drawColorEffect * 0.03f, Projectile.rotation, drawOriginGlow, MathHelper.SmoothStep(Projectile.scale * 1.25f, 0f, i * 0.05f), spriteEffects, 0);
+                spriteBatch.Draw(glowTexture, drawPosTrail - Vector2.UnitY.RotatedBy(MathHelper.PiOver4 * i) * (8f + 1f * timer), null, drawColorEffect * 0.03f, Projectile.rotation, drawOriginGlow, MathHelper.SmoothStep(Projectile.scale * 1.25f, 0f, i * 0.05f), spriteEffects, 0);
+
             }
             spriteBatch.Draw(texture, drawPos, texture.Frame(), drawColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
             return false;

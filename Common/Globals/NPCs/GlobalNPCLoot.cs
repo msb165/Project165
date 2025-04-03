@@ -17,9 +17,6 @@ namespace Project165.Common.Globals.NPCs
                 case NPCID.MartianSaucerCore:
                     npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GravityKnives>(), 6));
                     break;
-                case NPCID.Golem:
-                    npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GolemBow>(), 8));
-                    break;
                 case NPCID.BlueJellyfish:
                 case NPCID.GreenJellyfish:
                 case NPCID.PinkJellyfish:

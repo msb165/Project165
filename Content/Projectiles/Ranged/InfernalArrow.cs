@@ -23,16 +23,16 @@ namespace Project165.Content.Projectiles.Ranged
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.arrow = true;
             Projectile.friendly = true;
-            Projectile.penetrate = 2;
+            Projectile.tileCollide = false;
         }
 
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Projectile.velocity.Y += 0.2f;
+            //Projectile.velocity.Y += 0.2f;
             if (Projectile.velocity.Y > 16f)
             {
-                Projectile.velocity.Y = 16f;
+                //Projectile.velocity.Y = 16f;
             }
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3());
 
@@ -41,15 +41,34 @@ namespace Project165.Content.Projectiles.Ranged
                 Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), newColor: Color.Orange, Scale: 1f);
                 dust.noGravity = true;
                 dust.velocity *= 0.3f;
-                dust.position = Projectile.Center - Projectile.velocity / 20f * i;
+                dust.position = Projectile.Center - Projectile.velocity / 5f * i;
             }
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (Main.myPlayer == Projectile.owner)
+            {
+                Vector2 spawnPos = Main.rand.NextVector2CircularEdge(200f, 200f);
+                Vector2 spawnVel = spawnPos.SafeNormalize(spawnPos) * 8f;
+
+                if (spawnVel.Y > 0f)
+                {
+                    spawnVel.Y *= -1f;
+                }
+
+                Projectile.NewProjectile(Projectile.GetSource_OnHit(target), target.Center - spawnVel * 10f, spawnVel, ModContent.ProjectileType<InfernalFire>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
+            }
+            target.AddBuff(BuffID.OnFire3, 300);
         }
 
         public override void OnKill(int timeLeft)
         {
-            if (Main.myPlayer == Projectile.owner)
+            for (int i = 0; i < 30; i++)
             {
-                Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<InfernalFire>(), Projectile.damage / 2, Projectile.knockBack, Projectile.owner);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), newColor: Color.Orange, Scale: 1f);
+                dust.noGravity = true;
+                dust.velocity *= 4f;
             }
         }
 
@@ -84,7 +103,6 @@ namespace Project165.Content.Projectiles.Ranged
             }
 
             Main.EntitySpriteDraw(arrowTexture, Projectile.Center - Main.screenPosition, null, drawColor, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None);
-
 
             return false;
         }

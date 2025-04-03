@@ -14,6 +14,7 @@ using Project165.Content.Projectiles.Hostile;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Ranged;
+using Terraria.Audio;
 
 namespace Project165.Content.NPCs.Bosses.Frigus
 {
@@ -28,6 +29,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             PhaseOne_Bottom = 2,
             DeathAnimation = 3,
         }
+
         public AIState CurrentAIState
         {
             get => (AIState)NPC.ai[0];
@@ -47,7 +49,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         public override void SetStaticDefaults()
         {
             NPCID.Sets.TrailingMode[Type] = 1;
-            NPCID.Sets.TrailCacheLength[Type] = 15;
+            NPCID.Sets.TrailCacheLength[Type] = 8;
             NPCID.Sets.MPAllowedEnemies[Type] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn2] = true;
@@ -73,6 +75,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.boss = true;
+            NPC.dontTakeDamageFromHostiles = true;
             NPC.scale = 1.25f;
             NPC.value = 120000f;
             NPC.npcSlots = 5f;
@@ -312,7 +315,7 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         private void DeathAnimation()
         {
             Timer++;
-            NPC.velocity *= 0.9f;
+            NPC.velocity *= 0.8f;
             NPC.rotation += 0.4f * NPC.direction;
 
             if (NPC.scale < 2f)
@@ -328,14 +331,17 @@ namespace Project165.Content.NPCs.Bosses.Frigus
                 NPC.alpha = 255;
             }
 
+            NPC.position += NPC.netOffset;
             for (int i = 0; i < 5; i++)
             {
                 Dust deathDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, ModContent.DustType<CloudDust>(), 0, 0, 0, default, 1f);
                 deathDust.velocity *= 4f;
             }
+            NPC.position -= NPC.netOffset;
 
             if (Timer >= 64f)
             {
+                SoundEngine.PlaySound(SoundID.Roar with { Pitch = -0.5f }, NPC.position);
                 NPC.active = false;
                 NPC.HitEffect();
                 NPC.NPCLoot();
@@ -345,15 +351,18 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         private void SpawnAnimation()
         {
-            NPC.velocity *= 0.96f;
+            NPC.rotation = -NPC.velocity.ToRotation() + MathHelper.PiOver2;
+            NPC.velocity *= 0.96f;            
             if (NPC.alpha > 0)
             {
                 NPC.alpha -= 2;
+                NPC.position += NPC.netOffset;
                 for (int i = 0; i < 4; i++)
                 {
                     Vector2 speed = Main.rand.NextVector2CircularEdge(500f, 500f).SafeNormalize(Vector2.UnitY) * 6f;
                     Dust.NewDustPerfect(NPC.Center - speed * 20f, ModContent.DustType<CloudDust>(), speed, 128, default, 0.75f);
                 }
+                NPC.position -= NPC.netOffset;
             }
             else
             {
@@ -376,47 +385,15 @@ namespace Project165.Content.NPCs.Bosses.Frigus
 
         private void HandleRotation()
         {
-            if (CurrentAIState == AIState.DeathAnimation)
+            if (CurrentAIState is AIState.DeathAnimation or AIState.Spawning)
             {
                 return;
             }
 
-            Vector2 npcPlayerPos = NPC.Center - Player.Center;
-            float rotAcceleration = 0.075f;
+            Vector2 npcPlayerPos = Vector2.Normalize(NPC.Center - Player.Center);
             float newRotation = npcPlayerPos.ToRotation() + MathHelper.PiOver2;
 
-            if (newRotation < 0f)
-            {
-                newRotation += MathHelper.TwoPi;
-            }
-            if (newRotation > MathHelper.TwoPi)
-            {
-                newRotation -= MathHelper.TwoPi;
-            }
-            if (NPC.rotation < newRotation)
-            {
-                if (newRotation - NPC.rotation > MathHelper.Pi)
-                {
-                    NPC.rotation -= rotAcceleration;
-                }
-                else
-                {
-                    NPC.rotation += rotAcceleration;
-                }
-            }
-            else if (NPC.rotation > newRotation)
-            {
-                if (NPC.rotation - newRotation > MathHelper.Pi)
-                {
-                    NPC.rotation += rotAcceleration;
-                }
-                else
-                {
-                    NPC.rotation -= rotAcceleration;
-                }
-            }
-
-            NPC.rotation = newRotation;
+            NPC.rotation = NPC.rotation.AngleTowards(newRotation, 0.4f);
         }
 
         #endregion
@@ -430,10 +407,11 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         {
             if (NPC.life <= 0)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Back").Type);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Back").Type);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Front").Type);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("IceBossFly_Front").Type);
+                Vector2 spawnVel = Vector2.UnitY * 8f;
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, spawnVel, Mod.Find<ModGore>("IceBossFly_Back").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, spawnVel, Mod.Find<ModGore>("IceBossFly_Back").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, spawnVel, Mod.Find<ModGore>("IceBossFly_Front").Type);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, spawnVel, Mod.Find<ModGore>("IceBossFly_Front").Type);
             }
         }
 
@@ -450,16 +428,11 @@ namespace Project165.Content.NPCs.Bosses.Frigus
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[Type].Value;
-            SpriteEffects spriteEffects = SpriteEffects.None;
+            SpriteEffects spriteEffects = NPC.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2);
             Color npcDrawColor = Color.White * NPC.Opacity;
             Color npcDrawColorTrail = npcDrawColor with { A = 0 };
 
-
-            if (NPC.spriteDirection == -1)
-            {
-                spriteEffects = SpriteEffects.FlipHorizontally;
-            }
 
             for (int i = 0; i < NPC.oldPos.Length; i++)
             {

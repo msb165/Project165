@@ -57,10 +57,11 @@ namespace Project165.Content.Projectiles.Ranged
             {
                 if (canShoot)
                 {
-                    Vector2 projVelocity = Vector2.Normalize(Main.MouseWorld - Player.Center).RotatedByRandom(MathHelper.ToRadians(2f)) * Player.HeldItem.shootSpeed;
-                    int damage = Player.HeldItem.damage;
-                    float knockback = Player.HeldItem.knockBack;
-                    int shootType = (int)Projectile.ai[2];
+                    Player.PickAmmo(Player.HeldItem, out int shootType, out float speed, out int damage, out float knockback, out int useAmmoItemId);
+                    if (shootType == ProjectileID.WoodenArrowFriendly)
+                    {
+                        shootType = ProjectileID.FireArrow;
+                    }
 
                     SoundEngine.PlaySound(SoundID.Item5, Projectile.position);
 
@@ -72,10 +73,14 @@ namespace Project165.Content.Projectiles.Ranged
                         dust.noGravity = true;
                         dust.velocity = newVel;
                     }
+                    Vector2 projVelocity = Vector2.Normalize(Main.MouseWorld - Player.Center).RotatedByRandom(MathHelper.ToRadians(2.5f)) * Player.HeldItem.shootSpeed;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 rotatedVelocity = projVelocity * (0.6f + Main.rand.NextFloat() * 0.8f);
 
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVelocity * 2f, projVelocity, shootType, damage, knockback, Projectile.owner);
-
-                    if (Main.rand.NextBool(3))
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Utils.RandomVector2(Main.rand, -15f, 15f) + rotatedVelocity * 2f, rotatedVelocity, shootType, damage, knockback, Projectile.owner);
+                    }
+                    if (Main.rand.NextBool(2))
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVelocity * 3f, projVelocity, ModContent.ProjectileType<InfernalArrow>(), damage, knockback, Projectile.owner);
                     }

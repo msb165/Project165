@@ -45,9 +45,11 @@ Projectiles: {
 	ShadowWave.DisplayName: Shadow Wave
 	ShadowGas.DisplayName: Shadow Gas
 	ShadowStomp.DisplayName: Shadow Stomp
-	ShadowMinionProj.DisplayName: Shadow Minion Proj
+	ShadowMinionProj.DisplayName: Shadow Bolt
 	BouncyFire.DisplayName: Bouncy Fire
 	BigMagicExplosion.DisplayName: Big Magic Explosion
+	FlyingHand.DisplayName: Flying Hand
+	FireTornado.DisplayName: Fire Tornado
 }
 
 Items: {
@@ -169,8 +171,8 @@ Items: {
 		DisplayName: Infernal Bow
 		Tooltip:
 			'''
-			Converts Wooden Arrows into Hellfire Arrows
-			Has a chance to shoot an additional arrow
+			Converts Wooden Arrows into Fire Arrows
+			Has a chance to shoot an Infernal arrow
 			'''
 	}
 
@@ -243,11 +245,21 @@ Items: {
 		DisplayName: Chaos
 		Tooltip: ""
 	}
+
+	HardenedGelBlock: {
+		DisplayName: Hardened Gel Block
+		Tooltip: ""
+	}
+
+	ShadowAltar: {
+		DisplayName: Shadow Altar
+		Tooltip: ""
+	}
 }
 
 NPCs: {
 	IceBossFly.DisplayName: Frigus
-	MiniDungeonGuardian.DisplayName: Small Guardian
+	MiniDungeonGuardian.DisplayName: Apprentice Guardian
 	DarkSlime.DisplayName: Nightmare Hand
 	ShadowHand.DisplayName: Hand of the Shadows
 	FlyingIce.DisplayName: Flying Ice
@@ -258,6 +270,8 @@ NPCs: {
 Tiles: {
 	SlimeAltar.MapEntry: Shadow Altar
 	ShadowSlimeBlock.MapEntry: Shadow Block
+	ShadowAltar.MapEntry: Shadow Altar
+	HardenedGelBlock.MapEntry: Hardened Gel Block
 }
 
 Buffs: {

@@ -37,7 +37,7 @@ namespace Project165.Content.Projectiles.Ranged
             }
 
             Projectile.ai[0]++;
-            if (Projectile.ai[0] > 30f && Projectile.ai[1] == 0f && Main.myPlayer == Projectile.owner) 
+            if (Projectile.ai[0] > 30f && Projectile.ai[1] == 0f && Main.myPlayer == Projectile.owner && Main.rand.NextBool(10)) 
             {
                 Projectile.ai[1] = -1f;
                 Vector2 newVelocity = Vector2.Normalize(Vector2.One * -100f);

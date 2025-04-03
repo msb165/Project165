@@ -30,6 +30,16 @@ namespace Project165.Common.Globals.Items
                     entity.useTime = 32;
                     entity.useAnimation = 32;
                     break;
+                case ItemID.SuspiciousLookingEye:
+                case ItemID.WormFood:
+                case ItemID.BloodySpine:
+                case ItemID.MechanicalEye:
+                case ItemID.MechanicalSkull:
+                case ItemID.MechanicalWorm:
+                //case ItemID.LihzahrdPowerCell:
+                case ItemID.CelestialSigil:
+                    entity.consumable = false;
+                    break;
             }
         }
 
@@ -39,6 +49,21 @@ namespace Project165.Common.Globals.Items
             {
                 Project165Utils.SmoothHoldStyle(player);
             }
+            float intensity = 0f;
+            switch (item.type)
+            {
+                case ItemID.TacticalShotgun:
+                case ItemID.Boomstick:
+                    goto recoil;
+                case ItemID.Minishark:
+                case ItemID.Megashark:
+                case ItemID.RedRyder:
+                    intensity = -0.7f;
+                recoil:
+                    Project165Utils.RecoilEffect(player, intensity);
+                    break;
+            }
+
         }
 
         public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
@@ -77,7 +102,7 @@ namespace Project165.Common.Globals.Items
                     }
                     return false;
                 case ItemID.InfluxWaver:
-                    Projectile.NewProjectile(source, position + velocity * 2f, velocity.RotatedByRandom(0.07f), type, damage, knockback, player.whoAmI);
+                    Projectile.NewProjectile(source, position + velocity * 4f, velocity.RotatedByRandom(0.07f), type, damage, knockback, player.whoAmI);
                     return false;
             }
             return true;
@@ -88,6 +113,10 @@ namespace Project165.Common.Globals.Items
             if (item.type == ItemID.ChlorophytePartisan)
             {
                 velocity = velocity.RotatedByRandom(MathHelper.ToRadians(15f));
+            }
+            if (item.type == ItemID.TacticalShotgun)
+            {
+                position = position - (Vector2.UnitY * 12f).RotatedBy(new Vector2(velocity.X * player.direction, velocity.Y).ToRotation()) + velocity * 4f;
             }
         }
 

@@ -83,7 +83,7 @@ namespace Project165.Content.Projectiles.Magic
                 Projectile.rotation += 0.6f * Player.direction;
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Projectile.rotation.ToRotationVector2() * 80f - Projectile.velocity / 10f * i, DustID.Clentaminator_Purple, Scale:0.75f);
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Projectile.rotation.ToRotationVector2() * 80f - Projectile.velocity / 10f * i, DustID.Clentaminator_Purple, Scale: 0.75f);
                     dust.velocity *= 0f;
                     dust.noGravity = true;
                 }
@@ -99,7 +99,8 @@ namespace Project165.Content.Projectiles.Magic
             Projectile.timeLeft = 20;
             for (int i = 0; i < 3; i++)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - starShootSpeed * 14f, -(starShootSpeed * 14f) + (2f * i).ToRotationVector2() * Player.direction, ModContent.ProjectileType<UltraStar>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Projectile.owner);
+                Vector2 newVel = -(starShootSpeed * 14f) + (2f * -i).ToRotationVector2();
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - starShootSpeed * 14f, newVel, ModContent.ProjectileType<UltraStar>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Projectile.owner);
             }
             Player.reuseDelay = 8;
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Project165.Content.Projectiles.Melee;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -31,5 +32,12 @@ namespace Project165.Content.Items.Weapons.Melee
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            float ai0 = Main.rand.NextFloat() * Item.shootSpeed * 0.2f * player.direction;
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, ai0);
+            return false;
+        }
     }
 }

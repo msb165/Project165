@@ -13,7 +13,7 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             Item.width = 22;
             Item.height = 46;
-            Item.damage = 9;
+            Item.damage = 8;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.noUseGraphic = true;

@@ -26,6 +26,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             NPC.dontTakeDamage = true;
+            NPC.scale = 1.25f;
         }
 
         public float AITimer
@@ -66,7 +67,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             {
                 NPC.ai[0] = 0f;
                 Vector2 newProjVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 8f;
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newProjVelocity, ModContent.ProjectileType<ShadowMinionProj>(), NPC.GetAttackDamage_ForProjectiles(10f, 12f), 2f, Main.myPlayer);
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newProjVelocity, ModContent.ProjectileType<ShadowMinionProj>(), NPC.GetAttackDamage_ForProjectiles(30f, 33f), 2f, Main.myPlayer);
                 NPC.netUpdate = true;
             }
         }
