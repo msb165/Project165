@@ -110,7 +110,7 @@ namespace Project165.Content.Projectiles.Melee
             target.AddBuff(BuffID.Weak, 300);
             if (Main.myPlayer == Projectile.owner)
             {
-                Projectile.NewProjectile(target.GetSource_OnHit(target), target.Center, Vector2.Zero, ProjectileID.Volcano, Projectile.damage * 2, Projectile.knockBack, Projectile.owner);
+                Projectile.NewProjectile(target.GetSource_OnHit(target), target.Center, Vector2.Zero, ProjectileID.SolarWhipSwordExplosion, Projectile.damage * 3, Projectile.knockBack, Projectile.owner, 0f, 0.85f + Main.rand.NextFloat() * 1.15f);
             }
         }
 

@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Ranged;
 using Project165.Content.Items.Weapons.Magic;
+using Project165.Content.NPCs.Bosses.FireBoss;
 
 namespace Project165.Content.Items.TreasureBags
 {
@@ -32,6 +33,7 @@ namespace Project165.Content.Items.TreasureBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<UltraFireStaff>(), 3));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<InfernalBow>(), 3));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SuperFireSword>(), 3));
+            itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<FireBoss>()));
         }
     }
 }

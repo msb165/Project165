@@ -43,15 +43,16 @@ namespace Project165.Content.Tiles
 
         public override bool RightClick(int i, int j)
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowHand>()) && Main.hardMode && NPC.downedGolemBoss && Main.LocalPlayer.HasItem(ModContent.ItemType<ShadowSlimeSummon>()))
+            Player player = Main.LocalPlayer;
+            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowHand>()) && Main.hardMode && NPC.downedGolemBoss && player.HasItem(ModContent.ItemType<ShadowSlimeSummon>()))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    NPC.SpawnOnPlayer(Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowHand>());
+                    NPC.SpawnBoss(i * 16 + (80 * player.direction), j * 16, ModContent.NPCType<ShadowHand>(), player.whoAmI);
                 }
                 else
                 {
-                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, Main.LocalPlayer.whoAmI, ModContent.NPCType<ShadowHand>());
+                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<ShadowHand>());
                 }
             }
             return true;

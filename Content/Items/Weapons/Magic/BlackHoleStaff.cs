@@ -13,7 +13,6 @@ using Terraria.ModLoader;
 
 namespace Project165.Content.Items.Weapons.Magic
 {
-    // Idea: Weapon that would work like the old rainbow rod but would increase in size upon hitting an enemy and slowly pull some enemies and then the projectile would explode into gas (similar to the toxic flask)
     public class BlackHoleStaff : ModItem
     {
         public override void SetDefaults()

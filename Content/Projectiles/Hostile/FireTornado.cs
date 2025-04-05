@@ -2,17 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.Audio;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
-using log4net.Appender;
 using Project165.Content.NPCs.Bosses.FireBoss;
 
 namespace Project165.Content.Projectiles.Hostile
@@ -33,9 +28,6 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.alpha = 255;
         }
 
-        float expandY = 16f;
-        float expandX = 16f;
-
         int Direction => (int)Projectile.ai[1];
 
         Player Player => Main.player[Projectile.owner];
@@ -46,7 +38,6 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.velocity = Vector2.Zero;
 
             int ragingFlame = NPC.FindFirstNPC(ModContent.NPCType<FireBoss>());
-
             if (ragingFlame == -1)
             {
                 Projectile.Kill();
@@ -57,11 +48,10 @@ namespace Project165.Content.Projectiles.Hostile
                 Projectile.alpha--;
             }
 
-            if (Player.Distance(Projectile.Center) < 3000f)
+            if (Player.Distance(Projectile.Center) < 4000f)
             {
                 HandlePushback();
             }
-
 
             for (int i = 0; i < 5; i++)
             {
@@ -111,19 +101,10 @@ namespace Project165.Content.Projectiles.Hostile
         {
             Vector2 center = Player.Center;
             Vector2 newVel = projPos - center;
-            float speed;
             float squareVel = newVel.Length();
             float amount = MathF.Min(1f, Projectile.velocity.Length() / 5f);
             maxSpeed = MathHelper.Lerp(maxSpeed, 22f, amount);
-
-            if (squareVel > maxSpeed)
-            {
-                speed = maxSpeed / squareVel;
-            }
-            else
-            {
-                speed = 1f;
-            }
+            float speed = squareVel > maxSpeed ? maxSpeed / squareVel : 1f;
 
             newVel *= speed;
             Player.velocity = newVel;
@@ -131,8 +112,7 @@ namespace Project165.Content.Projectiles.Hostile
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float num308 = 0f;
-            float num309 = 4.78f;
+            float j = 0f;
             Texture2D texture = TextureAssets.Projectile[Type].Value;
 
             Vector2 topPos = Projectile.Top;
@@ -143,27 +123,27 @@ namespace Project165.Content.Projectiles.Hostile
             Vector2 origin = sourceRectangle.Size() / 2f;
             float timer = -MathHelper.PiOver2 / 20f * (float)Main.timeForVisualEffects;
 
-            Color value82 = Color.OrangeRed with { A = 40 };
-            Color color78 = Color.Orange with { A = 40 };
-            for (float i = (int)bottomPos.Y; i > (int)topPos.Y; i -= num309)
+            Color baseColorBack = Color.OrangeRed with { A = 40 };
+            Color baseColor = Color.Orange with { A = 40 };
+            for (float i = (int)bottomPos.Y; i > (int)topPos.Y; i -= 4.78f)
             {
-                num308 += num309;
-                float num312 = num308 / verticalCenter.Y;
-                float num313 = num308 * MathHelper.TwoPi / -20f;
-                float scaleOffset = num312 - 0.35f;
+                j += 4.78f;
+                float lerpColorAmount = j / verticalCenter.Y;
+                float rotationOffset = j * MathHelper.TwoPi / -20f;
+                float scaleOffset = lerpColorAmount - 0.35f;
                 Vector2 drawPos = Vector2.Zero + new Vector2(bottomPos.X, i) - Main.screenPosition;
-                Color drawColorBack = Color.Lerp(Color.Transparent, value82, num312 * 2f);
-                if (num312 > 0.5f)
+                Color drawColorBack = Color.Lerp(Color.Transparent, baseColorBack, lerpColorAmount * 2f);
+                if (lerpColorAmount > 0.5f)
                 {
-                    drawColorBack = Color.Lerp(Color.Transparent, value82, 2f - num312 * 2f);
+                    drawColorBack = Color.Lerp(Color.Transparent, baseColorBack, 2f - lerpColorAmount * 2f);
                 }
-                Color drawColor = Color.Lerp(Color.Transparent, color78, num312 * 2f);
-                if (num312 > 0.5f)
+                Color drawColor = Color.Lerp(Color.Transparent, baseColor, lerpColorAmount * 2f);
+                if (lerpColorAmount > 0.5f)
                 {
-                    drawColor = Color.Lerp(Color.Transparent, color78, 2f - num312 * 2f);
+                    drawColor = Color.Lerp(Color.Transparent, baseColor, 2f - lerpColorAmount * 2f);
                 }
-                Main.EntitySpriteDraw(texture, drawPos, sourceRectangle, drawColor, timer + num313, origin, (1f + scaleOffset) * 0.8f, SpriteEffects.None);
-                Main.EntitySpriteDraw(texture, drawPos, sourceRectangle, drawColorBack, timer + num313, origin, 1f + scaleOffset, SpriteEffects.None);
+                Main.EntitySpriteDraw(texture, drawPos, sourceRectangle, drawColor, timer + rotationOffset, origin, (1f + scaleOffset) * 0.8f, SpriteEffects.None);
+                Main.EntitySpriteDraw(texture, drawPos, sourceRectangle, drawColorBack, timer + rotationOffset, origin, 1f + scaleOffset, SpriteEffects.None);
             }
             return false;
         }

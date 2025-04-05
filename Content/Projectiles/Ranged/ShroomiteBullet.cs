@@ -50,9 +50,9 @@ namespace Project165.Content.Projectiles.Ranged
                 //Dust trailDust = Dust.NewDustDirect(Projectile.Center, 1, 1, DustID.BlueTorch, newColor:new(100, 100, 255), Scale:1f);
                 Dust trailDust = Dust.NewDustDirect(Projectile.Center, 1, 1, DustID.MushroomTorch, Scale: 1f);
                 trailDust.scale = 1f;
-                trailDust.position = Projectile.Center - Projectile.velocity / 10f;
+                trailDust.position = Projectile.Center - Projectile.velocity / 5f;
                 trailDust.noGravity = true;
-                trailDust.velocity *= 2f;
+                trailDust.velocity *= 0.1f;
             }
         }
 

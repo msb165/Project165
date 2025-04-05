@@ -5,6 +5,7 @@ using Project165.Content.Items.TreasureBags;
 using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Ranged;
+using Project165.Content.NPCs.Bosses.Frigus;
 using Project165.Content.Projectiles.Hostile;
 using System;
 using System.IO;
@@ -16,6 +17,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.UI;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace Project165.Content.NPCs.Bosses.FireBoss
 {
@@ -65,6 +67,12 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Bleeding] = true;
+            NPCID.Sets.NPCBestiaryDrawModifiers npcBestiaryDrawModifiers = new()
+            {
+                PortraitScale = 1.25f,
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, npcBestiaryDrawModifiers);
+            NPCID.Sets.BossBestiaryPriority.Add(Type);
             Main.npcFrameCount[Type] = 4;
         }
 
@@ -220,8 +228,10 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPC.TargetClosest();
             float moveAcceleration = 0.4f;
             float maxSpeed = 11f;
-            float maxDistance = 500f;
+            float maxDistance = 400f;
             float distance = MathF.Abs(NPC.Center.X - Player.Center.X);
+            float verticalDistance = Player.Center.Y - 200f - NPC.Center.Y;
+            verticalDistance = MathHelper.Clamp(verticalDistance, -32f, 32f);
 
             if ((NPC.Center.X < Player.Center.X && Direction < 0f || NPC.Center.X > Player.Center.X && Direction > 0f) && distance > maxDistance)
             {
@@ -230,14 +240,8 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
             NPC.velocity.X += Direction * moveAcceleration;
             NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -maxSpeed, maxSpeed);
-            float verticalDistance = Player.Center.Y - 200f - NPC.Center.Y;
-            if (MathF.Abs(verticalDistance) > 4f)
-            {
-                maxSpeed = 15f;
-            }
-            verticalDistance = MathHelper.Clamp(verticalDistance, -16f, 16f);
 
-            NPC.velocity.Y = (NPC.velocity.Y * (maxSpeed - 1f) + verticalDistance) / maxSpeed;
+            NPC.velocity.Y = (NPC.velocity.Y * (maxDistance - 1f) + verticalDistance) / maxDistance;
             NPC.rotation = MathHelper.Lerp(NPC.rotation, NPC.velocity.X * 0.025f, 0.05f);
             if (distance < 800f && NPC.position.Y < Player.position.Y && AITimer > 35f)
             {
@@ -257,13 +261,14 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                     Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 12f;
                     for (int i = 0; i < 3; i++)
                     {
-                        newVelocity = newVelocity.RotatedByRandom(MathHelper.ToRadians(5f)) * Main.rand.NextFloat(0.9f, 1.1f);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(38f, 42f), 0f, Main.myPlayer);
+                        newVelocity = newVelocity.RotatedByRandom(MathHelper.ToRadians(15f)) * Main.rand.NextFloat(0.85f, 1.125f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 30f), 0f, Main.myPlayer);
                     }
                 }
             }
+
             AITimer++;
-            if (AITimer > 600f && distance < 600f)
+            if (AITimer > 800f && distance < 600f)
             {
                 CurrentAIState = AIState.ShootSpheres;
                 AITimer = 0f;
@@ -277,9 +282,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
         public void SpamProjectiles()
         {
             NPC.TargetClosest();
-            //Vector2 newPosition = Vector2.Normalize(Player.Center + Vector2.UnitX * 250f - NPC.Center) * 20f;
             NPC.velocity *= 0.7f;
-            //NPC.SimpleFlyMovement(newPosition, 0.5f);
 
             if (Main.netMode != NetmodeID.MultiplayerClient && AITimer > 30f)
             {
@@ -297,18 +300,16 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 {
                     ShootTimer = 0f;
                     Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 8f;
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 5; i++)
                     {
-                        newVelocity *= Main.rand.NextFloat(0.85f, 1.1f);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + newVelocity * 4f, newVelocity.RotatedByRandom(MathHelper.ToRadians(85f)), ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
+                        newVelocity *= Main.rand.NextFloat(0.85f, 1.125f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + newVelocity, newVelocity.RotatedByRandom(MathHelper.ToRadians(90f)), ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(15f, 17f), 0f, Main.myPlayer);
                     }
-                    //newVelocity.X *= -1f;
-                    //Projectile.NewProjectile(NPC.GetSource_FromAI(), Player.Center + Vector2.UnitX * -400f * -NPC.direction, newVelocity, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(28f, 37f), 0f, Main.myPlayer);
                 }
             }
 
             AITimer++;
-            if (AITimer > 600f)
+            if (AITimer > 650f)
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
@@ -327,18 +328,13 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
 
         public void ShootSpheres()
         {
-            int timeToShoot = 30;
+            int timeToShoot = 40;
             double difficultyValue = Main.expertMode ? 0.5 : 0.3;
 
             NPC.TargetClosest();
 
-            Vector2 newVelocity = Vector2.Normalize(Player.Center - NPC.Center) * 4.5f;
-            NPC.rotation = Vector2.Normalize(Player.Center - NPC.Center).ToRotation() - MathHelper.PiOver2;
+            Vector2 newVelocity = Vector2.Normalize(Player.Center + Player.Size * 4f - NPC.Center) * 4.5f;
             NPC.SimpleFlyMovement(newVelocity, 0.5f);
-
-            //NPC.velocity *= 0.7f;
-            NPC.rotation = NPC.velocity.X * 0.05f;
-            NPC.rotation = MathHelper.Clamp(NPC.rotation, -0.5f, 0.5f);
 
             if (NPC.life < NPC.lifeMax * difficultyValue)
             {
@@ -363,7 +359,7 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                         Vector2 offset = center.RotatedBy(MathHelper.TwoPi / projAmount * rotate);
                         Vector2 newVel = Vector2.Normalize(Player.Center - NPC.Center) * 12f;
 
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset.RotatedBy(newVel.ToRotation()), newVel, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(23f, 26f), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset.RotatedBy(newVel.ToRotation()), newVel, ModContent.ProjectileType<FireBossProj>(), NPC.GetAttackDamage_ForProjectiles(29f, 30f), 0f, Main.myPlayer);
                     }
                 }
             }
@@ -385,10 +381,10 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
                 return;
             }
 
-            Vector2 npcPlayerPos = Vector2.Normalize(NPC.Center - Player.Center);
-            float newRotation = npcPlayerPos.ToRotation() - MathHelper.PiOver2;
+            Vector2 npcPlayerPos = NPC.Center - Player.Center;
+            float newRotation = npcPlayerPos.ToRotation() + MathHelper.PiOver2;
 
-            NPC.rotation = NPC.rotation.AngleTowards(newRotation, 0.4f);
+            NPC.rotation = NPC.rotation.AngleTowards(newRotation, 0.1f);
         }
 
         #endregion
@@ -408,6 +404,14 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             NPC.SetEventFlagCleared(ref DownedBossSystem.downedFireBoss, -1);
         }
 
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            if (projectile.type == ProjectileID.FinalFractal)
+            {
+                projectile.usesLocalNPCImmunity = false;
+            }
+        }
+
         public override void FindFrame(int frameHeight)
         {
             NPC.frameCounter += 0.25;
@@ -423,7 +427,11 @@ namespace Project165.Content.NPCs.Bosses.FireBoss
             Texture2D texture = TextureAssets.Npc[Type].Value;
             Vector2 drawOrigin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[Type] / 2 + 16);
             Color npcDrawColor = Color.White * NPC.Opacity;
+            Color secondPhaseColor = Color.Red * NPC.Opacity;
             Color npcDrawColorTrail = npcDrawColor with { A = 0 };
+            float lerpValue = NPC.life < NPC.lifeMax / 2 ? 0.5f : 0f;
+            //Color drawColorLerp = Color.Lerp(npcDrawColor, secondPhaseColor, lerpValue);
+            //Main.NewText(NPC.life < NPC.lifeMax / 2);
 
             float offset = (float)Main.timeForVisualEffects / 240f + Main.GlobalTimeWrappedHourly * 0.5f;
 

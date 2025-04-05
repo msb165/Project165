@@ -12,12 +12,13 @@ namespace Project165.Common.Globals.NPCs
 {
     public class GlobalNPCBuff : GlobalNPC
     {
-        public bool moonFire;
+        public bool moonFire, slowDown;
         public override bool InstancePerEntity => true;
 
         public override void ResetEffects(NPC npc)
         {
             moonFire = false;
+            slowDown = false;
         }
 
         public override void DrawEffects(NPC npc, ref Color drawColor)
@@ -34,6 +35,14 @@ namespace Project165.Common.Globals.NPCs
             if (moonFire)
             {
                 ApplyMoonFire(npc, ref damage);
+            }
+        }
+
+        public override void PostAI(NPC npc)
+        {
+            if (slowDown)
+            {
+                npc.velocity = Vector2.Clamp(npc.velocity, -Vector2.One * 3f, Vector2.One * 3f);
             }
         }
 
@@ -55,7 +64,7 @@ namespace Project165.Common.Globals.NPCs
         {
             if (Main.rand.NextBool(10))
             {
-                Dust dust = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Vortex, Alpha:100);
+                Dust dust = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Vortex, Alpha: 100);
                 dust.noGravity = true;
                 dust.fadeIn = 1.5f;
             }

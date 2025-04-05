@@ -37,7 +37,6 @@ namespace Project165.Content.Items.Weapons.Ranged
             return false;
         }
 
-        //public override bool CanConsumeAmmo(Item ammo, Player player) => Main.rand.NextBool(2);
-        //public override Vector2? HoldoutOffset() => new(1, 6);
+        public override bool CanConsumeAmmo(Item ammo, Player player) => Main.rand.NextBool(2);
     }
 }

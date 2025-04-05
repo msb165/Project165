@@ -18,27 +18,17 @@ namespace Project165.Content.Projectiles.Magic
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.penetrate = 3;
+            Projectile.scale = 2f;
+            Projectile.penetrate = 4;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 12;
             Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
         }
 
         Player Player => Main.player[Projectile.owner];
         public override void AI()
         {
-            /*for (int i = 0; i < 4; i++)
-            {
-                Dust dust = Dust.NewDustPerfect(Projectile.position, DustID.Corruption, Alpha: 150);
-                dust.scale = 2f;
-                dust.position = Projectile.Center - Projectile.velocity / 10f * i;
-                dust.noGravity = true;
-                dust.velocity = (Vector2.Normalize(Utils.RandomVector2(Main.rand, -10, 11)) * Main.rand.Next(3, 9));
-                Dust dust2 = Dust.NewDustPerfect(Projectile.position, DustID.Corruption, Alpha: 150);
-                dust2.scale = 1.5f;
-                dust2.position = Projectile.Center;
-            }*/
-
             for (int i = 0; i < 8; i++)
             {
                 Vector2 spinPoint = Main.rand.NextVector2CircularEdge(60, 60);
@@ -53,19 +43,22 @@ namespace Project165.Content.Projectiles.Magic
             {
                 if (Player.channel && Projectile.ai[0] == 0f)
                 {
+                    Projectile.tileCollide = false;
                     Projectile.velocity = Vector2.Zero;
                     Projectile.Center = Vector2.Lerp(Projectile.Center, Main.MouseWorld, 0.4f);
                 }
                 else
                 {
+                    Projectile.tileCollide = true;
                     Projectile.netUpdate = true;
                     Projectile.ai[0] = 1f;
                     if (Projectile.velocity.Length() < 2f)
                     {
-                        Projectile.velocity = Projectile.DirectionFrom(Player.Center) * 32f;
+                        Projectile.velocity = Projectile.DirectionFrom(Player.Center) * 24f;
                     }
                 }
             }
+
             bool foundTarget = false;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
@@ -77,6 +70,12 @@ namespace Project165.Content.Projectiles.Magic
                     foundTarget = true;
                 }
             }
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.ShadowFlame, 300);
+            target.AddBuff(BuffID.Venom, 300);
         }
 
         public override void OnKill(int timeLeft)
@@ -110,7 +109,6 @@ namespace Project165.Content.Projectiles.Magic
             Color drawColor = Color.White * Projectile.Opacity;
 
             float timer = MathF.Cos((float)Main.timeForVisualEffects * MathHelper.Pi / 15f);
-            float colorOffset = 0.75f + 0.25f * timer;
 
             for (int i = 0; i < 8; i++)
             {

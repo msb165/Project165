@@ -37,6 +37,12 @@ namespace Project165.Content.Projectiles.Magic
             }
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.ShadowFlame, 300);
+            target.AddBuff(BuffID.Venom, 300);
+        }
+
 
         public override bool PreDraw(ref Color lightColor)
         {

@@ -22,7 +22,9 @@ namespace Project165.Content.Items.Weapons.Magic
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.shoot = ModContent.ProjectileType<StellarRodHoldoutProj>();
-            Item.shootSpeed = 1f;            
+            Item.shootSpeed = 1f;
+            Item.rare = ItemRarityID.Green;
+            Item.value = Item.sellPrice(silver: 45);
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;

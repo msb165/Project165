@@ -16,6 +16,7 @@ namespace Project165.Content.Projectiles.Hostile
             Projectile.hostile = true;
             Projectile.aiStyle = -1;
             Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
         }
 
         public override void AI()
@@ -34,7 +35,7 @@ namespace Project165.Content.Projectiles.Hostile
                 Projectile.ai[0] = 1f;
             }
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Corruption, Alpha: 100);
                 dust.velocity = dust.velocity * 0.3f + Projectile.velocity * 0.2f;
@@ -45,7 +46,13 @@ namespace Project165.Content.Projectiles.Hostile
                 dust2.scale = 1.5f;
                 dust2.velocity *= 0f;
                 dust2.noGravity = true;
-                dust2.position = Projectile.Center.RotatedByRandom(MathHelper.ToRadians(0.01f)) - Projectile.velocity / 10f * i;
+                dust2.position = Projectile.Center.RotatedByRandom(MathHelper.ToRadians(0.01f)) - Projectile.velocity / 5f * i;
+
+                Dust dust3 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.SpectreStaff, newColor: Color.Magenta, Alpha: 220, Scale: 1.5f);
+                dust3.scale = 1.5f;
+                dust3.velocity *= 0f;
+                dust3.noGravity = true;
+                dust3.position = Projectile.Center - Projectile.velocity / 5f * i;
             }
         }
 

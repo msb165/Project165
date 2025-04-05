@@ -16,13 +16,9 @@ namespace Project165.Common.Globals.NPCs
                 return;
             }
 
-            if (!NPCID.Sets.CountsAsCritter[entity.type] && !entity.friendly && !entity.immortal && !entity.townNPC && entity.type >= NPCID.None && entity.type <= NPCID.Count && !entity.boss)
+            bool validEntity = !NPCID.Sets.CountsAsCritter[entity.type] && !entity.friendly && !entity.immortal && !entity.townNPC && entity.type >= NPCID.None && entity.type <= NPCID.Count && !entity.boss;
+            if (validEntity && !excludedNPCS.Contains(entity.type))
             {
-                if (excludedNPCS.Contains(entity.type))
-                {
-                    return;
-                }
-
                 float def = MathF.Ceiling(entity.defense * 1.5f);
                 entity.defense = (int)def;
                 entity.knockBackResist *= 0.75f;

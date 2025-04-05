@@ -13,8 +13,8 @@ namespace Project165.Content.Items.Weapons.Magic
         {
             Item.width = 30;
             Item.height = 38;
-            Item.damage = 52;
-            Item.mana = 10;
+            Item.damage = 60;
+            Item.mana = 16;
             Item.DamageType = DamageClass.Magic;
             Item.rare = ItemRarityID.Pink;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -33,6 +33,7 @@ namespace Project165.Content.Items.Weapons.Magic
             Vector2 pointPosition = player.RotatedRelativePoint(player.MountedCenter);
             Vector2 newPosition = pointPosition + new Vector2(Main.rand.Next(0, 101) * -player.direction, Main.rand.Next(-100, player.height / 2));
 
+            // This ensures the projectiles will not spawn inside a tile.
             for (int i = 0; i < 50; i++)
             {
                 newPosition = pointPosition + new Vector2(Main.rand.Next(0, 101) * -player.direction, Main.rand.Next(-100, player.height / 2));

@@ -12,11 +12,6 @@ namespace Project165.Content.Items.Weapons.Melee
     {
         public int currentAttack = 0;
 
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.Size = new(44);
@@ -32,7 +27,6 @@ namespace Project165.Content.Items.Weapons.Melee
             Item.knockBack = 8f;
             Item.noUseGraphic = true;
             Item.noMelee = true;
-            Item.ResearchUnlockCount = 1;
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;

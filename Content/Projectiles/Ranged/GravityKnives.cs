@@ -39,8 +39,8 @@ namespace Project165.Content.Projectiles.Ranged
 
             for (int i = 0; i < 10; i++)
             {
-                Vector2 spinPoint = Vector2.Zero;
-                spinPoint -= Vector2.UnitY.RotatedBy(i * MathHelper.TwoPi / 10f) * new Vector2(1f, 4f);
+                Vector2 spinPoint = -Vector2.UnitY.RotatedBy(i * MathHelper.TwoPi / 10f) * new Vector2(1f, 4f);
+                spinPoint = spinPoint.RotatedBy(Projectile.velocity.ToRotation());
                 Dust circleDust = Dust.NewDustPerfect(Projectile.Center, DustID.Clentaminator_Cyan, Vector2.Zero, 0, default, 0.7f);
                 circleDust.noGravity = true;
                 circleDust.position = Projectile.position + Projectile.Size / 2 + spinPoint;

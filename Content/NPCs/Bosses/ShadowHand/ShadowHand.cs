@@ -180,10 +180,10 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
 
         public void Jump()
         {
-            float waitingTime = SecondPhase ? 8f : 10f;
+            float waitingTime = SecondPhase ? 18f : 20f;
             float maxTime = 300f;
             float horizontalSpeed = 7f;
-            float jumpSpeed = 6f;
+            float jumpSpeed = 8f;
 
             NPC.noGravity = false;
             AITimer++;
@@ -202,7 +202,11 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
 
                     if (Player.Center.Y < NPC.Center.Y - 200f)
                     {
-                        NPC.velocity.Y -= 4f;
+                        NPC.velocity.Y -= 8f;
+                    }
+                    if (Player.Center.Y < NPC.Center.Y - 400f)
+                    {
+                        NPC.velocity.Y -= 10f;
                     }
                     if (!Collision.CanHit(NPC.Center, 1, 1, Player.Center, 1, 1))
                     {
@@ -262,7 +266,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                     if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(2))
                     {
                         SoundEngine.PlaySound(SoundID.Item14, NPC.position);
-                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, Vector2.Zero, ModContent.ProjectileType<ShadowStomp>(), NPC.GetAttackDamage_ForProjectiles(5f, 8f), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Bottom, Vector2.Zero, ModContent.ProjectileType<ShadowStomp>(), NPC.GetAttackDamage_ForProjectiles(8f, 10f), 0f, Main.myPlayer);
                     }
 
                     AITimer = 0f;
@@ -273,7 +277,11 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                     }
                     if (Player.Center.Y < NPC.Center.Y - 200f)
                     {
-                        NPC.velocity.Y -= 4f;
+                        NPC.velocity.Y -= 6f;
+                    }
+                    if (Player.Center.Y < NPC.Center.Y - 400f)
+                    {
+                        NPC.velocity.Y -= 10f;
                     }
                     if (!Collision.CanHit(NPC.Center, 1, 1, Player.Center, 1, 1))
                     {
@@ -289,7 +297,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
                 NPC.velocity.X *= 0.98f;
                 NPC.velocity.X = 8f * NPC.direction;
             }
-            if (Main.netMode != NetmodeID.MultiplayerClient && AITimer2 >= 3f && NPC.velocity.Y == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && AITimer2 >= 6f && NPC.velocity.Y == 0f)
             {
                 CurrentAIState = AIState.Jumping;
                 AITimer = 0f;

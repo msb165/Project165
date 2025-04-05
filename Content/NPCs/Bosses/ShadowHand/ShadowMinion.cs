@@ -61,7 +61,7 @@ namespace Project165.Content.NPCs.Bosses.ShadowHand
             AITimer++;
             MovementTimer += 0.01f;
 
-            NPC.Center = Vector2.Lerp(NPC.Center, Player.Center + new Vector2(MathF.Sin(MovementTimer) * 500f, -200f), 0.01f);
+            NPC.Center = Vector2.Lerp(NPC.Center, Player.Center + new Vector2(MathF.Sin(MovementTimer) * 500f, -250f), 0.01f);
 
             if (Main.netMode != NetmodeID.Server && NPC.ai[0] >= 100f)
             {

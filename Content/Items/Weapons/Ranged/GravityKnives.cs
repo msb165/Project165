@@ -10,7 +10,7 @@ namespace Project165.Content.Items.Weapons.Ranged
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
+            Item.ResearchUnlockCount = 99;
         }
 
         public override void SetDefaults()
@@ -31,8 +31,9 @@ namespace Project165.Content.Items.Weapons.Ranged
             Item.noUseGraphic = true;
             Item.rare = ItemRarityID.Yellow;
             Item.value = Item.buyPrice(silver: 50);
+            Item.ArmorPenetration = 10;
             Item.consumable = true;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

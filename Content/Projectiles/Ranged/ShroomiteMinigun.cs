@@ -25,6 +25,7 @@ namespace Project165.Content.Projectiles.Ranged
             Projectile.friendly = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
         }
 
         Player Player => Main.player[Projectile.owner];
@@ -38,7 +39,7 @@ namespace Project165.Content.Projectiles.Ranged
             Projectile.ai[0]++;
             if (Main.myPlayer == Projectile.owner && Projectile.ai[0] % Player.HeldItem.useAnimation == 0f)
             {
-                Player.PickAmmo(Player.HeldItem, out int projToShoot, out float speed, out int Damage, out float knockBack, out int usedAmmoItemID, Main.rand.NextBool(2));
+                Player.PickAmmo(Player.HeldItem, out int projToShoot, out float speed, out int Damage, out float knockBack, out int usedAmmoItemID);
                 if (canShoot)
                 {
                     float shootSpeed = Player.HeldItem.shootSpeed * Projectile.scale;

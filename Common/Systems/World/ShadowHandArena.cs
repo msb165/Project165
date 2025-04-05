@@ -46,7 +46,7 @@ namespace Project165.Common.Systems.World
 
             for (int i = 0; i < 5; i++)
             {
-                WorldGen.PlaceTile(altarPos.X + 48 - (i * 8), origin.Y + 20, TileID.Torches, false, true, -1, 4);
+                WorldGen.PlaceTile(altarPos.X + 48 - (i * 8), origin.Y + 20, TileID.Torches, false, true, -1, 12);
             }
 
             WorldGen.PlaceTile(altarPos.X + 30, altarPos.Y, ModContent.TileType<ShadowAltar>());

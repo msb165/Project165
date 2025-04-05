@@ -10,7 +10,6 @@ namespace Project165.Content.Items.Weapons.Magic
 {
     public class Avalanche : ModItem
     {
-
         public override void SetDefaults()
         {
             Item.Size = new(32);
