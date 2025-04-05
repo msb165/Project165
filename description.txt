@@ -1,17 +1,21 @@
+[h1]Introduction[/h1]
 
-Project 165 is a small content mod with the goal of expanding and overhauling the game.
+[b]Project 165[/b] is a small content mod with the goal of expanding and overhauling the overall game experience.
+
+[h2]Content[/h2]
 
 This mod features:
 
-- 3 Bosses (one post-Mechanical Bosses, one post-Golem and one post-Moon Lord)
+- 3 bosses (one post-Mechanical Bosses, one post-Golem and one post-Moon Lord)
 - 3 new enemies
-- 34 Items
+- 34 items
 
-Besides adding more content, this mod makes some changes to the vanilla game, here's what it changes:
+Besides adding new content, this mod also does some alterations to the vanilla game, here's what it changes:
 
 - Moves the Frost Legion event to pre-Hardmode.
 - Makes the Chlorophyte Saber a true melee weapon, only spawning projectiles uppon hitting an enemy.
 - Enchances Frost Bolt Staff's projectile visuals.
+- Enchances Influx Waver's projectile visuals.
 - Changes some of the gem staves to make them a bit different from each other.
 - Increases Terragrim's drop chance from 2% to 50%.
 - Makes the hold animation of staves smoother.
