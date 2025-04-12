@@ -11,40 +11,39 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Project165.Content.Items.Weapons.Magic
+namespace Project165.Content.Items.Weapons.Magic;
+
+public class BlackHoleStaff : ModItem
 {
-    public class BlackHoleStaff : ModItem
+    public override void SetDefaults()
     {
-        public override void SetDefaults()
-        {
-            Item.rare = ItemRarityID.Yellow;
-            Item.mana = 21;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.shoot = ModContent.ProjectileType<BlackHoleProj>();
-            Item.shootSpeed = 1f;
-            Item.width = 38;
-            Item.height = 36;
-            Item.UseSound = SoundID.Item43;
-            Item.useAnimation = 25;
-            Item.useTime = 25;
-            Item.knockBack = 5f;
-            Item.value = Item.sellPrice(gold: 4, silver: 12);
-            Item.damage = 90;
-            Item.DamageType = DamageClass.Magic;
-            Item.noMelee = true;
-            Item.channel = true;
-        }
-
-        public override bool CanUseItem(Player player) => !player.channel;
-
-        /*public override void AddRecipes()
-        {
-            CreateRecipe()
-                .AddIngredient(ItemID.RainbowRod)
-                .AddIngredient(ItemID.SoulofNight, 10)
-                .AddIngredient(ModContent.ItemType<ShadowEssence>(), 10)
-                .AddTile(TileID.MythrilAnvil)
-                .Register();
-        }*/
+        Item.rare = ItemRarityID.Yellow;
+        Item.mana = 21;
+        Item.useStyle = ItemUseStyleID.Swing;
+        Item.shoot = ModContent.ProjectileType<BlackHoleProj>();
+        Item.shootSpeed = 1f;
+        Item.width = 38;
+        Item.height = 36;
+        Item.UseSound = SoundID.Item43;
+        Item.useAnimation = 25;
+        Item.useTime = 25;
+        Item.knockBack = 5f;
+        Item.value = Item.sellPrice(gold: 4, silver: 12);
+        Item.damage = 90;
+        Item.DamageType = DamageClass.Magic;
+        Item.noMelee = true;
+        Item.channel = true;
     }
+
+    public override bool CanUseItem(Player player) => !player.channel;
+
+    /*public override void AddRecipes()
+    {
+        CreateRecipe()
+            .AddIngredient(ItemID.RainbowRod)
+            .AddIngredient(ItemID.SoulofNight, 10)
+            .AddIngredient(ModContent.ItemType<ShadowEssence>(), 10)
+            .AddTile(TileID.MythrilAnvil)
+            .Register();
+    }*/
 }

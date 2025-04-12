@@ -6,41 +6,42 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Project165.Content.Projectiles.Melee;
 
-namespace Project165.Content.Items.Weapons.Melee
+namespace Project165.Content.Items.Weapons.Melee;
+
+public class IceBat : ModItem
 {
-    public class IceBat : ModItem
+    public int currentAttack = 0;
+
+    public override void SetDefaults()
     {
-        public int currentAttack = 0;
+        Item.Size = new(44);
+        Item.useStyle = ItemUseStyleID.Swing;
+        Item.useAnimation = 20;
+        Item.useTime = 20;
+        Item.damage = 73;
+        Item.DamageType = DamageClass.MeleeNoSpeed;
+        Item.shoot = ModContent.ProjectileType<IceBatHoldoutProj>();
+        Item.shootSpeed = 1f;
+        Item.rare = ItemRarityID.Pink;
+        Item.value = Item.buyPrice(gold: 12);
+        Item.knockBack = 8f;
+        Item.noUseGraphic = true;
+        Item.noMelee = true;
+    }
 
-        public override void SetDefaults()
+    public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
+
+    public override bool MeleePrefix() => true;
+
+    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+    {
+        if (currentAttack > 1)
         {
-            Item.Size = new(44);
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 20;
-            Item.useTime = 20;
-            Item.damage = 73;
-            Item.DamageType = DamageClass.MeleeNoSpeed;
-            Item.shoot = ModContent.ProjectileType<IceBatHoldoutProj>();
-            Item.shootSpeed = 1f;
-            Item.rare = ItemRarityID.Pink;
-            Item.value = Item.buyPrice(gold: 20);
-            Item.knockBack = 8f;
-            Item.noUseGraphic = true;
-            Item.noMelee = true;
-        }
+            currentAttack = 0;
+        }            
 
-        public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] < 1;
-
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            if (currentAttack > 1)
-            {
-                currentAttack = 0;
-            }            
-
-            Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, currentAttack);
-            currentAttack++;
-            return false;
-        }
+        Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, player.whoAmI, currentAttack);
+        currentAttack++;
+        return false;
     }
 }

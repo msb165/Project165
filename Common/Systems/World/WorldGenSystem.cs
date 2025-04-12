@@ -11,78 +11,77 @@ using Terraria.WorldBuilding;
 using Microsoft.Xna.Framework;
 using Project165.Content.Items.Weapons.Magic;
 
-namespace Project165.Common.Systems.World
+namespace Project165.Common.Systems.World;
+
+internal class WorldGenSystem : ModSystem
 {
-    internal class WorldGenSystem : ModSystem
+    public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
     {
-        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
+        int microBiomesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Micro Biomes"));
+
+        if (microBiomesIndex != -1)
         {
-            int microBiomesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Micro Biomes"));
-
-            if (microBiomesIndex != -1)
+            tasks.Insert(microBiomesIndex + 1, new PassLegacy("Shadow Arena", (progress, config) =>
             {
-                tasks.Insert(microBiomesIndex + 1, new PassLegacy("Shadow Arena", (progress, config) =>
-                {
-                    progress.Message = "Project 165: Shadow Arena";
-                    ShadowHandArena slimeArena = GenVars.configuration.CreateBiome<ShadowHandArena>();
+                progress.Message = "Project 165: Shadow Arena";
+                ShadowHandArena slimeArena = GenVars.configuration.CreateBiome<ShadowHandArena>();
 
-                    Point origin2 = default;
-                    for (int i = 0; i < 2; i++)
+                Point origin2 = default;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (i == 0)
                     {
-                        if (i == 0)
+                        int j = 0;
+                        while (j++ <= Main.maxTilesX)
                         {
-                            int j = 0;
-                            while (j++ <= Main.maxTilesX)
+                            origin2.X = GenVars.dungeonSide < 0 ? Main.maxTilesX - 250 : WorldGen.genRand.Next(250, (int)(Main.maxTilesX * 0.25));
+                            origin2.Y = (int)GenVars.rockLayer + WorldGen.genRand.Next(300, 500);
+                            if (slimeArena.Place(origin2, GenVars.structures))
                             {
-                                origin2.X = GenVars.dungeonSide < 0 ? Main.maxTilesX - 250 : WorldGen.genRand.Next(250, (int)(Main.maxTilesX * 0.25));
-                                origin2.Y = (int)GenVars.rockLayer + WorldGen.genRand.Next(300, 500);
-                                if (slimeArena.Place(origin2, GenVars.structures))
-                                {
-                                    break;
-                                }
+                                break;
                             }
                         }
                     }
-                }));
-            }
+                }
+            }));
         }
+    }
 
-        public override void PostWorldGen()
+    public override void PostWorldGen()
+    {
+        int placedItems = 0;
+        int maxItemsToPlace = 6;
+
+        for (int i = 0; i < Main.maxChests; i++)
         {
-            int placedItems = 0;
-            int maxItemsToPlace = 6;
-
-            for (int i = 0; i < Main.maxChests; i++)
+            Chest chest = Main.chest[i];
+            if (chest == null)
             {
-                Chest chest = Main.chest[i];
-                if (chest == null)
+                continue;
+            }
+
+            Tile chestTile = Main.tile[chest.x, chest.y];
+            if (chestTile.TileType == TileID.Containers && chestTile.TileFrameX == 13 * 36)
+            {
+                if (WorldGen.genRand.NextBool(3))
                 {
                     continue;
                 }
 
-                Tile chestTile = Main.tile[chest.x, chest.y];
-                if (chestTile.TileType == TileID.Containers && chestTile.TileFrameX == 13 * 36)
+                for (int j = 0; j < Chest.maxItems; j++)
                 {
-                    if (WorldGen.genRand.NextBool(3))
+                    if (chest.item[j].type == ItemID.None)
                     {
-                        continue;
-                    }
-
-                    for (int j = 0; j < Chest.maxItems; j++)
-                    {
-                        if (chest.item[j].type == ItemID.None)
-                        {
-                            chest.item[j].SetDefaults(ModContent.ItemType<StellarRod>());
-                            placedItems++;
-                            break;
-                        }
+                        chest.item[j].SetDefaults(ModContent.ItemType<StellarRod>());
+                        placedItems++;
+                        break;
                     }
                 }
+            }
 
-                if (placedItems >= maxItemsToPlace)
-                {
-                    break;
-                }
+            if (placedItems >= maxItemsToPlace)
+            {
+                break;
             }
         }
     }

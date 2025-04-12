@@ -3,16 +3,15 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Project165.Common.Globals.NPCs
+namespace Project165.Common.Globals.NPCs;
+
+public class GlobalNPCShop : GlobalNPC
 {
-    public class GlobalNPCShop : GlobalNPC
+    public override void ModifyShop(NPCShop shop)
     {
-        public override void ModifyShop(NPCShop shop)
+        if (shop.NpcType == NPCID.ArmsDealer)
         {
-            if (shop.NpcType == NPCID.ArmsDealer)
-            {
-                shop.Add(ModContent.ItemType<MachineGunStaff>(), Condition.DownedEyeOfCthulhu);
-            }
+            shop.Add(ModContent.ItemType<MachineGunStaff>(), Condition.DownedEyeOfCthulhu);
         }
     }
 }

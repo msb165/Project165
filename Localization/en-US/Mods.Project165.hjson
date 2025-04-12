@@ -50,6 +50,12 @@ Projectiles: {
 	BigMagicExplosion.DisplayName: Big Magic Explosion
 	FlyingHand.DisplayName: Flying Hand
 	FireTornado.DisplayName: Fire Tornado
+	RadianceProj.DisplayName: Radiance
+	SnowBallHostile.DisplayName: Snow Ball
+	IceGuardianProj.DisplayName: Ice Guardian
+	IceGuardianBolt.DisplayName: Ice Guardian Bolt
+	AssassinKnifeProj.DisplayName: Assassin Knife
+	AssassinBeam.DisplayName: Assassin Beam
 }
 
 Items: {
@@ -172,13 +178,8 @@ Items: {
 		Tooltip:
 			'''
 			Converts Wooden Arrows into Fire Arrows
-			Has a chance to shoot an Infernal arrow
+			Has a chance to shoot an Infernal Arrow
 			'''
-	}
-
-	GolemBow: {
-		DisplayName: Golem Bow
-		Tooltip: ""
 	}
 
 	MeteorMinionStaff: {
@@ -187,7 +188,7 @@ Items: {
 	}
 
 	SuperFireSword: {
-		DisplayName: Super Fire Sword
+		DisplayName: Blazing Blade
 		Tooltip: ""
 	}
 
@@ -255,6 +256,31 @@ Items: {
 		DisplayName: Shadow Altar
 		Tooltip: ""
 	}
+
+	Radiance: {
+		DisplayName: Radiance
+		Tooltip: ""
+	}
+
+	SnowMount: {
+		DisplayName: Snowman Doll
+		Tooltip: ""
+	}
+
+	IceGuardianStaff: {
+		DisplayName: Ice Guardian Staff
+		Tooltip: ""
+	}
+
+	AssassinKnife: {
+		DisplayName: Assassin Knife
+		Tooltip: 
+			'''
+			A knife used by a cold and fast assassin
+			Stores a beam after every critical hit
+			Press right click to shoot one or more projectiles
+			'''
+	}
 }
 
 NPCs: {
@@ -265,6 +291,7 @@ NPCs: {
 	FlyingIce.DisplayName: Flying Ice
 	FireBoss.DisplayName: Raging Flame
 	ShadowMinion.DisplayName: Shadow Minion
+	TallSnowman.DisplayName: Tall Snowman
 }
 
 Tiles: {
@@ -288,5 +315,15 @@ Buffs: {
 	JellyfishBuff: {
 		DisplayName: Jellyfish Buff
 		Description: A jellyfish fights for you
+	}
+
+	SnowBallBuff: {
+		DisplayName: Snowman Doll
+		Description: Summons a rideable snowball
+	}
+
+	IceGuardianBuff: {
+		DisplayName: Ice Guardian
+		Description: An Ice Guardian fights for you
 	}
 }

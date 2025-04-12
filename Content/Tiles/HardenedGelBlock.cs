@@ -9,23 +9,22 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace Project165.Content.Tiles
+namespace Project165.Content.Tiles;
+
+public class HardenedGelBlock : ModTile
 {
-    public class HardenedGelBlock : ModTile
+    public override void SetStaticDefaults()
     {
-        public override void SetStaticDefaults()
-        {
-            Main.tileBlockLight[Type] = true;
-            Main.tileMergeDirt[Type] = true;
-            Main.tileSolid[Type] = true;
+        Main.tileBlockLight[Type] = true;
+        Main.tileMergeDirt[Type] = true;
+        Main.tileSolid[Type] = true;
 
-            LocalizedText name = CreateMapEntryName();
-            AddMapEntry(Color.Purple, name);
+        LocalizedText name = CreateMapEntryName();
+        AddMapEntry(Color.Purple, name);
 
-            DustType = DustID.Crimslime;
-            MinPick = 215;
-        }
-
-        public override bool CanExplode(int i, int j) => false;
+        DustType = DustID.Crimslime;
+        MinPick = 215;
     }
+
+    public override bool CanExplode(int i, int j) => false;
 }
