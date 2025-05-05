@@ -21,8 +21,14 @@ namespace Project165.Content.Projectiles.Hostile
         }
 
         public override void AI()
-        {
-            Projectile.rotation += 0.1f * Projectile.direction;
+        {            
+            Projectile.rotation += 0.2f * Projectile.direction;
+            for (int i = 0; i < 3; i++)
+            {
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, Alpha: 100);
+                dust.velocity *= 0.1f;
+                dust.noGravity = true;
+            }
         }
 
         public override void OnKill(int timeLeft)

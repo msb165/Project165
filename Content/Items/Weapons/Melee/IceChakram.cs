@@ -27,5 +27,4 @@ public class IceChakram : ModItem
         Item.noMelee = true;
         Item.noUseGraphic = true;
     }
-
 }

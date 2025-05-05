@@ -18,7 +18,7 @@ public class IceBat : ModItem
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useAnimation = 20;
         Item.useTime = 20;
-        Item.damage = 73;
+        Item.damage = 75;
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.shoot = ModContent.ProjectileType<IceBatHoldoutProj>();
         Item.shootSpeed = 1f;

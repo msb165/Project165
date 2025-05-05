@@ -96,6 +96,12 @@ namespace Project165.Content.Projectiles.Summon
                 Attack();
             }
 
+            PreventClumping();
+            Projectile.spriteDirection = Projectile.direction;
+        }
+
+        public void PreventClumping()
+        {
             float acceleration = 3f;
             float projWidth = Projectile.width * 1.5f;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -120,8 +126,6 @@ namespace Project165.Content.Projectiles.Summon
                     }
                 }
             }
-
-            Projectile.spriteDirection = Projectile.direction;
         }
 
         public void Idle()
@@ -187,8 +191,9 @@ namespace Project165.Content.Projectiles.Summon
                 if (AITimer >= timeToShoot && Main.myPlayer == Projectile.owner && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
                 {
                     AITimer = 0f;
-                    Vector2 projVel = Vector2.Normalize(target.Center - Projectile.Center) * 10f;
+                    Vector2 projVel = Vector2.Normalize(target.Center - Projectile.Center) * 16f;
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + projVel * 4f, projVel, ModContent.ProjectileType<IceGuardianBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                    Projectile.velocity -= projVel.RotatedByRandom(MathHelper.ToRadians(45f)) * 0.4f;
                 }
             }
         }

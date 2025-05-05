@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Project165.Utilites;
 using System;
 using System.IO;
 using Terraria;
@@ -79,7 +80,7 @@ public class MachineGunProj : ModProjectile
 
     public void IdleStuff()
     {
-        Projectile.direction = Projectile.spriteDirection = Owner.direction;
+        Projectile.spriteDirection = Projectile.direction = Owner.direction;
         CurrentAIState = AIState.Targeting;
         AITimer = 0f;
         Projectile.netUpdate = true;
@@ -103,7 +104,7 @@ public class MachineGunProj : ModProjectile
         if (targetIndex != -1)
         {
             Vector2 distance = (Main.npc[targetIndex].Center - Projectile.Center).SafeNormalize(Vector2.UnitY);
-            Projectile.rotation = Projectile.AngleTo(Main.npc[targetIndex].Center);
+            Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.AngleTo(Main.npc[targetIndex].Center), 0.2f);
             Projectile.direction = (Projectile.rotation > MathHelper.PiOver2 || Projectile.rotation < -MathHelper.PiOver2).ToDirectionInt() * -1;
             if (shouldShoot && Projectile.owner == Main.myPlayer)
             {
@@ -206,7 +207,7 @@ public class MachineGunProj : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         Texture2D gunTexture = TextureAssets.Projectile[Type].Value;
-        Texture2D baseTexture = (Texture2D)Request<Texture2D>("Project165/Assets/Images/MachineGunBase");
+        Texture2D baseTexture = (Texture2D)Request<Texture2D>(Project165Utils.ImagesPath + "MachineGunBase");
         
 
         Vector2 baseDrawPos = Projectile.Bottom + Vector2.UnitY * Projectile.gfxOffY - Main.screenPosition;

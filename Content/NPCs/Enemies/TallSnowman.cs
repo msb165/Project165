@@ -69,7 +69,7 @@ namespace Project165.Content.NPCs.Enemies
             ]);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.invasionType == InvasionID.SnowLegion ? SpawnCondition.Invasion.Chance * 0.2f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.invasionType == InvasionID.SnowLegion ? SpawnCondition.Invasion.Chance * 0.1f : 0f;
 
         public override void AI()
         {
@@ -94,6 +94,7 @@ namespace Project165.Content.NPCs.Enemies
             if (NPC.velocity.Y == 0f)
             {
                 NPC.TargetClosest(faceTarget: true);
+                NPC.velocity.X = NPC.direction * 4f;
                 NPC.velocity.Y = -8f;
                 NPC.rotation = MathHelper.Lerp(NPC.rotation, 0f, 1f);
 
@@ -104,10 +105,7 @@ namespace Project165.Content.NPCs.Enemies
                     NPC.netUpdate = true;
                 }
             }
-            else if (NPC.velocity.Y != 0f)
-            {
-                NPC.velocity.X = NPC.direction * 4f;
-            }
+            NPC.velocity.X += 0.01f * NPC.direction;
         }
 
         int shootTime = 15;

@@ -1,4 +1,5 @@
 ﻿using Project165.Content.Projectiles.Melee;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -23,13 +24,14 @@ public class Roqueforti : ModItem
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.UseSound = SoundID.Item1;
-        Item.damage = 90;
+        Item.damage = 50;
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.knockBack = 2.5f;
         Item.crit = 8;
         Item.rare = ItemRarityID.Lime;
         Item.shoot = ModContent.ProjectileType<RoquefortiProjectile>();
         Item.shootSpeed = 16f;
+        Item.value = Item.buyPrice(gold: 30);
         Item.channel = true;
         Item.autoReuse = true;
     }

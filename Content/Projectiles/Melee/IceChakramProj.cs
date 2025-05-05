@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 using Project165.Content.Items.Weapons.Melee;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -19,7 +21,7 @@ public class IceChakramProj : ModProjectile
 
     public override void SetDefaults()
     {
-        Projectile.Size = new(30);
+        Projectile.Size = new(28);
         Projectile.friendly = true;
         Projectile.penetrate = -1;
         Projectile.DamageType = DamageClass.Melee;            
@@ -105,7 +107,7 @@ public class IceChakramProj : ModProjectile
     {
         for (int i = 0; i < 20; i++)
         {
-            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, 0, 0, 0, default, 0.5f);
+            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Cyan, Scale: 0.5f);
             dust.noGravity = true;
             dust.velocity *= 4f;
         }

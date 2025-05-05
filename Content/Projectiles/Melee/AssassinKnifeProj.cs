@@ -74,7 +74,7 @@ namespace Project165.Content.Projectiles.Melee
         {
             if (Player.HeldItem.ModItem is AssassinKnife knife)
             {
-                if (knife.projAmount < 3 && hit.Crit)
+                if (knife.projAmount < 3 && knife != null && hit.Crit)
                 {
                     knife.projAmount++;
                 }
@@ -94,7 +94,6 @@ namespace Project165.Content.Projectiles.Melee
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Main.instance.LoadProjectile(ProjectileID.HallowBossLastingRainbow);
             Texture2D glowTexture = TextureAssets.Extra[ExtrasID.SharpTears].Value;
             Vector2 drawOrigin = texture.Size() / 2;
             Vector2 drawOriginGlow = glowTexture.Size() / 2;

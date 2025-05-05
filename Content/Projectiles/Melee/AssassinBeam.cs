@@ -42,7 +42,6 @@ namespace Project165.Content.Projectiles.Melee
         {
             Projectile.velocity.Y += VerticalSpeed * 0.025f;
             Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y, -8, 8f);
-
             for (int i = 0; i < 3; i++)
             {
                 Dust dust = Dust.NewDustPerfect(Projectile.position, ModContent.DustType<GlowDust>(), Vector2.Zero, 200, new Color(250, 250, 250), Scale: 1f);

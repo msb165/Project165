@@ -73,6 +73,7 @@ namespace Project165.Content.Items.Weapons.Melee
                 }
                 shouldPlaySound = true;
                 projAmount = 0;
+                return false;
             }
             else
             {

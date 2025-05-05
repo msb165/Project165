@@ -19,6 +19,7 @@ internal class ManaKnifeProj : ModProjectile
         ProjectileID.Sets.TrailCacheLength[Type] = 15;
         ProjectileID.Sets.TrailingMode[Type] = 2;
     }
+
     public override void SetDefaults()
     {
         Projectile.friendly = true;
@@ -62,7 +63,8 @@ internal class ManaKnifeProj : ModProjectile
         SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
         for (int i = 0; i < 8; i++)
         {
-            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 100, Color.SkyBlue, 0.75f);
+            Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowDust>(), 0, 0, 100, Color.SkyBlue, 0.75f);
+            dust.velocity *= 2f;
         }
     }
     public override bool PreDraw(ref Color lightColor)
@@ -77,7 +79,7 @@ internal class ManaKnifeProj : ModProjectile
         {
             drawColorTrail *= 0.75f;
             newScale *= 0.99f;
-            spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, Projectile.Size / 2, newScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, Projectile.oldPos[i] + Projectile.Size / 2 - Projectile.velocity / 10f * i - Main.screenPosition, texture.Frame(), drawColorTrail, Projectile.rotation, Projectile.Size / 2, newScale, SpriteEffects.None, 0);
         }
 
         spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, drawColor, Projectile.rotation, Projectile.Size / 2, Projectile.scale, SpriteEffects.None, 0);

@@ -16,6 +16,7 @@ using Terraria.Audio;
 using System;
 using Project165.Content.Items.Weapons.Magic;
 using Terraria.Map;
+using Project165.Content.Items.Placeables.Furniture;
 
 
 namespace Project165.Content.NPCs.Bosses.ShadowHand;
@@ -130,7 +131,6 @@ public class ShadowHand : ModNPC
             return;
         }
 
-
         DisableMountsAndHooks();
 
         if (NPC.noTileCollide && !Player.dead)
@@ -148,15 +148,34 @@ public class ShadowHand : ModNPC
         SecondPhase = NPC.life < NPC.lifeMax * 0.5;
         if (NPC.localAI[0] == 0f)
         {
+            NPC.localAI[1]++;
+            int numberOfNPCs = 1;
+            float spawnDelay = 90f;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int minionNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ShadowMinion>());
-                if (Main.netMode == NetmodeID.Server)
+                if (Main.masterMode)
                 {
-                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, minionNPC);
+                    numberOfNPCs = 2;
                 }
+                if (Main.zenithWorld)
+                {
+                    numberOfNPCs = 3;
+                }
+
+                if (NPC.localAI[1] % (spawnDelay / numberOfNPCs) == 0f && NPC.localAI[1] <= spawnDelay)
+                {
+                    int minionNPC = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ShadowMinion>());
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, minionNPC);
+                    }
+                }
+
             }
-            NPC.localAI[0] = 1f;
+            if (NPC.localAI[1] >= spawnDelay)
+            {
+                NPC.localAI[0] = 1f;
+            }
             NPC.netUpdate = true;
         }
 
@@ -349,6 +368,8 @@ public class ShadowHand : ModNPC
         npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<ShadowSlimeStaff>(), 4));
         npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<BlackHoleStaff>(), 4));
         npcLoot.Add(ItemDropRule.ByCondition(notExpert, ModContent.ItemType<ShadowEssence>(), 1, 8, 30));
+
+        npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<ShadowHandRelic>()));
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

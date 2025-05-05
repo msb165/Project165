@@ -19,9 +19,9 @@ namespace Project165.Content.Items.Weapons.Summon
         {
             Item.width = 34;
             Item.height = 32;
-            Item.useTime = 36;
-            Item.useAnimation = 36;
-            Item.damage = 30;
+            Item.useTime = 34;
+            Item.useAnimation = 34;
+            Item.damage = 32;
             Item.DamageType = DamageClass.Summon;
             Item.shoot = ModContent.ProjectileType<IceGuardianProj>();
             Item.mana = 10;

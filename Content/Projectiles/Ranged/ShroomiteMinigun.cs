@@ -52,9 +52,9 @@ public class ShroomiteMinigun : ModProjectile
                 }
 
                 SoundEngine.PlaySound(SoundID.Item11, Projectile.position);
-                Projectile.velocity = spinPoint;
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, spinPoint, 0.5f);
                 Vector2 spawnVel = Vector2.Normalize(Projectile.velocity) * speed;
-                spawnVel = spawnVel.RotatedByRandom(MathHelper.ToRadians(15f));
+                spawnVel = spawnVel.RotatedByRandom(MathHelper.ToRadians(5f));
                 Projectile.NewProjectile(source, Projectile.Center + Vector2.UnitY * 4f + Projectile.velocity * 4f, spawnVel, projToShoot, Damage, KnockBack, Projectile.owner);
                 if (Main.rand.NextBool(4))
                 {
@@ -72,9 +72,11 @@ public class ShroomiteMinigun : ModProjectile
         Projectile.position = Player.MountedCenter - Projectile.Size / 2 - (Vector2.UnitX * 8f).RotatedBy(Projectile.velocity.ToRotation());
         Projectile.spriteDirection = Projectile.direction;
         Projectile.rotation = Projectile.velocity.ToRotation();
+        Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.rotation + Main.rand.NextFloat(-0.2f, 0.2f), 0.125f);
         SetPlayerValues();
 
-        Dust dust = Dust.NewDustDirect(Projectile.position, 4, 4, DustID.Cloud, Alpha: 100, Scale: 1.75f);
+        Dust dust = Dust.NewDustDirect(Projectile.position, 4, 4, DustID.Cloud, Alpha: 100, Scale: 1.25f);
+        dust.noGravity = true;
         dust.position = Projectile.Center + Vector2.UnitY * 4f + Projectile.velocity * 7f;
         dust.velocity = (Vector2.UnitX * 4f * Main.rand.NextFloat(0.9f, 2f)).RotatedBy(Projectile.velocity.ToRotation()).RotatedByRandom(MathHelper.ToRadians(15f));
     }

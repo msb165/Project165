@@ -14,6 +14,14 @@ public class GlobalNPCTweaks : GlobalNPC
     {
         switch (entity.type)
         {
+            case NPCID.BoundGoblin:
+            case NPCID.BoundMechanic:
+            case NPCID.BoundWizard:
+            case NPCID.BoundTownSlimeOld:
+            case NPCID.BoundTownSlimePurple:
+            case NPCID.BoundTownSlimeYellow:
+                entity.dontTakeDamage = true; 
+                break;
             case NPCID.SnowmanGangsta:
                 entity.damage = 20;
                 entity.lifeMax = 80;
@@ -39,13 +47,14 @@ public class GlobalNPCTweaks : GlobalNPC
             return;
         }
 
-        bool validEntity = !NPCID.Sets.CountsAsCritter[entity.type] && !entity.friendly && !entity.immortal && !entity.townNPC && entity.type >= NPCID.None && entity.type <= NPCID.Count && !entity.boss;
-        if (validEntity && !excludedNPCS.Contains(entity.type))
+        bool isValidEntity = !NPCID.Sets.CountsAsCritter[entity.type] && !entity.friendly && !entity.immortal && !entity.townNPC && entity.type >= NPCID.None && entity.type <= NPCID.Count && !entity.boss;
+        if (isValidEntity && !excludedNPCS.Contains(entity.type))
         {
             float def = MathF.Ceiling(entity.defense * 1.5f);
+            float life = MathF.Ceiling(entity.lifeMax * 1.5f);
             entity.defense = (int)def;
             entity.knockBackResist *= 0.75f;
-            entity.lifeMax *= 2;
+            entity.lifeMax = (int)life;
         }
     }
 
@@ -53,7 +62,7 @@ public class GlobalNPCTweaks : GlobalNPC
     {
         if (npc.aiStyle == NPCAIStyleID.Snowman)
         {
-            npc.rotation = MathHelper.Lerp(npc.rotation, npc.velocity.X * 0.05f, 0.08f);
+            npc.rotation = MathHelper.Lerp(npc.rotation, npc.velocity.X * 0.05f, 0.05f);
             if (npc.velocity.Y == 0f)
             {
                 npc.rotation = MathHelper.Lerp(npc.rotation, 0f, 1f);

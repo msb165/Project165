@@ -16,6 +16,8 @@ using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Ranged;
 using Terraria.Audio;
 using Project165.Content.Items.Weapons.Summon;
+using Project165.Content.Items.Placeables.Furniture;
+using Project165.Content.Items.Accessories;
 
 namespace Project165.Content.NPCs.Bosses.Frigus;
 
@@ -114,11 +116,14 @@ public class IceBossFly : ModNPC
         Conditions.NotExpert notExpertCondition = new();
         npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<IceBossBag>()));
 
-        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<Avalanche>(), 5));
-        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceShotgun>(), 5));
-        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceChakram>(), 5));
-        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceBat>(), 5));
-        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceGuardianStaff>(), 5));
+        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<Avalanche>(), 6));
+        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceShotgun>(), 6));
+        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceChakram>(), 6));
+        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceBat>(), 6));
+        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceGuardianStaff>(), 6));
+        npcLoot.Add(ItemDropRule.ByCondition(notExpertCondition, ModContent.ItemType<IceCloak>(), 6));
+
+        npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<FrigusRelic>()));
     }
 
     #region AI
@@ -280,7 +285,11 @@ public class IceBossFly : ModNPC
             timeToShoot = 75f;
             if (Main.expertMode)
             {
-                timeToShoot = 70f;
+                timeToShoot -= 5f;
+            }
+            if (Main.masterMode)
+            {
+                timeToShoot -= 5f;
             }
         }
 
@@ -300,7 +309,14 @@ public class IceBossFly : ModNPC
             for (int i = 0; i < 16; i++)
             {
                 Vector2 spawnPos = new(Player.Center.X + Main.screenWidth / 2 - Main.screenWidth / 16 * i, Main.screenPosition.Y + Main.screenHeight + 500f);
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.UnitY * -4f, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
+                //Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.UnitY * -4f, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, Vector2.Normalize(Player.Center - spawnPos) * 4f, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
+
+                if (PhaseTwo)
+                {
+                    Vector2 spawnPos2 = new(Main.screenPosition.X + Main.screenWidth + 500f, Player.Center.Y + Main.screenHeight / 2 - Main.screenHeight / 6f * i);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos2, Vector2.UnitX * -4f, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(30f, 23f), 0f, Main.myPlayer, 1f, 0f);
+                }
             }
         }
 
@@ -400,6 +416,10 @@ public class IceBossFly : ModNPC
 
         Vector2 spawnVelocity = Vector2.Normalize(Player.Center - NPC.Center) * velocity;
         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, spawnVelocity, ModContent.ProjectileType<IceBossProjectile>(), NPC.GetAttackDamage_ForProjectiles(28f, 23f), 0f, Main.myPlayer, 0f, 0f);
+        if (CurrentAIState == AIState.PhaseOne_Sideways)
+        {
+            NPC.velocity -= spawnVelocity * 0.6f;
+        }
     }
 
     private void HandleRotation()

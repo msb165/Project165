@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Microsoft.Xna.Framework;
 using Project165.Utilites;
+using Project165.Content.Projectiles.Melee;
+using System;
 
 namespace Project165.Common.Globals.Items;
 
@@ -30,6 +32,13 @@ public class GlobalItemTweaks : GlobalItem
                 entity.useTime = 32;
                 entity.useAnimation = 32;
                 break;
+            case ItemID.BeamSword:
+                entity.useTime = 30;
+                entity.useAnimation = entity.useTime;
+                entity.shootSpeed = 26f;
+                entity.noMelee = true;
+                entity.shootsEveryUse = true;
+                break;
             case ItemID.SlimeCrown:
             case ItemID.SuspiciousLookingEye:
             case ItemID.WormFood:
@@ -39,7 +48,6 @@ public class GlobalItemTweaks : GlobalItem
             case ItemID.MechanicalEye:
             case ItemID.MechanicalSkull:
             case ItemID.MechanicalWorm:
-            case ItemID.LihzahrdPowerCell:
             case ItemID.CelestialSigil:
                 entity.consumable = false;
                 break;
@@ -48,7 +56,7 @@ public class GlobalItemTweaks : GlobalItem
 
     public override void UseStyle(Item item, Player player, Rectangle heldItemFrame)
     {
-        if (Item.staff[item.type])
+        if (Item.staff[item.type] == true && item.useStyle == ItemUseStyleID.Shoot)
         {
             Project165Utils.SmoothHoldStyle(player);
         }
@@ -57,16 +65,17 @@ public class GlobalItemTweaks : GlobalItem
         {
             case ItemID.TacticalShotgun:
             case ItemID.Boomstick:
-                goto recoil;
+                Project165Utils.RecoilEffect(player, intensity);
+                break;
             case ItemID.Minishark:
             case ItemID.Megashark:
             case ItemID.RedRyder:
                 intensity = -0.7f;
-            recoil:
                 Project165Utils.RecoilEffect(player, intensity);
                 break;
+            default:
+                break;
         }
-
     }
 
     public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
@@ -107,6 +116,13 @@ public class GlobalItemTweaks : GlobalItem
             case ItemID.InfluxWaver:
                 Projectile.NewProjectile(source, position + velocity * 4f, velocity.RotatedByRandom(0.07f), type, damage, knockback, player.whoAmI);
                 return false;
+            case ItemID.BeamSword:
+                float adjustedItemScale = player.GetAdjustedItemScale(item);
+                player.ChangeDir(MathF.Sign(velocity.X));
+                Projectile.NewProjectile(source, player.MountedCenter, Vector2.UnitX * player.direction, ModContent.ProjectileType<BeamSwingProj>(), damage, knockback, player.whoAmI, player.direction * player.gravDir, player.itemAnimationMax, adjustedItemScale * 1.1f);
+                Projectile.NewProjectile(source, position + velocity, velocity, ModContent.ProjectileType<BeamSuperProj>(), (int)(damage * 0.75f), knockback, player.whoAmI, player.direction * player.gravDir, ai1: 18f, adjustedItemScale);
+                NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, player.whoAmI);
+                return false;
         }
         return true;
     }
@@ -122,26 +138,4 @@ public class GlobalItemTweaks : GlobalItem
             position = position - (Vector2.UnitY * 12f).RotatedBy(new Vector2(velocity.X * player.direction, velocity.Y).ToRotation()) + velocity * 4f;
         }
     }
-
-    public override void AddRecipes()
-    {
-		Recipe.Create(ItemID.Zenith)
-            .AddIngredient(ItemID.TerraBlade)
-            .AddIngredient(ItemID.Meowmere)
-            .AddIngredient(ItemID.StarWrath)
-            .AddIngredient(ItemID.InfluxWaver)
-            .AddIngredient(ItemID.TheHorsemansBlade)
-            .AddIngredient(ItemID.Seedler)
-            .AddIngredient(ItemID.Starfury)
-            .AddIngredient(ItemID.BeeKeeper)
-            .AddIngredient(ItemID.Terragrim)
-            .AddIngredient(ItemID.CopperShortsword)
-            .AddTile(TileID.MythrilAnvil)
-            .Register();
-        Recipe.Create(ItemID.SnowGlobe)
-            .AddIngredient(ItemID.SnowBlock, 15)
-            .AddRecipeGroup(RecipeGroupID.Wood, 5)
-            .AddTile(TileID.WorkBenches)
-            .Register();
-	}
 }

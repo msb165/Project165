@@ -22,8 +22,9 @@ public class ManaKnife : ModItem
         Item.shoot = ModContent.ProjectileType<ManaKnifeProj>();
         Item.shootSpeed = 16f;
         Item.useStyle = ItemUseStyleID.Swing;
-        Item.useTime = 8;
+        Item.useTime = 4;
         Item.useAnimation = 8;
+        Item.reuseDelay = 10;
         Item.UseSound = SoundID.Item1 with { Pitch = 0.8f };
         Item.noUseGraphic = true;
         Item.noMelee = true;

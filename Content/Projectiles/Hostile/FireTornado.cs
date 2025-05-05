@@ -48,7 +48,7 @@ public class FireTornado : ModProjectile
             Projectile.alpha--;
         }
 
-        if (Player.Distance(Projectile.Center) < 4000f)
+        if (Player.Distance(Projectile.Center) < 3000f)
         {
             HandlePushback();
         }
@@ -99,6 +99,9 @@ public class FireTornado : ModProjectile
 
     public void MoveBack(Vector2 projPos = default, float maxSpeed = 11f)
     {
+        Player.StopVanityActions();
+        //Player.mount.Dismount(Player);
+
         Vector2 center = Player.Center;
         Vector2 newVel = projPos - center;
         float squareVel = newVel.Length();

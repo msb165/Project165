@@ -77,7 +77,7 @@ namespace Project165.Content.Mounts
             {
                 if (drawPlayer.velocity.X != 0f)
                 {
-                    rotationSpeed += MathHelper.Lerp(0f, 0.05f, drawPlayer.velocity.X * 0.125f);
+                    rotationSpeed += MathHelper.Lerp(0f, 0.2f, drawPlayer.velocity.X * 0.25f);
                 }
 
                 playerDrawData.Add(new DrawData(texture, drawPosition + Vector2.UnitY * 4, texture.Frame(), drawColor, rotationSpeed, drawOrigin, drawScale, spriteEffects));

@@ -101,9 +101,21 @@ public class JellyfishProj : ModProjectile
                 Attack();
                 break;
         }
+        FindFrame();
 
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         Projectile.spriteDirection = Projectile.direction;
+    }
+
+
+    public void FindFrame()
+    {
+        if (++Projectile.frameCounter >= Main.projFrames[Type])
+        {
+            Projectile.frameCounter = 0;
+            Projectile.frame = CurrentState == AIState.Attacking ? 4 + (++Projectile.frame): ++Projectile.frame;
+            Projectile.frame %= CurrentState == AIState.Attacking ? Main.projFrames[Type] : Main.projFrames[Type] - 3;
+        }
     }
 
     public void Idle()
@@ -225,7 +237,7 @@ public class JellyfishProj : ModProjectile
         int startY = frameHeight * Projectile.frame;
         Rectangle sourceRectangle = new(0, startY, texture.Width, frameHeight);
 
-        // Show afterimages only when it's attacking
+        // Display afterimages only when it's attacking
         if (CurrentState is AIState.Attacking or AIState.Returning)
         {
             for (int i = 0; i < Projectile.oldPos.Length; i++)

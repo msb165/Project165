@@ -1,4 +1,5 @@
-﻿using Project165.Content.Items.Weapons.Magic;
+﻿using Project165.Content.Items.Accessories;
+using Project165.Content.Items.Weapons.Magic;
 using Project165.Content.Items.Weapons.Melee;
 using Project165.Content.Items.Weapons.Ranged;
 using Project165.Content.Items.Weapons.Summon;
@@ -30,11 +31,13 @@ public class IceBossBag : ModItem
 
     public override void ModifyItemLoot(ItemLoot itemLoot)
     {
-        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Avalanche>(), 5));
-        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceShotgun>(), 5));
-        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceChakram>(), 5));
-        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceBat>(), 5));
-        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceGuardianStaff>(), 5));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Avalanche>(), 6));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceShotgun>(), 6));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceChakram>(), 6));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceBat>(), 6));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceGuardianStaff>(), 6));
+        itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<IceCloak>(), 6));
+
         itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<IceBossFly>()));
     }
 }

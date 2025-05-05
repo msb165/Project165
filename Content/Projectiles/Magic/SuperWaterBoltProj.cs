@@ -58,17 +58,18 @@ public class SuperWaterBoltProj : ModProjectile
             testDust.noGravity = true;
             testDust.velocity *= 0.2f;
             testDust.velocity += Projectile.velocity * 0.1f;
-            testDust.position = Projectile.Center.RotatedByRandom(MathHelper.ToRadians(0.01f)) - Projectile.velocity / 5f * i;
+            testDust.position = Projectile.Center - Projectile.velocity / 5f * i;
 
             Dust testDust2 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Blue, 0, 0, 0, Color.White with { A = 127 }, 1f);
             testDust2.noGravity = true;
             testDust2.velocity = Projectile.velocity;
-            testDust2.position = Projectile.Center.RotatedByRandom(MathHelper.ToRadians(0.0125f)) - Projectile.velocity / 5f * i;
+            testDust2.position = Projectile.position - Projectile.Size * 2.5f + Main.rand.NextVector2Square(16f, 32f) - Projectile.velocity / 10f * i;
+
 
             Dust testDust3 = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Clentaminator_Blue, Scale: 1.25f);
             testDust3.noGravity = true;
             testDust3.velocity *= 0f;
-            testDust3.position = Projectile.Center.RotatedByRandom(MathHelper.ToRadians(0.002f)) - Projectile.velocity / 2.5f * i;
+            testDust3.position = Projectile.Center.RotatedByRandom(MathHelper.ToRadians(0.0125f)).RotatedBy(Projectile.velocity.ToRotation()) - Projectile.velocity / 5f * i;
         }
     }
 

@@ -13,7 +13,7 @@ public class Radiance : ModItem
     {
         Item.Size = new(36);
         Item.rare = ItemRarityID.Red;
-        Item.damage = 170;
+        Item.damage = 160;
         Item.crit = 10;
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.shoot = ModContent.ProjectileType<RadianceProj>();

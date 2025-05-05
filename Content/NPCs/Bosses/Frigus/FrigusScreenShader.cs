@@ -1,22 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria;
+﻿using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
+using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 
 namespace Project165.Content.NPCs.Bosses.Frigus;
 
-public class FrigusScreenShader : ScreenShaderData
+public class FrigusScreenShader(string passName) : ScreenShaderData(passName)
 {
-    public FrigusScreenShader(string passName) : base(passName)
-    {
-    }
-
     private Vector2 _texturePosition = Vector2.Zero;
     private int iceBossIndex;
     private float windSpeed = 0.1f;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,10 @@ public class GlobalNPCBuff : GlobalNPC
             drawColor = Color.Cyan with { A = 200 };
             DrawMoonFire(npc);
         }
+        if (slowDown)
+        {
+            drawColor = new Color(127, 127, 255);
+        }
     }
 
     public override void UpdateLifeRegen(NPC npc, ref int damage)
@@ -42,7 +47,7 @@ public class GlobalNPCBuff : GlobalNPC
     {
         if (slowDown)
         {
-            npc.velocity = Vector2.Clamp(npc.velocity, -Vector2.One * 3f, Vector2.One * 3f);
+            npc.velocity = Vector2.Clamp(npc.velocity, -Vector2.One, Vector2.One);
         }
     }
 
@@ -70,4 +75,9 @@ public class GlobalNPCBuff : GlobalNPC
         }
     }
     #endregion
+
+    public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        base.PostDraw(npc, spriteBatch, screenPos, drawColor);
+    }
 }

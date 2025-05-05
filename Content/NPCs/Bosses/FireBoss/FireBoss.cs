@@ -36,23 +36,10 @@ public class FireBoss : ModNPC
         set => NPC.ai[0] = (float)value;
     }
 
-    public float AITimer
-    {
-        get => NPC.ai[1];
-        set => NPC.ai[1] = value;
-    }
+    public ref float AITimer => ref NPC.ai[1];
+    public ref float Direction => ref NPC.ai[2];
 
-    public float Direction
-    {
-        get => NPC.ai[2];
-        set => NPC.ai[2] = value;
-    }
-
-    public float ShootTimer
-    {
-        get => NPC.ai[3];
-        set => NPC.ai[3] = value;
-    }
+    public ref float ShootTimer => ref NPC.ai[3];
 
     public override void SetStaticDefaults()
     {
