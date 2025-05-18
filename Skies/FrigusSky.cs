@@ -33,6 +33,7 @@ public class FrigusSky : CustomSky
         }
         return iceBossIndex != -1;
     }
+
     public override void Update(GameTime gameTime)
     {
         if (Main.gamePaused || !Main.hasFocus)
@@ -59,33 +60,21 @@ public class FrigusSky : CustomSky
         }
     }
 
-    public override float GetCloudAlpha()
-    {
-        return 1f;
-    }
+    public override float GetCloudAlpha() => 0.4f;
 
     public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
     {
         if (minDepth < 1f && maxDepth >= 0f)
         {
-            spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), new Color(39, 53, 56, 100) * intensity);
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), new Color(250, 250, 255, 255) * 0.5f * intensity);
         }
     }
 
-    public override void Activate(Vector2 position, params object[] args)
-    {
-        isActive = true;
-    }
+    public override void Activate(Vector2 position, params object[] args) => isActive = true;
 
-    public override void Deactivate(params object[] args)
-    {
-        isActive = false;
-    }
+    public override void Deactivate(params object[] args) => isActive = false;
 
-    public override void Reset()
-    {
-        isActive = false;
-    }
+    public override void Reset() => isActive = false;
 
     public override bool IsActive() => isActive || intensity > 0f;
 }

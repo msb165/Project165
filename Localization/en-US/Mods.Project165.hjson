@@ -31,7 +31,7 @@ Projectiles: {
 	GolemArrow.DisplayName: Golem Arrow
 	InfernalArrow.DisplayName: Infernal Arrow
 	InfernalFire.DisplayName: Infernal Fire
-	SuperFireSwordHoldoutProj.DisplayName: Super Fire Sword
+	SuperFireSwordHoldoutProj.DisplayName: Blazing Blade
 	SuperFire.DisplayName: Super Fire
 	AdamantiteBolt.DisplayName: Adamantite Bolt
 	AdamantiteEnergy.DisplayName: Adamantite Energy
@@ -56,6 +56,17 @@ Projectiles: {
 	IceGuardianBolt.DisplayName: Ice Guardian Bolt
 	AssassinKnifeProj.DisplayName: Assassin Knife
 	AssassinBeam.DisplayName: Assassin Beam
+	IceFlaskBolt.DisplayName: Ice Flask
+	IceFlaskProj.DisplayName: Ice Flask
+	BeamSwingProj.DisplayName: Beam
+	BeamSuperProj.DisplayName: Beam
+	IceCloakProj.DisplayName: Ice Bolt
+	IceElementalProj.DisplayName: Ice Elemental
+	BlazingBeam.DisplayName: Blazing Beam
+	BlazingShortProj.DisplayName: Blazing Shortsword
+	BigMagicGunHold.DisplayName: Big Magic Gun
+	HallowedJavelinProj.DisplayName: Hallowed Javelin
+	SnowbomberExplosion.DisplayName: Explosion
 }
 
 Items: {
@@ -269,17 +280,62 @@ Items: {
 
 	IceGuardianStaff: {
 		DisplayName: Ice Guardian Staff
-		Tooltip: ""
+		Tooltip: Summons an Ice Guardian to fight for you
 	}
 
 	AssassinKnife: {
 		DisplayName: Assassin Knife
-		Tooltip: 
+		Tooltip:
 			'''
 			A knife used by a cold and fast assassin
 			Stores a beam after every critical hit
-			Press right click to shoot one or more projectiles
+			Press right click to fire the stored projectiles
 			'''
+	}
+
+	IceFlask: {
+		DisplayName: Ice Flask
+		Tooltip: ""
+	}
+
+	FrigusMask: {
+		DisplayName: Frigus Mask
+		Tooltip: ""
+	}
+
+	FrigusRelic: {
+		DisplayName: Frigus Relic
+		Tooltip: ""
+	}
+
+	IceCloak: {
+		DisplayName: Ice Cloak
+		Tooltip: Summons homing ice bolts after taking damage
+	}
+
+	IceElementalStaff: {
+		DisplayName: Ice Elemental Staff
+		Tooltip: ""
+	}
+
+	ShadowHandRelic: {
+		DisplayName: Shadow Hand Relic
+		Tooltip: ""
+	}
+
+	BlazingShortsword: {
+		DisplayName: Blazing Shortsword
+		Tooltip: ""
+	}
+
+	BigMagicGun: {
+		DisplayName: Big Magic Gun
+		Tooltip: ""
+	}
+
+	HallowedJavelin: {
+		DisplayName: Hallowed Javelin
+		Tooltip: Has a chance to explode upon death
 	}
 }
 
@@ -292,6 +348,8 @@ NPCs: {
 	FireBoss.DisplayName: Raging Flame
 	ShadowMinion.DisplayName: Shadow Minion
 	TallSnowman.DisplayName: Tall Snowman
+	TestDummy.DisplayName: Test Dummy
+	Snowbomber.DisplayName: Snowbomber
 }
 
 Tiles: {
@@ -325,5 +383,15 @@ Buffs: {
 	IceGuardianBuff: {
 		DisplayName: Ice Guardian
 		Description: An Ice Guardian fights for you
+	}
+
+	SlowDown: {
+		DisplayName: Slow Down
+		Description: ""
+	}
+
+	IceElementalBuff: {
+		DisplayName: Ice Elemental Buff
+		Description: An Ice Elemental protects you
 	}
 }

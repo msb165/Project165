@@ -12,7 +12,7 @@ public partial class DetourChanges : ModSystem
     private int On_NPC_GetNPCInvasionGroup(On_NPC.orig_GetNPCInvasionGroup orig, int npcID)
     {
         int result = orig(npcID);
-        if (npcID == ModContent.NPCType<TallSnowman>())
+        if (npcID == ModContent.NPCType<TallSnowman>() || npcID == ModContent.NPCType<Snowbomber>())
         {
             result = InvasionID.SnowLegion;
         }

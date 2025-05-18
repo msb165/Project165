@@ -1,18 +1,5 @@
-﻿using Humanizer;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Terraria.GameContent.ItemDropRules;
+﻿using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.UI;
 
 namespace Project165.ILEdits;
 
